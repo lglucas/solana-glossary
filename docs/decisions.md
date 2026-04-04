@@ -11,7 +11,7 @@
 - **Decisao:** Refazer os dois jogos educacionais existentes com tema Solana:
   1. **Escape Room** (baseado no "Operation Cypherpunk")
   2. **Jogo da Vida** (baseado no "Jogo da Vida da Startup")
-- **Motivo:** Lucas ja tem experiencia comprovada com esses formatos (1413 e 999 linhas respectivamente). Refaze-los com acabamento de browser-game profissional e dados do SDK maximiza Creativity [25%] e Quality & Polish [25%].
+- **Motivo:** Lucas ja tem experiencia comprovada com esses formatos (1413 e 999 linhas respectivamente). Refaze-los com acabamento de browser-game profissional e dados do SDK maximiza Quality & Polish [25%] e Creativity [20%].
 - **Impacto:** Descartado o projeto de tooling agentivo (MCP/RAG) e o frontend puro do glossario.
 
 ## Decisao 3 — PRs separados
