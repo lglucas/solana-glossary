@@ -37,18 +37,20 @@ export function useVidaGame({
     createInitialState(theme, players),
   );
   const fromPollRef = useRef(false);
+  const initialRef = useRef(true);
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   const isMyTurn = currentPlayer?.wallet === myWallet;
 
-  // Salva state no Supabase — SO quando e minha vez (evita race condition)
+  // Salva state no Supabase apos acao local (pula poll e render inicial)
   useEffect(() => {
-    if (!roomCode || !isMyTurn || fromPollRef.current) {
+    if (!roomCode || fromPollRef.current || initialRef.current) {
       fromPollRef.current = false;
+      initialRef.current = false;
       return;
     }
     saveGameState(roomCode, state);
-  }, [state, roomCode, isMyTurn]);
+  }, [state, roomCode]);
 
   // Poll Supabase para receber state do jogador ativo
   useEffect(() => {
