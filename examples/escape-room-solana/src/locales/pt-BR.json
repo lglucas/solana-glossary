@@ -111,6 +111,23 @@
     "dice": "Dado virtual",
     "cards": "Cartas de evento",
     "quiz": "Quiz rapido",
+    "rollDice": "Clique para rolar",
+    "player": "Jogador",
+    "addPlayer": "Adicionar Jogador",
+    "setupTitle": "Configurar Jogadores",
+    "startGame": "Iniciar Partida",
+    "gameOver": "Fim de Jogo!",
+    "turnCount": "{{count}} turnos",
+    "backToBoards": "Voltar aos Tabuleiros",
+    "correct": "Correto! +150 pts",
+    "wrong": "Errado! -50 pts",
+    "challengeTitle": "Desafio Quiz",
+    "effects": {
+      "advance": "Avance {{value}} casas!",
+      "retreat": "Recue {{value}} casas!",
+      "bonus": "+{{value}} pontos!",
+      "penalty": "-{{value}} pontos!"
+    },
     "boards": {
       "normie": "De Normie a Validator",
       "normieDesc": "Comece como um leigo total e evolua ate se tornar um validator da rede Solana.",

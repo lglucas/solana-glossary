@@ -111,6 +111,23 @@
     "dice": "Dado virtual",
     "cards": "Cartas de evento",
     "quiz": "Quiz rapido",
+    "rollDice": "Click para lanzar",
+    "player": "Jugador",
+    "addPlayer": "Agregar Jugador",
+    "setupTitle": "Configurar Jugadores",
+    "startGame": "Iniciar Partida",
+    "gameOver": "Fin del Juego!",
+    "turnCount": "{{count}} turnos",
+    "backToBoards": "Volver a los Tableros",
+    "correct": "Correcto! +150 pts",
+    "wrong": "Incorrecto! -50 pts",
+    "challengeTitle": "Desafio Quiz",
+    "effects": {
+      "advance": "Avanza {{value}} casillas!",
+      "retreat": "Retrocede {{value}} casillas!",
+      "bonus": "+{{value}} puntos!",
+      "penalty": "-{{value}} puntos!"
+    },
     "boards": {
       "normie": "De Normie a Validator",
       "normieDesc": "Empieza como un novato total y evoluciona hasta convertirte en validator de Solana.",

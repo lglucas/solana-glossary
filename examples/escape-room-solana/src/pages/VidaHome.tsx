@@ -4,6 +4,7 @@
  * @projeto Solana Glossary — Jogo da Vida Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
@@ -112,9 +113,9 @@ export default function VidaHome() {
           >
             {BOARDS.map((b) => (
               <motion.div key={b.id} variants={scaleIn}>
-                <button
-                  disabled
-                  className={`w-full text-left rounded-2xl p-[1px] bg-gradient-to-br ${b.gradient} opacity-90 hover:opacity-100 transition-all duration-300 group cursor-not-allowed`}
+                <Link
+                  to={`/vida/jogar/${b.id}`}
+                  className={`block w-full text-left rounded-2xl p-[1px] bg-gradient-to-br ${b.gradient} opacity-90 hover:opacity-100 transition-all duration-300 group`}
                 >
                   <div
                     className="rounded-2xl bg-[#0a0015]/90 backdrop-blur-xl p-6 h-full"
@@ -137,11 +138,11 @@ export default function VidaHome() {
                         {t("vida.players")}
                       </span>
                     </div>
-                    <div className="mt-4 text-xs text-gray-600 font-mono tracking-wider">
-                      {t("vida.comingSoon")}
+                    <div className="mt-4 text-xs text-emerald-400 font-mono tracking-wider">
+                      {t("portal.play")} →
                     </div>
                   </div>
-                </button>
+                </Link>
               </motion.div>
             ))}
           </motion.div>

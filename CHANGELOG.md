@@ -5,6 +5,41 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.9.0] - 2026-04-04
+
+### Adicionado (Sprint 6 — Jogo da Vida: Engine Core)
+- **Engine completo** em `vida/engine/`: types, board, dice, turns, events, challenges, themes
+  - Tabuleiro modular com ~50 casas (start, normal, event, challenge, bonus, trap, finish)
+  - Dado virtual 1-6 com animacao de rolagem (CSS transform)
+  - Maquina de estado de turnos: roll → moving → resolve → next
+  - Cartas de evento com termos do SDK (avanca, recua, bonus, penalidade)
+  - Quiz em casas de desafio: definicao → 4 opcoes, +150/-50 pts
+  - 3 temas com categorias SDK distintas (normie/startup/timeline)
+- **Componentes UI** em `vida/components/`:
+  - Board (grid 10x5), Dice (visual com pontos), PlayerSetup (2-8 jogadores)
+  - EventCardModal (carta com efeito), ChallengeModal (quiz 4 opcoes)
+- **Paginas**: VidaPlay (gameplay), VidaResult (ranking final + confetti)
+- **Hook**: useVidaGame — gerencia estado completo do jogo
+- Rotas: `/vida/jogar/:tema`, `/vida/resultado/:tema`
+- VidaHome: cards dos 3 tabuleiros agora linkam ao jogo (nao mais "EM BREVE")
+- i18n: 25+ chaves vida.* (pt-BR + es): dado, jogador, turnos, efeitos, desafios
+- **Footer com links**: Superteam Brazil Solana + Tokenfy.me em todas as paginas
+- **Portal retro Mega Man X**: CRT scanlines, Press Start 2P font, star field, stage select, HIGH SCORES arcade
+
+### Modificado
+- `Portal.tsx` — reescrito com estetica retro real (pixel font, neon glow, vignette CRT)
+- `App.tsx` — 3 novas rotas para Jogo da Vida
+- `VidaHome.tsx` — tabuleiros clicaveis (Link ao inves de button disabled)
+- `index.html` — Google Fonts: Press Start 2P + Orbitron + Space Grotesk
+- Rodapes: componente Footer.tsx com links para linktr.ee/superteamBR e tokenfy.me
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.36s)
+- 15 arquivos novos para Jogo da Vida, todos ≤200 linhas (max 175)
+- Total: 1284 linhas de engine + UI para o Jogo da Vida
+
+---
+
 ## [0.8.2] - 2026-04-04
 
 ### Adicionado (Portal retro-Solana + NFT Avatar)

@@ -16,6 +16,8 @@ const VidaHome = lazy(() => import("./pages/VidaHome"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
 const GameResult = lazy(() => import("./pages/GameResult"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
+const VidaPlay = lazy(() => import("./vida/pages/VidaPlay"));
+const VidaResult = lazy(() => import("./vida/pages/VidaResult"));
 
 // ─── Spinner de carregamento ────────────────────────────────────────────────
 
@@ -36,6 +38,8 @@ export default function App() {
         <Route path="/" element={<Portal />} />
         <Route path="/escape" element={<Home />} />
         <Route path="/vida" element={<VidaHome />} />
+        <Route path="/vida/jogar/:tema" element={<VidaPlay />} />
+        <Route path="/vida/resultado/:tema" element={<VidaResult />} />
         <Route path="/jogar/:tema/:nivel" element={<GamePlay />} />
         <Route path="/resultado/:tema/:nivel" element={<GameResult />} />
         <Route path="/ranking" element={<Leaderboard />} />

@@ -80,15 +80,15 @@
 - [x] Todos 12 puzzles recebem prop theme e aplicam estilo visual do tema
 - [ ] Testes de usabilidade em todos os 12 puzzles
 
-## Sprint 6 — Jogo da Vida: Engine Core (v0.8.0)
+## Sprint 6 — Jogo da Vida: Engine Core (v0.9.0) ✓
 **Objetivo:** Motor do Jogo da Vida funcionando
-- [ ] Sistema de tabuleiro (~50 casas) modular
-- [ ] Dado virtual com animacao
-- [ ] Sistema de turnos (2-8 jogadores)
-- [ ] Cartas de evento com termos do SDK
-- [ ] Mini-desafios em casas especiais
-- [ ] Quiz rapido (proporcao menor)
-- [ ] Integracao SDK: searchTerms(), getLocalizedTerms()
+- [x] Sistema de tabuleiro (~50 casas) modular — board.ts, types.ts
+- [x] Dado virtual com animacao — dice.ts, Dice.tsx
+- [x] Sistema de turnos (2-8 jogadores) — turns.ts, useVidaGame.ts
+- [x] Cartas de evento com termos do SDK — events.ts, EventCardModal.tsx
+- [x] Mini-desafios em casas especiais — challenges.ts, ChallengeModal.tsx
+- [x] Quiz rapido (definicao → 4 opcoes) — ChallengeModal.tsx
+- [x] Integracao SDK: getTermsByCategory() + locale overrides
 
 ## Sprint 7 — Jogo da Vida: Multiplayer Online (v0.8.0)
 **Objetivo:** Multiplayer via internet funcionando
