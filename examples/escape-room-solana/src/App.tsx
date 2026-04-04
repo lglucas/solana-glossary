@@ -10,6 +10,7 @@ import { Routes, Route } from "react-router-dom";
 
 // ─── Paginas lazy-loaded ────────────────────────────────────────────────────
 
+const Portal = lazy(() => import("./pages/Portal"));
 const Home = lazy(() => import("./pages/Home"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
 const GameResult = lazy(() => import("./pages/GameResult"));
@@ -31,7 +32,16 @@ export default function App() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Portal />} />
+        <Route path="/escape" element={<Home />} />
+        <Route
+          path="/vida"
+          element={
+            <div className="min-h-screen bg-[#0a0015] text-white flex items-center justify-center font-['Orbitron']">
+              <p className="text-gray-500">Jogo da Vida — Em breve</p>
+            </div>
+          }
+        />
         <Route path="/jogar/:tema/:nivel" element={<GamePlay />} />
         <Route path="/resultado/:tema/:nivel" element={<GameResult />} />
         <Route path="/ranking" element={<Leaderboard />} />

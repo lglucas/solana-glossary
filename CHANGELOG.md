@@ -5,6 +5,33 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.8.2] - 2026-04-04
+
+### Adicionado (Portal retro-Solana + NFT Avatar)
+- `pages/Portal.tsx` — pagina de entrada estilo retro Sonic/Mega Man X
+  - Titulo "SOLANA GLOSSARY" com glow neon e fonte Orbitron
+  - Scanlines e grid neon de fundo (estetica retro)
+  - Dois cards: Escape Room (roxo/cyan) e Jogo da Vida (verde/laranja)
+  - Mini leaderboard top 5 jogadores
+  - "PRESS START" — referencia retro
+- `lib/nft.ts` — busca NFTs da wallet via DAS API (getAssetsByOwner)
+  - Funciona com Helius, Shyft e outros RPCs DAS-compativeis
+  - Fallback graceful: se RPC nao suporta, retorna array vazio
+- NFT thumbnails como opcoes de avatar (acima dos emojis)
+- Rota `/escape` para Home do Escape Room, `/vida` placeholder do Jogo da Vida
+- i18n: 10 chaves portal.* (pt-BR + es)
+
+### Modificado
+- `App.tsx` — nova rota `/` (Portal), Home movida para `/escape`
+- `hooks/useProfile.ts` — integra fetchNftAvatars() ao conectar wallet
+- `components/WalletButton.tsx` — exibe NFTs como avatar se disponiveis
+- `pages/Home.tsx` — botao voltar ativo (volta para Portal)
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.26s) | Todos arquivos ≤200 linhas
+
+---
+
 ## [0.8.0] - 2026-04-04
 
 ### Adicionado (Sprint 10 — Wallet + Perfil + Leaderboard)

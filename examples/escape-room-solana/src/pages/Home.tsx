@@ -39,7 +39,7 @@ export default function Home() {
   const { t, i18n } = useTranslation();
 
   return (
-    <Layout hideBack>
+    <Layout>
       <div className="relative min-h-screen bg-[#0a0015] text-white overflow-hidden font-['Space_Grotesk',sans-serif]">
         <AnimatedBlobs variant="genesis" />
         <motion.div

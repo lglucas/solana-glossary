@@ -40,6 +40,20 @@
     "scoreSaved": "Pontuacao salva!",
     "newRecord": "Novo recorde!"
   },
+  "portal": {
+    "subtitle": "Aprenda blockchain Solana jogando — dois jogos, mil termos, uma missao",
+    "play": "JOGAR",
+    "topPlayers": "Top Jogadores",
+    "viewAll": "Ver ranking completo",
+    "noScores": "Nenhuma pontuacao registrada ainda",
+    "footer": "Superteam Brazil × AceleradoraECO — 2026",
+    "games": {
+      "escape": "Escape Room",
+      "escapeDesc": "Desvende 12 puzzles em 3 temas. Resolva desafios de blockchain contra o relogio.",
+      "vida": "Jogo da Vida Solana",
+      "vidaDesc": "Percorra o tabuleiro do Normie ao Validator. Multiplayer online com amigos."
+    }
+  },
   "escape": {
     "title": "Escape Room Solana",
     "subtitle": "Desvende os segredos da blockchain Solana",
