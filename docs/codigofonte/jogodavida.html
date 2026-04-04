@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Vida da Startup - Web1 ao Web3</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+        body {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 50%, #1a1a2e 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        .board-path {
+            position: relative;
+        }
+
+        .board-space {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .board-space:hover {
+            transform: translateY(-8px) scale(1.05);
+            z-index: 10;
+        }
+
+        .board-space::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -15px;
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+            opacity: 0.4;
+        }
+
+        .board-space:nth-child(10n)::before {
+            display: none;
+        }
+
+        .player-token {
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+        }
+
+        @keyframes diceRoll {
+
+            0%,
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+
+            25% {
+                transform: rotate(90deg) scale(1.1);
+            }
+
+            50% {
+                transform: rotate(180deg) scale(1);
+            }
+
+            75% {
+                transform: rotate(270deg) scale(1.1);
+            }
+        }
+
+        .dice-rolling {
+            animation: diceRoll 0.5s ease infinite;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-enter {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: -200% center;
+            }
+
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .shine-effect {
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+
+        .tooltip-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .board-space:hover .tooltip-content {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .era-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .path-connector {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.5), transparent);
+            z-index: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Narrativas imersivas para cada espaço
+        const gameSpaces = [
+            {
+                id: 0,
+                name: "LARGADA",
+                type: "start",
+                era: "Web1",
+                shortDesc: "Sua jornada começa aqui!",
+                story: "🎬 É segunda-feira, 3h da manhã. Você acorda com aquela ideia que não te deixa dormir. Seus olhos brilham na tela do notebook. É agora ou nunca. Você respira fundo e aperta ENTER no primeiro commit. Bem-vindo ao mundo das startups! A jornada de mil milhas começa com um único passo... e muito café! ☕"
+            },
+            {
+                id: 1,
+                name: "Primeira Ideia",
+                type: "normal",
+                era: "Web1",
+                shortDesc: "O início de tudo",
+                story: "💡 Eureka! Você está no chuveiro quando BAM! - a ideia perfeita. Você corre molhado para anotar no caderno antes de esquecer. Seus amigos acham que você está louco, mas você SENTE que isso vai dar certo. É aquele frio na barriga misturado com empolgação. Você começa a rabiscar no guardanapo do bar o que pode ser o próximo unicórnio..."
+            },
+            {
+                id: 2,
+                name: "Site Estático",
+                type: "powerup",
+                era: "Web1",
+                shortDesc: "Primeiro site online!",
+                story: "🎉 Depois de 48 horas sem dormir, você finalmente digita SEU domínio no navegador e... FUNCIONA! Seu coração acelera. O site pode ter só HTML e CSS, mas é SEU. Você compartilha o link no ICQ para todos os contatos. Sua mãe não entende nada, mas diz que está orgulhosa. Primeiro passo conquistado! 🚀 [AVANCE 2 CASAS]",
+                bonus: 2
+            },
+            {
+                id: 3,
+                name: "Bug no HTML",
+                type: "setback",
+                era: "Web1",
+                shortDesc: "Erro no código",
+                story: "🐛 Pânico! Você acorda com 50 mensagens. O site está todo quebrado - uma tag </div> esquecida e TUDO virou uma bagunça. Seu primeiro 'cliente' (seu tio que você convenceu a testar) não consegue nem navegar. Você passa o dia inteiro debugando, linha por linha. Lição aprendida: sempre valide seu HTML! 😓 [VOLTE 1 CASA]",
+                penalty: -1
+            },
+            {
+                id: 4,
+                name: "Email Marketing",
+                type: "normal",
+                era: "Web1",
+                shortDesc: "Primeira campanha",
+                story: "📧 Você descobriu que tem uma lista de 50 emails (seus amigos, família e aquele primo distante). Decide enviar seu primeiro newsletter. Taxa de abertura: 12%. Seu pai clicou achando que era vírus. Mas hey, 6 pessoas viram sua mensagem! No mundo Web1, isso é praticamente viral!"
+            },
+            {
+                id: 5,
+                name: "Viral no Fórum",
+                type: "powerup",
+                era: "Web1",
+                shortDesc: "Sucesso inesperado!",
+                story: "🔥 Você postou sobre seu projeto em um fórum tech e foi dormir. Acorda com 500+ respostas! 'Isso é genial!', 'Shut up and take my money!', 'Alguém dá funding pra essa pessoa!'. Seu servidor caseiro não aguenta o tráfego. Problema bom de se ter! Seu projeto está em TODOS os feeds RSS! 🌟 [AVANCE 3 CASAS]",
+                bonus: 3
+            },
+            {
+                id: 6,
+                name: "Servidor Caiu",
+                type: "setback",
+                era: "Web1",
+                shortDesc: "Downtime crítico",
+                story: "💥 3h da tarde, quarta-feira. TUDO para. Erro 500. Timeout. Nada responde. Você corre para o 'servidor' (seu PC velho na sala). A ventoinha queimou. Seu site fica 6 horas offline. Você perde um cliente potencial que estava prestes a comprar. Aprende que shared hosting talvez não seja tão ruim assim... 😰 [PERCA SUA PRÓXIMA JOGADA]",
+                skipTurn: true
+            },
+            {
+                id: 7,
+                name: "Primeiro Cliente",
+                type: "normal",
+                era: "Web1",
+                shortDesc: "Primeira venda!",
+                story: "💰 Você recebe um email: 'Quero contratar seu serviço'. WHAT?! Alguém está disposto a PAGAR pelo que você fez?! Mãos tremendo, você envia seu primeiro boleto. R$ 97,00. Parece pouco, mas é a validação que você precisava. Você imprime e emoldura. Hoje você não é mais hobbysta - você é empreendedor!"
+            },
+
+            {
+                id: 8,
+                name: "🌐 ERA WEB 2.0",
+                type: "milestone",
+                era: "Web2",
+                shortDesc: "Nova era!",
+                story: "⭐ O mundo mudou da noite para o dia. MySpace, Orkut, e agora esse tal de Facebook. Não é mais sobre sites estáticos - é sobre COMUNIDADES, interação, conteúdo gerado por usuário. Ajax revoluciona tudo. Você percebe: precisa repensar TUDO. A internet não é mais um lugar para ler, é um lugar para PARTICIPAR! Welcome to Web2! 🎆"
+            },
+            {
+                id: 9,
+                name: "Perfil no Facebook",
+                type: "normal",
+                era: "Web2",
+                shortDesc: "Nas redes sociais",
+                story: "📱 2008. Você cria uma Fan Page. '3 pessoas curtiram sua página'. Uma delas é você mesmo de outra conta. Mas é um começo! Você posta todos os dias, responde cada comentário pessoalmente. Social media não é sobre vender, é sobre construir relacionamentos. Seu engajamento é 100% (literalmente, os 3 curtem tudo)."
+            },
+            {
+                id: 10,
+                name: "Vídeo Viral",
+                type: "powerup",
+                era: "Web2",
+                shortDesc: "Milhões de views!",
+                story: "🎬 Você fez um vídeo simples, meio sem querer, mostrando seu produto. Postou no YouTube e esqueceu. Uma semana depois: 2 MILHÕES DE VISUALIZAÇÕES! O vídeo está em todo lugar - Reddit, Twitter, até no Fantástico! Seu inbox explode. Investidores estão te procurando. Isso é melhor que ganhar na loteria! 🚀🔥 [AVANCE 4 CASAS]",
+                bonus: 4
+            },
+            {
+                id: 11,
+                name: "Troll Attack",
+                type: "setback",
+                era: "Web2",
+                shortDesc: "Hate na internet",
+                story: "😡 Você acorda com notificações DEMAIS. Uma review negativa virou trend. Memes sobre sua startup estão viralizando... pelos motivos errados. 'Isso é uma piada?', 'Pior produto que já vi'. Trolls estão em todo lugar. Você fica o dia inteiro fazendo damage control. Aprende: na internet, você vai ser criticado. Respire fundo. 😔 [VOLTE 2 CASAS]",
+                penalty: -2
+            },
+            {
+                id: 12,
+                name: "API Integration",
+                type: "normal",
+                era: "Web2",
+                shortDesc: "Conectando sistemas",
+                story: "🔌 Você finalmente entendeu APIs! Agora seu produto conversa com Stripe, SendGrid, Google Maps, Facebook, Twitter... É como ter superpoderes! Você não precisa construir tudo do zero. Standing on the shoulders of giants. Em 2 semanas fez o que levaria 6 meses antigamente!"
+            },
+            {
+                id: 13,
+                name: "Growth Hacking",
+                type: "powerup",
+                era: "Web2",
+                shortDesc: "Crescimento exponencial!",
+                story: "📈 Você descobriu UM hack simples: 'Convide um amigo e ganhe 1 mês grátis'. Em 3 semanas: 1000 usuários. Em 2 meses: 10.000! Seu K-factor é > 1. É crescimento ORGÂNICO, viral, exponencial! VCs estão de olho. Você está vivendo o sonho do 'hockey stick growth'! 💎 [AVANCE 3 CASAS]",
+                bonus: 3
+            },
+            {
+                id: 14,
+                name: "Mudança de Algoritmo",
+                type: "setback",
+                era: "Web2",
+                shortDesc: "Facebook mudou tudo",
+                story: "📉 Manhã de terça. Facebook anuncia mudança no algoritmo. Seu reach orgânico: de 20% para 2%. Da noite para o dia. Você dependia 80% do tráfego do Facebook. Pânico. Reunião de emergência. Pivô urgente. A lição dói: nunca dependa de uma única plataforma. Você não controla a plataforma. 😰 [VOLTE 2 CASAS]",
+                penalty: -2
+            },
+            {
+                id: 15,
+                name: "App Mobile",
+                type: "normal",
+                era: "Web2",
+                shortDesc: "Na loja de apps",
+                story: "📱 O iPhone mudou o jogo. 'There's an app for that'. Você aprendeu Swift/Kotlin em 3 meses. Submissions para App Store: 7 tentativas. Cada reject doía. Mas agora está lá: '⭐️⭐️⭐️⭐️ 4.2 - 50 avaliações'. Seu app tem notificações push, funciona offline, é NATIVO! Mobile-first não é mais tendência, é obrigação."
+            },
+            {
+                id: 16,
+                name: "Investidor Anjo",
+                type: "powerup",
+                era: "Web2",
+                shortDesc: "Primeiro investimento!",
+                story: "💰 Você está pitchando em um evento. Termina. Um cara de terno casual se aproxima: 'Gostei. Quanto você precisa?'. Coração acelerado. 'R$ 100k'. Ele: 'Tenho interesse. Me manda o contrato'. WHAT?! 2 semanas depois: dinheiro na conta. Seu primeiro INVESTOR! Agora é sério. Runway de 12 meses. Let's scale! 🚀💎 [AVANCE 5 CASAS]",
+                bonus: 5
+            },
+            {
+                id: 17,
+                name: "Concorrente Maior",
+                type: "setback",
+                era: "Web2",
+                shortDesc: "Big tech no mercado",
+                story: "😨 TechCrunch: 'Google lança produto similar ao [seu produto]'. Seu coração para. Eles têm recursos infinitos, bilhões de usuários, marca estabelecida. Você tem 5 pessoas na equipe. David vs Golias? Mais para formiga vs elefante. Reunião de crise. Vocês decidem: nichify ou die. Foco total no diferencial. 😔 [VOLTE 1 CASA]",
+                penalty: -1
+            },
+            {
+                id: 18,
+                name: "Dados dos Usuários",
+                type: "normal",
+                era: "Web2",
+                shortDesc: "Analytics power!",
+                story: "📊 Você instalou Google Analytics, Mixpanel, Hotjar... Os dados são REVELADORES! Descobriu que 80% dos users abandonam no passo 3. Fez um A/B test. Conversion rate: +45%! Dados não mentem. Você não está mais 'achando', está SABENDO. Data-driven decisions FTW!"
+            },
+            {
+                id: 19,
+                name: "Cloud Computing",
+                type: "powerup",
+                era: "Web2",
+                shortDesc: "AWS! Azure! Google Cloud!",
+                story: "☁️ Adeus servidor no armário! Você migrou para AWS. Auto-scaling, CDN global, 99.99% uptime, backup automático. Black Friday? Tráfego 10x? Sem problemas! A infra escala sozinha. Você está rodando em 3 continentes. DevOps está feliz. Sleep é possível novamente! 😴 [AVANCE 2 CASAS]",
+                bonus: 2
+            },
+            {
+                id: 20,
+                name: "LGPD/GDPR",
+                type: "setback",
+                era: "Web2",
+                shortDesc: "Compliance é real",
+                story: "⚖️ Email do jurídico: 'Precisamos adaptar TUDO para LGPD até mês que vem'. Nightmare. Cookies, termos de uso, política de privacidade, data processing agreements, DPO, data mapping... R$ 50k em consultoria. 3 meses de trabalho. Mas é lei. E é o certo a fazer. Dados são sagrados. 😰 [PERCA SUA PRÓXIMA JOGADA]",
+                skipTurn: true
+            },
+
+            {
+                id: 21,
+                name: "🌐 ERA WEB 3.0",
+                type: "milestone",
+                era: "Web3",
+                shortDesc: "Descentralização!",
+                story: "⭐ Bitcoin está a 60k. Ethereum muda TUDO. Smart contracts, NFTs, DAOs, DeFi... A internet não é mais controlada por big tech. É P2P, trustless, permissionless. Você percebe: a próxima revolução não é sobre plataformas, é sobre PROTOCOLOS. Read, Write, OWN. Welcome to Web3! 🚀💎"
+            },
+            {
+                id: 22,
+                name: "Smart Contract",
+                type: "normal",
+                era: "Web3",
+                shortDesc: "Código é lei",
+                story: "⚡ Você aprende Solidity. Deploy do primeiro smart contract na mainnet. Aquele sentimento... seu código está IMUTÁVEL, rodando PARA SEMPRE na blockchain. Ninguém pode derrubar, censurar ou modificar. É permanente. É seu legado digital. Transaction hash: 0x7f8d...a2e9. Eternizado."
+            },
+            {
+                id: 23,
+                name: "NFT Launch",
+                type: "powerup",
+                era: "Web3",
+                shortDesc: "Coleção exclusiva!",
+                story: "🎨 Sua coleção de 10k NFTs está no ar. Mint em 10 minutos. SOLD OUT! Floor price: 0.5 ETH. Volume: 500 ETH em 24h. OpenSea está pegando fogo. Discord com 50k membros. Você não está vendendo JPEGs, está construindo COMUNIDADE. Utility roadmap está bombando! 🔥💎 [AVANCE 4 CASAS]",
+                bonus: 4
+            },
+            {
+                id: 24,
+                name: "Gas Fees Altas",
+                type: "setback",
+                era: "Web3",
+                shortDesc: "Ethereum caro demais",
+                story: "⛽ Você vai fazer um mint. Gas fee: $350. Para uma transação de $20. WHAT?! Network congestion está insana. Seus users estão reclamando. Você considera migrar para L2 (Polygon? Arbitrum? Optimism?). Ou esperar ETH 2.0? Trilema do blockchain é REAL: descentralização, segurança, escalabilidade - escolha 2. 😫 [VOLTE 2 CASAS]",
+                penalty: -2
+            },
+            {
+                id: 25,
+                name: "DAO Criada",
+                type: "normal",
+                era: "Web3",
+                shortDesc: "Governança descentralizada",
+                story: "🗳️ Sua startup não tem CEO. Tem uma DAO. Snapshot para votações. Token holders decidem o roadmap. Proposals on-chain. Transparência total. Treasury multisig. É democracia digital. É caótico, lento às vezes, mas é o FUTURO. Power to the people!"
+            },
+            {
+                id: 26,
+                name: "Token Valoriza",
+                type: "powerup",
+                era: "Web3",
+                shortDesc: "To the moon! 🚀",
+                story: "🌙 Seu token estava $0.10. Binance anuncia listing. Em 48 horas: $2.50! +2,400% em 2 dias! Telegram explode. 'WEN LAMBO?' em todo lugar. Você é paper millionaire. Mas você HODL. Diamond hands. Você acredita no projeto long-term. Community é insana. LFG! 💎🙌 [AVANCE 5 CASAS]",
+                bonus: 5
+            },
+            {
+                id: 27,
+                name: "Hack na Carteira",
+                type: "setback",
+                era: "Web3",
+                shortDesc: "Vulnerabilidade explorada",
+                story: "🚨 3h da manhã. Discord ping: 'CONTRACT DRAINED!'. Você corre pro computador. Etherscan mostra: treasury wallet emptied. $500k gone. Reentrancy attack. Bug no código. Você sente o chão desabar. Comunidade em pânico. Post-mortem doloroso. Lição custosa: audit SEMPRE seus contratos. 😰💔 [VOLTE 3 CASAS]",
+                penalty: -3
+            },
+            {
+                id: 28,
+                name: "Metaverso",
+                type: "normal",
+                era: "Web3",
+                shortDesc: "Realidade virtual social",
+                story: "🥽 Você comprou um terreno em Decentraland. Construiu um escritório virtual. Sua equipe se reúne lá, avatares customizados. Eventos, conferências, networking - tudo em VR. É estranho no começo, mas depois... você não quer sair. O futuro do trabalho é phygital!"
+            },
+            {
+                id: 29,
+                name: "DeFi Protocol",
+                type: "powerup",
+                era: "Web3",
+                shortDesc: "Finanças descentralizadas!",
+                story: "💱 Seu protocolo DeFi está no ar. Liquidity pools, yield farming, staking. TVL: $10M em 30 dias! Você eliminou middlemen. Sem bancos, sem custódia, sem permissão. APYs de 3 dígitos! (Por enquanto...). Você não está competindo com bancos, está tornando-os obsoletos! 🏦➡️💀 [AVANCE 3 CASAS]",
+                bonus: 3
+            },
+            {
+                id: 30,
+                name: "Bear Market",
+                type: "setback",
+                era: "Web3",
+                shortDesc: "Cripto inverno ❄️",
+                story: "📉 Luna colapsou. FTX implodiu. Tudo despenca -90%. Seu token: de $2.50 para $0.08. 'Web3 is dead' em todo lugar. VCs sumiram. Team quer sair. É dark. MAS: é nessa hora que os verdadeiros builders constam. Bear market separa turistas de residentes. BUIDL! 😰 [PERCA SUA PRÓXIMA JOGADA]",
+                skipTurn: true
+            },
+
+            {
+                id: 31,
+                name: "🤖 ERA DA IA",
+                type: "milestone",
+                era: "AI",
+                shortDesc: "Inteligência Artificial!",
+                story: "⭐ Novembro 2022. ChatGPT lança. Tudo muda em 48 horas. IA não é mais ficção científica - é SUA FERRAMENTA DE TRABALHO. Copilot escreve código. MidJourney cria arte. IA generativa revoluciona TUDO. A pergunta não é mais 'IA vai dominar?'. É 'como usar IA para vencer?'. AI-first era starts NOW! 🧠✨"
+            },
+            {
+                id: 32,
+                name: "ChatGPT Integration",
+                type: "normal",
+                era: "AI",
+                shortDesc: "IA no produto",
+                story: "🧠 Você integrou GPT-4 no seu produto. Agora seus users conversam com sua plataforma naturalmente. Suporte 24/7 automatizado. Geração de conteúdo personalizado. UX que ENTENDE contexto. Seu CAC caiu 40%. LTV subiu 60%. IA não é feature, é seu moat!"
+            },
+            {
+                id: 33,
+                name: "Automação Completa",
+                type: "powerup",
+                era: "AI",
+                shortDesc: "Produtividade 10x!",
+                story: "⚡ Você automou TUDO com IA. Marketing: AI. Sales: AI. Customer Success: AI. DevOps: AI. Sua equipe de 10 produz como 100. Você dorme 8h/dia pela primeira vez em 5 anos. Sua margem é 85%. Competitors não conseguem competir. Você hackeou o jogo! 🚀🤖 [AVANCE 6 CASAS]",
+                bonus: 6
+            },
+            {
+                id: 34,
+                name: "Alucinação da IA",
+                type: "setback",
+                era: "AI",
+                shortDesc: "IA inventou dados",
+                story: "🤥 Sua IA de suporte deu uma resposta... TOTALMENTE errada. Inventou políticas que não existem. Cliente processou. Mídia pegou: 'Startup usa IA irresponsavelmente'. Damage control mode. Você aprende: IA é powerful, mas needs guardrails. Sempre validar outputs críticos. Trust, but verify. 😰 [VOLTE 2 CASAS]",
+                penalty: -2
+            },
+            {
+                id: 35,
+                name: "Agent Autônomo",
+                type: "normal",
+                era: "AI",
+                shortDesc: "IA que age sozinha",
+                story: "🤖 Seu AI agent não só responde - ele AGE. Detecta problema, cria ticket, busca solução, implementa fix, testa, deploys. Tudo sozinho. Você acordou e encontrou 15 tasks resolvidas enquanto dormia. É surreal. É assustador. É incrível. A linha entre humano e máquina está ficando borrada..."
+            },
+            {
+                id: 36,
+                name: "Produto AGI",
+                type: "powerup",
+                era: "AI",
+                shortDesc: "Superinteligência artificial!",
+                story: "🧠💎 Seu produto agora tem AGI. Ele aprende, raciocina, cria, inova... sozinho. Ele é melhor que qualquer humano em sua área. Você não programa mais features - você ENSINA objetivos e ele descobre o how. É transcendental. Você está construindo o futuro da humanidade! 🚀✨ [AVANCE 5 CASAS]",
+                bonus: 5
+            },
+            {
+                id: 37,
+                name: "Regulação IA",
+                type: "setback",
+                era: "AI",
+                shortDesc: "Governos regulam IA",
+                story: "⚖️ União Europeia aprova AI Act. Classificações de risco, audits obrigatórias, transparência forçada. Seu modelo precisa explicar CADA decisão. Compliance vai custar milhões. Advogados everywhere. É importante? Sim. É chato? Muito. Mas é o preço da responsabilidade. 😔 [VOLTE 1 CASA]",
+                penalty: -1
+            },
+            {
+                id: 38,
+                name: "Unicórnio",
+                type: "normal",
+                era: "AI",
+                shortDesc: "Valuation bilionário! 🦄",
+                story: "🦄 Série C fechada. Valuation: $1.2 BILHÃO. Você lê de novo. Sim, BILHÃO, com B. Você está na capa da Forbes. 'Youngest billionaire founder'. Seu cap table... você é rico no papel. Mas não muda nada. Você continua no mesmo escritório, mesma missão. Unicórnio é título, não destino!"
+            },
+            {
+                id: 39,
+                name: "IPO",
+                type: "powerup",
+                era: "AI",
+                shortDesc: "Abriu capital!",
+                story: "📈 NASDAQ: [YOURTICKER]. Você toca o sino. As ações abrem 45% acima do preço. Market cap: $5B. Você é CEO de empresa pública. Earnings calls, quarterly reports, shareholders... É outro nível. Você chegou. MAS... é só o começo de um novo capítulo! 🎊 [AVANCE 3 CASAS]",
+                bonus: 3
+            },
+            {
+                id: 40,
+                name: "🏆 SUCESSO!",
+                type: "finish",
+                era: "AI",
+                shortDesc: "Você conquistou!",
+                story: "👑 Você fez. De uma ideia às 3h da manhã até empresa que mudou o mundo. Você sobreviveu bugs, trolls, bear markets, regulações. Você aprendeu, pivotou, cresceu. Mas mais importante: você NUNCA desistiu. Esta é a jornada do empreendedor. E você, meu amigo, é um vencedor. Congrats! 🎉🚀💎🏆"
+            }
+        ];
+
+        const PLAYER_COLORS = [
+            { name: "Vermelho", class: "bg-red-500", hex: "#ef4444" },
+            { name: "Azul", class: "bg-blue-500", hex: "#3b82f6" },
+            { name: "Verde", class: "bg-green-500", hex: "#22c55e" },
+            { name: "Amarelo", class: "bg-yellow-400", hex: "#facc15" },
+            { name: "Roxo", class: "bg-purple-500", hex: "#a855f7" },
+            { name: "Rosa", class: "bg-pink-500", hex: "#ec4899" },
+            { name: "Laranja", class: "bg-orange-500", hex: "#f97316" },
+            { name: "Ciano", class: "bg-cyan-500", hex: "#06b6d4" }
+        ];
+
+        const GameBoard = () => {
+            const [gameState, setGameState] = useState('setup'); // 'setup', 'playing', 'finished'
+            const [players, setPlayers] = useState([
+                { id: 1, name: "", position: 0, color: PLAYER_COLORS[0], skipsRemaining: 0, isActive: true },
+                { id: 2, name: "", position: 0, color: PLAYER_COLORS[1], skipsRemaining: 0, isActive: true }
+            ]);
+            const [diceValues, setDiceValues] = useState({});
+            const [rollingPlayer, setRollingPlayer] = useState(null);
+            const [messages, setMessages] = useState({});
+            const [winner, setWinner] = useState(null);
+            const [hoveredSpace, setHoveredSpace] = useState(null);
+
+            const addPlayer = () => {
+                if (players.length >= 8) return;
+                const newPlayer = {
+                    id: players.length + 1,
+                    name: "",
+                    position: 0,
+                    color: PLAYER_COLORS[players.length % PLAYER_COLORS.length],
+                    skipsRemaining: 0,
+                    isActive: true
+                };
+                setPlayers([...players, newPlayer]);
+            };
+
+            const removePlayer = (playerId) => {
+                if (players.length <= 2) return;
+                setPlayers(players.filter(p => p.id !== playerId));
+            };
+
+            const updatePlayerName = (playerId, name) => {
+                setPlayers(players.map(p =>
+                    p.id === playerId ? { ...p, name: name || `Jogador ${p.id}` } : p
+                ));
+            };
+
+            const updatePlayerColor = (playerId, colorIndex) => {
+                setPlayers(players.map(p =>
+                    p.id === playerId ? { ...p, color: PLAYER_COLORS[colorIndex] } : p
+                ));
+            };
+
+            const startGame = () => {
+                // Valida nomes
+                const validPlayers = players.map(p => ({
+                    ...p,
+                    name: p.name.trim() || `Jogador ${p.id}`
+                }));
+                setPlayers(validPlayers);
+                setGameState('playing');
+            };
+
+            const rollDice = (playerId) => {
+                if (rollingPlayer || winner || gameState !== 'playing') return;
+
+                const player = players.find(p => p.id === playerId);
+                if (!player) return;
+
+                // Verifica se jogador precisa pular
+                if (player.skipsRemaining > 0) {
+                    const newPlayers = players.map(p =>
+                        p.id === playerId
+                            ? { ...p, skipsRemaining: p.skipsRemaining - 1 }
+                            : p
+                    );
+                    setPlayers(newPlayers);
+                    setMessages({
+                        ...messages,
+                        [playerId]: `⏸️ ${player.name} perdeu a rodada! ${newPlayers.find(p => p.id === playerId).skipsRemaining} restante(s)`
+                    });
+                    return;
+                }
+
+                setRollingPlayer(playerId);
+                setMessages({ ...messages, [playerId]: "🎲 Rolando..." });
+
+                // Animação do dado
+                const rollAnimation = setInterval(() => {
+                    setDiceValues({ ...diceValues, [playerId]: Math.floor(Math.random() * 6) + 1 });
+                }, 100);
+
+                setTimeout(() => {
+                    clearInterval(rollAnimation);
+                    const finalDice = Math.floor(Math.random() * 6) + 1;
+                    setDiceValues({ ...diceValues, [playerId]: finalDice });
+                    movePlayer(playerId, finalDice);
+                    setRollingPlayer(null);
+                }, 1000);
+            };
+
+            const movePlayer = (playerId, steps) => {
+                const playerIndex = players.findIndex(p => p.id === playerId);
+                if (playerIndex === -1) return;
+
+                const newPlayers = [...players];
+                const player = newPlayers[playerIndex];
+                let newPosition = Math.min(player.position + steps, 40);
+                player.position = newPosition;
+
+                const space = gameSpaces[newPosition];
+                let msg = `📍 ${player.name} → ${space.name}`;
+
+                // Chegou ao final?
+                if (newPosition === 40) {
+                    setWinner(player);
+                    setGameState('finished');
+                    setMessages({ ...messages, [playerId]: `🏆 ${player.name} VENCEU! 🎉` });
+                    setPlayers(newPlayers);
+                    return;
+                }
+
+                // Aplica efeitos
+                if (space.type === "powerup" && space.bonus) {
+                    setTimeout(() => {
+                        player.position = Math.min(player.position + space.bonus, 40);
+                        setPlayers([...newPlayers]);
+                        if (player.position === 40) {
+                            setWinner(player);
+                            setGameState('finished');
+                            setMessages({ ...messages, [playerId]: `🏆 ${player.name} VENCEU! 🎉` });
+                        }
+                    }, 1500);
+                    msg = `🚀 ${space.shortDesc}`;
+                } else if (space.type === "setback") {
+                    if (space.skipTurn) {
+                        player.skipsRemaining = 1;
+                        msg = `⚠️ ${space.shortDesc} - PERDE PRÓXIMA RODADA!`;
+                    } else if (space.penalty) {
+                        setTimeout(() => {
+                            player.position = Math.max(0, player.position + space.penalty);
+                            setPlayers([...newPlayers]);
+                        }, 1500);
+                        msg = `⚠️ ${space.shortDesc}`;
+                    }
+                } else if (space.type === "milestone") {
+                    msg = `🎯 ${space.name}!`;
+                } else {
+                    msg = `${space.shortDesc}`;
+                }
+
+                setMessages({ ...messages, [playerId]: msg });
+                setPlayers(newPlayers);
+            };
+
+            const resetGame = () => {
+                setPlayers(players.map(p => ({
+                    ...p,
+                    position: 0,
+                    skipsRemaining: 0
+                })));
+                setDiceValues({});
+                setMessages({});
+                setWinner(null);
+                setGameState('setup');
+            };
+
+            const getSpaceColor = (space) => {
+                if (space.type === "start") return "from-purple-600 to-pink-600";
+                if (space.type === "finish") return "from-yellow-400 via-orange-500 to-red-500";
+                if (space.type === "milestone") return "from-indigo-600 to-purple-700";
+                if (space.type === "powerup") return "from-green-500 to-emerald-600";
+                if (space.type === "setback") return "from-red-500 to-rose-600";
+
+                if (space.era === "Web1") return "from-slate-500 to-gray-600";
+                if (space.era === "Web2") return "from-blue-500 to-cyan-600";
+                if (space.era === "Web3") return "from-purple-500 to-fuchsia-600";
+                if (space.era === "AI") return "from-orange-500 to-pink-600";
+
+                return "from-gray-400 to-gray-500";
+            };
+
+            const getSpaceIcon = (space) => {
+                if (space.type === "start") return "🎬";
+                if (space.type === "finish") return "🏆";
+                if (space.type === "milestone") return "⭐";
+                if (space.type === "powerup") return "🚀";
+                if (space.type === "setback") return "⚠️";
+                return "📍";
+            };
+
+            const getEraColor = (era) => {
+                if (era === "Web1") return "bg-gray-600";
+                if (era === "Web2") return "bg-blue-600";
+                if (era === "Web3") return "bg-purple-600";
+                if (era === "AI") return "bg-orange-600";
+                return "bg-gray-600";
+            };
+
+            // Setup Screen
+            if (gameState === 'setup') {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4">
+                        <div className="max-w-4xl w-full">
+                            <div className="glass-morphism rounded-3xl p-8 shadow-2xl">
+                                <h1 className="text-5xl font-bold text-center mb-3 text-white floating">
+                                    🎮 Jogo da Vida da Startup
+                                </h1>
+                                <p className="text-center text-gray-300 mb-8 text-lg">
+                                    Da Web1 ao Web3 e IA - Configure os jogadores e comece sua jornada!
+                                </p>
+
+                                <div className="space-y-4 mb-8">
+                                    {players.map((player, index) => (
+                                        <div key={player.id} className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-12 h-12 rounded-full ${player.color.class} flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
+                                                    {index + 1}
+                                                </div>
+
+                                                <input
+                                                    type="text"
+                                                    placeholder={`Nome do Jogador ${index + 1}`}
+                                                    value={player.name}
+                                                    onChange={(e) => updatePlayerName(player.id, e.target.value)}
+                                                    className="flex-1 px-4 py-3 rounded-lg bg-white/20 text-white placeholder-gray-400 border border-white/30 focus:border-white/50 focus:outline-none"
+                                                />
+
+                                                <select
+                                                    value={PLAYER_COLORS.findIndex(c => c.name === player.color.name)}
+                                                    onChange={(e) => updatePlayerColor(player.id, parseInt(e.target.value))}
+                                                    className="px-4 py-3 rounded-lg bg-white/20 text-white border border-white/30 focus:border-white/50 focus:outline-none"
+                                                >
+                                                    {PLAYER_COLORS.map((color, idx) => (
+                                                        <option key={idx} value={idx} className="bg-gray-800">
+                                                            {color.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+
+                                                {players.length > 2 && (
+                                                    <button
+                                                        onClick={() => removePlayer(player.id)}
+                                                        className="px-4 py-3 rounded-lg bg-red-500/80 hover:bg-red-600 text-white font-semibold transition-all"
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-4">
+                                    {players.length < 8 && (
+                                        <button
+                                            onClick={addPlayer}
+                                            className="flex-1 px-6 py-4 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold text-lg transition-all border border-white/30"
+                                        >
+                                            ➕ Adicionar Jogador
+                                        </button>
+                                    )}
+
+                                    <button
+                                        onClick={startGame}
+                                        className="flex-1 px-6 py-4 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg shadow-lg transition-all transform hover:scale-105"
+                                    >
+                                        🚀 Começar Jogo!
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Playing Screen
+            return (
+                <div className="min-h-screen p-4 md:p-8">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header */}
+                        <div className="glass-morphism rounded-2xl p-6 mb-6 card-enter">
+                            <h1 className="text-4xl font-bold text-center mb-2 text-white">
+                                🎮 Jogo da Vida da Startup
+                            </h1>
+                            <p className="text-center text-gray-300">Da Web1 ao Web3 e IA</p>
+                        </div>
+
+                        {/* Players Control Panel */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+                            {players.map((player) => (
+                                <div
+                                    key={player.id}
+                                    className="glass-morphism rounded-xl p-4 shadow-lg card-enter"
+                                >
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div
+                                            className={`w-10 h-10 rounded-full ${player.color.class} shadow-lg flex items-center justify-center text-white font-bold`}
+                                            style={{ boxShadow: `0 0 20px ${player.color.hex}50` }}
+                                        >
+                                            {player.id}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-bold text-white text-lg">{player.name}</p>
+                                            <p className="text-sm text-gray-300">
+                                                Casa {player.position}/40
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {player.skipsRemaining > 0 && (
+                                        <div className="mb-3 px-3 py-2 bg-red-500/20 border border-red-500/50 rounded-lg">
+                                            <p className="text-center text-sm text-red-300 font-semibold">
+                                                ⏸️ Pula {player.skipsRemaining} rodada(s)
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center gap-3">
+                                        <div className={`w-16 h-16 rounded-xl border-4 border-white/30 flex items-center justify-center text-3xl font-bold bg-white/10 shadow-lg ${rollingPlayer === player.id ? 'dice-rolling' : ''}`}>
+                                            {diceValues[player.id] || "?"}
+                                        </div>
+
+                                        <button
+                                            onClick={() => rollDice(player.id)}
+                                            disabled={rollingPlayer || winner}
+                                            className={`flex-1 px-4 py-3 rounded-xl font-bold text-white shadow-lg transition-all transform ${rollingPlayer || winner
+                                                    ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                                                    : `bg-gradient-to-r ${player.color.class} hover:scale-105 hover:shadow-xl`
+                                                }`}
+                                            style={!rollingPlayer && !winner ? {
+                                                boxShadow: `0 4px 15px ${player.color.hex}40`
+                                            } : {}}
+                                        >
+                                            🎲 Rolar
+                                        </button>
+                                    </div>
+
+                                    {messages[player.id] && (
+                                        <div className="mt-3 px-3 py-2 bg-white/10 rounded-lg border border-white/20">
+                                            <p className="text-sm text-white text-center font-medium">
+                                                {messages[player.id]}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Winner Banner */}
+                        {winner && (
+                            <div className="glass-morphism rounded-2xl p-8 mb-6 text-center card-enter shine-effect"
+                                style={{
+                                    background: `linear-gradient(90deg, ${winner.color.hex}20, ${winner.color.hex}40, ${winner.color.hex}20)`,
+                                    borderColor: winner.color.hex
+                                }}>
+                                <div className="text-6xl mb-4 floating">🏆</div>
+                                <h2 className="text-4xl font-bold text-white mb-2">
+                                    {winner.name} VENCEU!
+                                </h2>
+                                <p className="text-xl text-gray-200">
+                                    Parabéns por completar a jornada! 🎉
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Game Board */}
+                        <div className="glass-morphism rounded-2xl p-6 mb-6">
+                            <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-10 gap-3 relative">
+                                {gameSpaces.map((space) => {
+                                    const playersHere = players.filter(p => p.position === space.id);
+
+                                    return (
+                                        <div
+                                            key={space.id}
+                                            className={`board-space bg-gradient-to-br ${getSpaceColor(space)} rounded-xl p-3 shadow-lg relative min-h-[100px] flex flex-col items-center justify-center cursor-pointer border-2 border-white/20`}
+                                            onMouseEnter={() => setHoveredSpace(space)}
+                                            onMouseLeave={() => setHoveredSpace(null)}
+                                        >
+                                            <div className="text-3xl mb-1">{getSpaceIcon(space)}</div>
+                                            <div className="text-xs font-bold text-white text-center mb-1">
+                                                {space.id}
+                                            </div>
+                                            <div className="text-[10px] font-semibold text-white text-center break-words leading-tight">
+                                                {space.name}
+                                            </div>
+
+                                            <div className={`era-badge ${getEraColor(space.era)} text-white mt-1`}>
+                                                {space.era}
+                                            </div>
+
+                                            {/* Players tokens */}
+                                            {playersHere.length > 0 && (
+                                                <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
+                                                    {playersHere.map((player) => (
+                                                        <div
+                                                            key={player.id}
+                                                            className={`player-token w-6 h-6 rounded-full ${player.color.class} border-2 border-white shadow-xl font-bold text-white text-xs flex items-center justify-center`}
+                                                            style={{ boxShadow: `0 0 15px ${player.color.hex}` }}
+                                                        >
+                                                            {player.id}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            {/* Tooltip com história */}
+                                            {hoveredSpace && hoveredSpace.id === space.id && (
+                                                <div className="tooltip-content absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 z-50 w-80 max-w-[90vw]">
+                                                    <div className="bg-gray-900 rounded-xl p-4 shadow-2xl border-2 border-white/30">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <span className="text-2xl">{getSpaceIcon(space)}</span>
+                                                            <h3 className="font-bold text-white text-lg">{space.name}</h3>
+                                                            <span className={`era-badge ${getEraColor(space.era)} text-white ml-auto`}>
+                                                                {space.era}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-gray-200 text-sm leading-relaxed">
+                                                            {space.story}
+                                                        </p>
+                                                    </div>
+                                                    <div className="w-4 h-4 bg-gray-900 transform rotate-45 absolute top-full left-1/2 -translate-x-1/2 -mt-2 border-r-2 border-b-2 border-white/30"></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Controls */}
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={resetGame}
+                                className="px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 shadow-lg transition-all transform hover:scale-105"
+                            >
+                                🔄 Novo Jogo
+                            </button>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="text-center text-white mt-8 text-sm opacity-75">
+                            <p>🎓 Startup do Zero - Aceleradora ECO</p>
+                            <p className="text-xs mt-1">Jogo educacional para vivenciar a jornada empreendedora</p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<GameBoard />, document.getElementById('root'));
+    </script>
+    <script defer
+        src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
+        integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
+        data-cf-beacon='{"version":"2024.11.0","token":"96b1a09e72b94c528f87940fd811e9d1","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

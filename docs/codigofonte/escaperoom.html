@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operation Cypherpunk - Escape Room</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+        body {
+            background: #000;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+        }
+
+        .orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .matrix-bg {
+            background: linear-gradient(180deg, #000 0%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        .matrix-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 65, 0.03) 2px, rgba(0, 255, 65, 0.03) 4px);
+            pointer-events: none;
+        }
+
+        .glitch {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+
+            0%,
+            90%,
+            100% {
+                transform: translate(0);
+            }
+
+            91% {
+                transform: translate(-2px, 2px);
+            }
+
+            92% {
+                transform: translate(2px, -2px);
+            }
+
+            93% {
+                transform: translate(-2px, -2px);
+            }
+
+            94% {
+                transform: translate(2px, 2px);
+            }
+        }
+
+        .scanline {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scanline::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(0, 255, 65, 0.5);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5), inset 0 0 50px rgba(0, 255, 65, 0.1);
+        }
+
+        .terminal-text {
+            color: #00ff41;
+            text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+        }
+
+        .surveillance-text {
+            color: #ff0000;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+        }
+
+        .btn-cyber {
+            background: linear-gradient(90deg, #00ff41 0%, #00cc33 100%);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+            transition: all 0.3s;
+        }
+
+        .btn-cyber:hover:not(:disabled) {
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(90deg, #ff0000 0%, #cc0000 100%);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .station-card {
+            background: rgba(0, 20, 0, 0.8);
+            border: 2px solid #00ff41;
+            transition: all 0.3s;
+        }
+
+        .station-card:hover {
+            border-color: #00ff41;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.6);
+            transform: translateY(-5px);
+        }
+
+        .station-locked {
+            background: rgba(50, 0, 0, 0.8);
+            border: 2px solid #666;
+            opacity: 0.6;
+        }
+
+        .station-completed {
+            background: rgba(0, 50, 0, 0.9);
+            border: 2px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        }
+
+        .code-display {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            letter-spacing: 0.3em;
+            color: #00ff41;
+            text-shadow: 0 0 15px rgba(0, 255, 65, 0.8);
+        }
+
+        .timer-urgent {
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-red {
+
+            0%,
+            100% {
+                color: #ff0000;
+                text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+            }
+
+            50% {
+                color: #ff6666;
+                text-shadow: 0 0 30px rgba(255, 0, 0, 1);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .camera-icon {
+            animation: blink-camera 2s ease-in-out infinite;
+        }
+
+        @keyframes blink-camera {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+            }
+
+            25%,
+            75% {
+                opacity: 0.3;
+            }
+        }
+
+        /* CORREÇÃO DO BUG: Inputs e textareas com fundo escuro e texto verde */
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        textarea {
+            background: rgba(0, 20, 0, 0.9) !important;
+            border: 2px solid #00ff41 !important;
+            color: #00ff41 !important;
+            font-family: 'Share Tech Mono', monospace !important;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(0, 255, 65, 0.5) !important;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none !important;
+            border-color: #00ff41 !important;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.5) !important;
+        }
+
+        .bitcoin-symbol {
+            animation: float-coin 3s ease-in-out infinite;
+        }
+
+        @keyframes float-coin {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .penalty-flash {
+            animation: flash-red 0.5s ease-in-out;
+        }
+
+        @keyframes flash-red {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(255, 0, 0, 0.3);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const DIFFICULTIES = {
+            easy: {
+                name: 'Fácil',
+                time: 5400, // 90 minutes
+                hintsAfter: 1, // Show hints after 1 wrong attempt
+                timePenalty: 0, // No time penalty
+                color: 'bg-green-600',
+                description: '90min • Dicas rápidas • Sem penalidade'
+            },
+            medium: {
+                name: 'Médio',
+                time: 3600, // 60 minutes
+                hintsAfter: 2, // Show hints after 2 wrong attempts
+                timePenalty: 300, // -5 minutes penalty
+                color: 'bg-yellow-600',
+                description: '60min • Dicas após 2 erros • -5min por erro'
+            },
+            hard: {
+                name: 'Difícil',
+                time: 2700, // 45 minutes
+                hintsAfter: 3, // Show hints after 3 wrong attempts
+                timePenalty: 600, // -10 minutes penalty
+                color: 'bg-red-600',
+                description: '45min • Dicas após 3 erros • -10min por erro'
+            }
+        };
+
+        const CHALLENGES = [
+            {
+                id: 1,
+                name: "The Cypherpunk Manifesto",
+                icon: "📜",
+                description: "Decifre a mensagem de Eric Hughes",
+                code: "PRIVACY"
+            },
+            {
+                id: 2,
+                name: "Decrypt the Message",
+                icon: "🔐",
+                description: "Quebra a Cifra de César",
+                code: "SHA"
+            },
+            {
+                id: 3,
+                name: "Find the Private Key",
+                icon: "🔑",
+                description: "Encontre a chave secreta",
+                code: "256"
+            },
+            {
+                id: 4,
+                name: "The Satoshi Riddle",
+                icon: "🎭",
+                description: "Quem realmente é Satoshi?",
+                code: "SATOSHI"
+            },
+            {
+                id: 5,
+                name: "Proof of Work",
+                icon: "⛏️",
+                description: "Entenda a mineração",
+                code: "BLOCK"
+            },
+            {
+                id: 6,
+                name: "Break the Surveillance",
+                icon: "📹",
+                description: "Desative a vigilância",
+                code: "CHAIN"
+            },
+            {
+                id: 7,
+                name: "The Double Spend Problem",
+                icon: "💰",
+                description: "Resolva o problema Byzantine",
+                code: "CONSENSUS"
+            },
+            {
+                id: 8,
+                name: "The Genesis Block",
+                icon: "⛓️",
+                description: "Acesse o bloco gênesis",
+                code: "FREEDOM",
+                isFinal: true
+            }
+        ];
+
+        const App = () => {
+            const [gameState, setGameState] = useState('intro'); // intro, difficulty, playing, won, lost
+            const [difficulty, setDifficulty] = useState(null);
+            const [timeRemaining, setTimeRemaining] = useState(3600);
+            const [completedChallenges, setCompletedChallenges] = useState([]);
+            const [currentChallenge, setCurrentChallenge] = useState(null);
+            const [collectedCodes, setCollectedCodes] = useState([]);
+            const [showIntro, setShowIntro] = useState(true);
+            const [totalErrors, setTotalErrors] = useState(0);
+            const [score, setScore] = useState(0);
+
+            useEffect(() => {
+                if (gameState === 'playing' && timeRemaining > 0) {
+                    const timer = setInterval(() => {
+                        setTimeRemaining(prev => {
+                            if (prev <= 1) {
+                                setGameState('lost');
+                                return 0;
+                            }
+                            return prev - 1;
+                        });
+                    }, 1000);
+                    return () => clearInterval(timer);
+                }
+            }, [gameState, timeRemaining]);
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            const selectDifficulty = (diffKey) => {
+                setDifficulty(diffKey);
+                setTimeRemaining(DIFFICULTIES[diffKey].time);
+                setGameState('playing');
+            };
+
+            const applyTimePenalty = () => {
+                if (difficulty && DIFFICULTIES[difficulty].timePenalty > 0) {
+                    const penalty = DIFFICULTIES[difficulty].timePenalty;
+                    setTimeRemaining(prev => Math.max(0, prev - penalty));
+                    return penalty;
+                }
+                return 0;
+            };
+
+            const completeChallenge = (challengeId, code, errors) => {
+                setCompletedChallenges([...completedChallenges, challengeId]);
+                setCollectedCodes([...collectedCodes, code]);
+                setCurrentChallenge(null);
+
+                // Calculate score
+                const baseScore = 1000;
+                const errorPenalty = errors * 100;
+                const timePenalty = difficulty === 'hard' ? 200 : difficulty === 'medium' ? 100 : 0;
+                const earnedScore = Math.max(100, baseScore - errorPenalty - timePenalty);
+                setScore(prev => prev + earnedScore);
+            };
+
+            const completeGame = () => {
+                // Bonus por tempo restante
+                const timeBonus = Math.floor(timeRemaining / 60) * 50;
+                setScore(prev => prev + timeBonus);
+                setGameState('won');
+            };
+
+            // Intro Screen
+            if (showIntro && gameState === 'intro') {
+                return <IntroScreen onContinue={() => {
+                    setShowIntro(false);
+                    setGameState('difficulty');
+                }} />;
+            }
+
+            // Difficulty Selection
+            if (gameState === 'difficulty') {
+                return (
+                    <div className="matrix-bg min-h-screen scanline flex items-center justify-center p-4">
+                        <div className="terminal rounded-lg p-8 md:p-12 max-w-4xl w-full fade-in">
+                            <h2 className="text-4xl font-bold terminal-text text-center mb-8 orbitron glitch">
+                                ⚙️ SELECIONE A DIFICULDADE
+                            </h2>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                {Object.entries(DIFFICULTIES).map(([key, diff]) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => selectDifficulty(key)}
+                                        className="terminal rounded-lg p-6 hover:scale-105 transition-all cursor-pointer"
+                                    >
+                                        <div className={`difficulty-badge ${diff.color} text-white inline-block mb-4`}>
+                                            {diff.name}
+                                        </div>
+                                        <h3 className="text-2xl font-bold terminal-text mb-3 orbitron">
+                                            {key === 'easy' ? '🟢' : key === 'medium' ? '🟡' : '🔴'}
+                                        </h3>
+                                        <p className="text-green-400 text-sm leading-relaxed">
+                                            {diff.description}
+                                        </p>
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="terminal-text text-sm text-center opacity-75">
+                                <p>💡 Dica: Comece com Fácil se é sua primeira vez!</p>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // Playing Screen
+            if (gameState === 'playing') {
+                return (
+                    <div className="matrix-bg min-h-screen scanline">
+                        <div className="container mx-auto px-4 py-6">
+                            {/* Header with Timer */}
+                            <div className="terminal rounded-lg p-6 mb-6 fade-in">
+                                <div className="flex flex-wrap justify-between items-center gap-4">
+                                    <div>
+                                        <h1 className="text-2xl md:text-3xl font-bold orbitron terminal-text glitch">
+                                            🔐 OPERATION CYPHERPUNK
+                                        </h1>
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <span className={`difficulty-badge ${DIFFICULTIES[difficulty].color} text-white`}>
+                                                {DIFFICULTIES[difficulty].name}
+                                            </span>
+                                            <span className="terminal-text text-sm">
+                                                {completedChallenges.length}/{CHALLENGES.length} Estações
+                                            </span>
+                                            <span className="terminal-text text-sm">
+                                                🏆 {score} pts
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-sm terminal-text mb-1">TEMPO RESTANTE</div>
+                                        <div className={`text-4xl md:text-5xl font-bold orbitron ${timeRemaining < 300 ? 'timer-urgent' : 'terminal-text'}`}>
+                                            {formatTime(timeRemaining)}
+                                        </div>
+                                        {totalErrors > 0 && (
+                                            <div className="text-xs text-red-400 mt-1">
+                                                ⚠️ {totalErrors} erro(s)
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Progress Bar */}
+                                <div className="mt-4 bg-gray-900 h-4 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
+                                        style={{ width: `${(completedChallenges.length / CHALLENGES.length) * 100}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+
+                            {/* Collected Codes Display */}
+                            {collectedCodes.length > 0 && (
+                                <div className="terminal rounded-lg p-6 mb-6 fade-in">
+                                    <h3 className="text-xl font-bold terminal-text mb-4 orbitron">📟 CÓDIGOS COLETADOS</h3>
+                                    <div className="flex flex-wrap gap-4">
+                                        {collectedCodes.map((code, idx) => (
+                                            <div key={idx} className="code-display bg-black/50 px-6 py-3 rounded border-2 border-green-500">
+                                                {code}
+                                            </div>
+                                        ))}
+                                        {[...Array(CHALLENGES.length - collectedCodes.length)].map((_, idx) => (
+                                            <div key={`empty-${idx}`} className="code-display bg-black/50 px-6 py-3 rounded border-2 border-gray-700 opacity-30">
+                                                ???
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Challenges Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {CHALLENGES.map(challenge => {
+                                    const isCompleted = completedChallenges.includes(challenge.id);
+                                    const isLocked = challenge.isFinal && completedChallenges.length < CHALLENGES.length - 1;
+                                    const isAvailable = !isCompleted && !isLocked;
+
+                                    return (
+                                        <div
+                                            key={challenge.id}
+                                            className={`
+                                                rounded-lg p-6 cursor-pointer transition-all
+                                                ${isCompleted ? 'station-completed' : isLocked ? 'station-locked' : 'station-card'}
+                                            `}
+                                            onClick={() => isAvailable && setCurrentChallenge(challenge)}
+                                        >
+                                            <div className="text-4xl mb-3 text-center">
+                                                {isCompleted ? '✅' : isLocked ? '🔒' : challenge.icon}
+                                            </div>
+                                            <h3 className="text-lg font-bold terminal-text text-center mb-2 orbitron leading-tight">
+                                                {challenge.name}
+                                            </h3>
+                                            <p className="text-green-400 text-center text-xs">
+                                                {isCompleted ? `✓ ${challenge.code}` :
+                                                    isLocked ? '⚠️ BLOQUEADO' :
+                                                        challenge.description}
+                                            </p>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Challenge Modal */}
+                            {currentChallenge && (
+                                <ChallengeModal
+                                    challenge={currentChallenge}
+                                    difficulty={difficulty}
+                                    onComplete={(code, errors) => {
+                                        setTotalErrors(prev => prev + errors);
+                                        if (currentChallenge.isFinal) {
+                                            completeGame();
+                                        } else {
+                                            completeChallenge(currentChallenge.id, code, errors);
+                                        }
+                                    }}
+                                    onClose={() => setCurrentChallenge(null)}
+                                    collectedCodes={collectedCodes}
+                                    onTimePenalty={applyTimePenalty}
+                                />
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            // Win Screen
+            if (gameState === 'won') {
+                return <WinScreen
+                    timeUsed={DIFFICULTIES[difficulty].time - timeRemaining}
+                    difficulty={difficulty}
+                    score={score}
+                    errors={totalErrors}
+                />;
+            }
+
+            // Lost Screen
+            if (gameState === 'lost') {
+                return <LostScreen
+                    onRestart={() => {
+                        setGameState('intro');
+                        setShowIntro(true);
+                        setDifficulty(null);
+                        setTimeRemaining(3600);
+                        setCompletedChallenges([]);
+                        setCollectedCodes([]);
+                        setTotalErrors(0);
+                        setScore(0);
+                    }}
+                    completedChallenges={completedChallenges.length}
+                    totalChallenges={CHALLENGES.length}
+                />;
+            }
+
+            return null;
+        };
+
+        // Intro Screen Component
+        const IntroScreen = ({ onContinue }) => {
+            const [stage, setStage] = useState(0);
+
+            useEffect(() => {
+                const timers = [
+                    setTimeout(() => setStage(1), 2000),
+                    setTimeout(() => setStage(2), 4000),
+                    setTimeout(() => setStage(3), 6000),
+                    setTimeout(() => setStage(4), 8000)
+                ];
+                return () => timers.forEach(t => clearTimeout(t));
+            }, []);
+
+            return (
+                <div className="matrix-bg min-h-screen scanline flex items-center justify-center p-4">
+                    <div className="terminal rounded-lg p-8 md:p-12 max-w-4xl w-full fade-in">
+                        <div className="text-center">
+                            <div className="text-6xl mb-6 camera-icon">📹</div>
+                            <h1 className="text-4xl md:text-6xl font-bold surveillance-text mb-4 orbitron glitch">
+                                BIG BROTHER IS WATCHING
+                            </h1>
+
+                            {stage >= 1 && (
+                                <div className="terminal-text text-xl mb-6 fade-in">
+                                    <p className="mb-2">📅 Ano: 2009</p>
+                                    <p>📍 Lugar: Um bunker secreto</p>
+                                </div>
+                            )}
+
+                            {stage >= 2 && (
+                                <div className="terminal-text text-lg mb-6 text-left max-w-2xl mx-auto fade-in">
+                                    <p className="mb-4">
+                                        Você faz parte dos <span className="font-bold text-green-400">CYPHERPUNKS</span> -
+                                        um grupo clandestino que luta pela privacidade desde os anos 90.
+                                    </p>
+                                    <p className="mb-4 surveillance-text font-bold">
+                                        🚨 O GOVERNO descobriu sua localização!
+                                    </p>
+                                    <p>
+                                        Você tem <span className="font-bold">tempo limitado</span> até eles chegarem.
+                                    </p>
+                                </div>
+                            )}
+
+                            {stage >= 3 && (
+                                <div className="terminal-text mb-8 text-left max-w-2xl mx-auto fade-in">
+                                    <p className="mb-3 font-bold text-green-400 text-xl">🎯 MISSÃO:</p>
+                                    <ol className="list-decimal list-inside space-y-2 text-sm md:text-base">
+                                        <li>Decifrar o Manifesto Cypherpunk</li>
+                                        <li>Quebrar a criptografia clássica</li>
+                                        <li>Encontrar a chave privada de Satoshi</li>
+                                        <li>Resolver o enigma da identidade</li>
+                                        <li>Entender Proof of Work</li>
+                                        <li>Desativar o sistema de vigilância</li>
+                                        <li>Resolver o Double Spend Problem</li>
+                                        <li>Acessar o Genesis Block</li>
+                                    </ol>
+                                    <p className="mt-4 text-yellow-400">
+                                        💡 Cada desafio revela parte da história de como Bitcoin mudou o mundo.
+                                    </p>
+                                </div>
+                            )}
+
+                            {stage >= 4 && (
+                                <div className="fade-in">
+                                    <p className="terminal-text text-lg mb-6">
+                                        ⏱️ O relógio está correndo... você está pronto?
+                                    </p>
+                                    <button
+                                        onClick={onContinue}
+                                        className="btn-cyber text-black px-8 py-4 rounded-lg font-bold text-xl orbitron"
+                                    >
+                                        ▶ ACEITAR MISSÃO
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Challenge Modal Component
+        const ChallengeModal = ({ challenge, difficulty, onComplete, onClose, collectedCodes, onTimePenalty }) => {
+            const [answer, setAnswer] = useState('');
+            const [hint, setHint] = useState('');
+            const [error, setError] = useState('');
+            const [attempts, setAttempts] = useState(0);
+            const [lockCode, setLockCode] = useState(['', '', '', '']);
+            const [showPenalty, setShowPenalty] = useState(false);
+
+            const diffSettings = DIFFICULTIES[difficulty];
+
+            const handleError = (errorMsg) => {
+                setAttempts(prev => prev + 1);
+                const newAttempts = attempts + 1;
+                setError(errorMsg);
+
+                // Apply time penalty on second error
+                if (newAttempts >= 2 && diffSettings.timePenalty > 0) {
+                    const penalty = onTimePenalty();
+                    if (penalty > 0) {
+                        setShowPenalty(true);
+                        setError(`${errorMsg} ⏱️ -${penalty / 60} minutos!`);
+                        setTimeout(() => setShowPenalty(false), 1000);
+                    }
+                }
+
+                // Show hints after certain attempts
+                if (newAttempts >= diffSettings.hintsAfter) {
+                    setHint(getHint(challenge.id, newAttempts));
+                }
+            };
+
+            const getHint = (challengeId, attemptCount) => {
+                const hints = {
+                    1: [
+                        '💡 Leia o texto em voz alta, soa familiar?',
+                        '💡 A resposta está na própria frase: "é necessária para..."',
+                        '💡 Palavra-chave: PRIVACIDADE (ou PRIVACY em inglês)'
+                    ],
+                    2: [
+                        '💡 Cifra de César: cada letra foi deslocada 5 posições',
+                        '💡 W → R, Y → T, J → E... continue o padrão!',
+                        '💡 A resposta começa com "We require..."'
+                    ],
+                    3: [
+                        '💡 Pense nas datas importantes: Pizza Day é 22/05',
+                        '💡 Genesis Block foi em 03/01/2009',
+                        '💡 Formato: DD-MM-AA-AA (dia/mês do Pizza + últimos 2 dígitos do ano)'
+                    ],
+                    4: [
+                        '💡 Satoshi não é uma pessoa específica',
+                        '💡 Pense filosoficamente: quem controla Bitcoin?',
+                        '💡 Respostas válidas: "nobody", "anonymous", "we all" ou em português'
+                    ],
+                    5: [
+                        '💡 SHA-256 gera um hash. Qual número deve estar no hash?',
+                        '💡 Bitcoin requer que o hash comece com zeros',
+                        '💡 Você precisa de 4 zeros à esquerda: 0000...'
+                    ],
+                    6: [
+                        '💡 Bitcoin usa endereços, não nomes reais',
+                        '💡 Um endereço BTC típico tem 26-35 caracteres',
+                        '💡 Qualquer string alfanumérica longa serve para este exercício'
+                    ],
+                    7: [
+                        '💡 O problema Byzantine envolve consenso sem confiança',
+                        '💡 Bitcoin resolve isso através de...',
+                        '💡 Palavra-chave: PROOF OF WORK (ou POW)'
+                    ],
+                    8: [
+                        '💡 Use todos os códigos que você coletou',
+                        '💡 O último código está na mensagem do Genesis Block',
+                        '💡 "Chancellor on brink..." fala sobre FREEDOM (liberdade)'
+                    ]
+                };
+
+                const challengeHints = hints[challengeId] || [];
+                const index = Math.min(attemptCount - diffSettings.hintsAfter, challengeHints.length - 1);
+                return challengeHints[index];
+            };
+
+            const normalizeAnswer = (text) => {
+                return text.toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "") // Remove accents
+                    .trim();
+            };
+
+            const handleSubmit = () => {
+                const normalized = normalizeAnswer(answer);
+
+                if (challenge.id === 1) {
+                    // Challenge 1: Cypherpunk Manifesto
+                    const validAnswers = ['privacy', 'privacidade', 'privacidade é necessária', 'privacy is necessary'];
+                    if (validAnswers.some(valid => normalized.includes(valid))) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Incorreto! Dica: Qual palavra está no centro do manifesto?');
+                    }
+                }
+                else if (challenge.id === 2) {
+                    // Challenge 2: Caesar Cipher
+                    const validAnswers = ['we require', 'privacy', 'open society', 'privacidade', 'sociedade aberta'];
+                    if (validAnswers.some(valid => normalized.includes(valid))) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Incorreto! Dica: Cifra de César, desloque cada letra 5 posições para trás');
+                    }
+                }
+                else if (challenge.id === 3) {
+                    // Challenge 3: Lock code
+                    const code = lockCode.join('');
+                    if (code === '2209') {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Código incorreto! Formato: DIA DIA MÊS MÊS do Pizza Day (22/05)');
+                    }
+                }
+                else if (challenge.id === 4) {
+                    // Challenge 4: Satoshi Riddle
+                    const validAnswers = ['nobody', 'ninguem', 'anonymous', 'anonimo', 'we all', 'todos nos', 'everyone', 'collective', 'coletivo'];
+                    if (validAnswers.some(valid => normalized.includes(valid))) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError(`❌ Incorreto! Tentativa ${attempts + 1}. Pense: Satoshi é um conceito, não uma pessoa.`);
+                    }
+                }
+                else if (challenge.id === 5) {
+                    // Challenge 5: Proof of Work
+                    if (answer.startsWith('0000') && answer.length >= 10) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Hash inválido! Precisa começar com 0000 (4 zeros)');
+                    }
+                }
+                else if (challenge.id === 6) {
+                    // Challenge 6: Bitcoin address
+                    if (answer.length >= 15 && !answer.includes(' ') && !/[\s]/.test(answer)) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Endereço inválido! Deve ter pelo menos 15 caracteres sem espaços');
+                    }
+                }
+                else if (challenge.id === 7) {
+                    // Challenge 7: Double Spend / Byzantine
+                    const validAnswers = ['proof of work', 'pow', 'consensus', 'consenso', 'mineracao', 'mining', 'blockchain'];
+                    if (validAnswers.some(valid => normalized.includes(valid))) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Incorreto! Como Bitcoin garante que não há gasto duplo?');
+                    }
+                }
+                else if (challenge.id === 8) {
+                    // Challenge 8: Final codes
+                    const input = answer.toUpperCase().replace(/\s/g, '');
+                    const hasAllCodes = collectedCodes.every(code => input.includes(code));
+                    const hasFreedom = input.includes('FREEDOM') || normalized.includes('liberdade');
+
+                    if (hasAllCodes && hasFreedom) {
+                        onComplete(challenge.code, attempts);
+                    } else {
+                        handleError('❌ Códigos incorretos! Use TODOS os códigos coletados + FREEDOM');
+                    }
+                }
+            };
+
+            const handleLockInput = (index, value) => {
+                const newCode = [...lockCode];
+                newCode[index] = value.slice(-1);
+                setLockCode(newCode);
+
+                if (value && index < 3) {
+                    document.getElementById(`lock-${index + 1}`)?.focus();
+                }
+            };
+
+            return (
+                <div className={`fixed inset-0 bg-black/90 flex items-center justify-center p-4 z-50 fade-in ${showPenalty ? 'penalty-flash' : ''}`}>
+                    <div className="terminal rounded-lg p-6 md:p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 className="text-2xl md:text-3xl font-bold terminal-text orbitron mb-2">
+                                    {challenge.icon} {challenge.name}
+                                </h2>
+                                <p className="text-green-400 text-sm">{challenge.description}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <span className={`difficulty-badge ${diffSettings.color} text-white`}>
+                                        {diffSettings.name}
+                                    </span>
+                                    {attempts > 0 && (
+                                        <span className="text-xs text-red-400">
+                                            {attempts} erro(s)
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="text-red-500 hover:text-red-400 text-2xl font-bold"
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <div className="space-y-6">
+                            {/* Challenge 1: Cypherpunk Manifesto */}
+                            {challenge.id === 1 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-purple-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3">📜</div>
+                                            <p className="text-purple-400 text-xl font-bold mb-3">THE CYPHERPUNK MANIFESTO</p>
+                                            <p className="text-sm text-gray-400">Eric Hughes, 9 de Março de 1993</p>
+                                        </div>
+                                        <blockquote className="terminal-text italic border-l-4 border-green-500 pl-4 my-4">
+                                            "Privacy is necessary for an open society in the electronic age.
+                                            Privacy is not secrecy. A private matter is something one doesn't want
+                                            the whole world to know, but a secret matter is something one doesn't
+                                            want anybody to know. Privacy is the power to selectively reveal
+                                            oneself to the world."
+                                        </blockquote>
+                                        <p className="text-yellow-400 text-center mt-4">
+                                            🎯 Qual é a palavra-chave deste manifesto?
+                                        </p>
+                                    </div>
+                                    <div className="terminal-text text-sm mb-4">
+                                        <p className="mb-2">📚 <strong>Contexto histórico:</strong></p>
+                                        <p className="mb-2">Os Cypherpunks foram um movimento dos anos 90 que lutava pela privacidade digital através de criptografia forte.</p>
+                                        <p className="text-yellow-400">💡 A resposta está na primeira frase do manifesto!</p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Digite a palavra-chave (PT-BR ou EN)..."
+                                        className="w-full p-4 rounded mb-4"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 2: Caesar Cipher */}
+                            {challenge.id === 2 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-yellow-500 mb-4">
+                                        <p className="text-yellow-400 font-mono text-lg text-center mb-4">
+                                            "Wy jxnajxy nx sthtxxfwd kwj fs tuts xthnyyd"
+                                        </p>
+                                    </div>
+                                    <div className="terminal-text mb-4 text-sm">
+                                        <p className="mb-2">🔐 <strong>Cifra de César:</strong> Cada letra foi deslocada 5 posições no alfabeto</p>
+                                        <p className="mb-2">📖 Exemplo: A → F, B → G, C → H...</p>
+                                        <p className="mb-2">🔄 Para decifrar: volte 5 posições (F → A, G → B...)</p>
+                                        <p className="text-yellow-400">💡 Esta é uma continuação do Manifesto Cypherpunk!</p>
+                                    </div>
+                                    <textarea
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Digite a mensagem decifrada (PT-BR ou EN)..."
+                                        className="w-full p-4 rounded mb-4 h-24"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 3: Private Key Lock */}
+                            {challenge.id === 3 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-blue-500 mb-4 text-center">
+                                        <div className="text-6xl mb-4">🔐</div>
+                                        <p className="text-blue-400 text-xl mb-4">CADEADO DA CHAVE PRIVADA</p>
+                                        <div className="flex justify-center gap-3 mb-4">
+                                            {[0, 1, 2, 3].map(i => (
+                                                <input
+                                                    key={i}
+                                                    id={`lock-${i}`}
+                                                    type="text"
+                                                    maxLength="1"
+                                                    value={lockCode[i]}
+                                                    onChange={(e) => handleLockInput(i, e.target.value)}
+                                                    className="w-14 h-14 md:w-16 md:h-16 text-center text-3xl font-bold rounded"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="terminal-text space-y-2 text-sm">
+                                        <p>🍕 <strong>Bitcoin Pizza Day:</strong> 22 de maio de 2010</p>
+                                        <p className="text-xs opacity-75 ml-4">Laszlo Hanyecz pagou 10.000 BTC por 2 pizzas - primeira transação comercial</p>
+                                        <p>⛓️ <strong>Genesis Block:</strong> 3 de janeiro de 2009</p>
+                                        <p className="text-xs opacity-75 ml-4">O primeiro bloco minerado por Satoshi Nakamoto</p>
+                                        <p>📉 <strong>Halvings até 2025:</strong> 4 eventos de redução da recompensa</p>
+                                        <p>₿ <strong>Supply máximo:</strong> 21.000.000 BTC (nunca será ultrapassado)</p>
+                                        <p className="text-yellow-400 mt-4">💡 Formato: DIA-DIA-MÊS-MÊS do Pizza Day</p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Challenge 4: Satoshi Riddle */}
+                            {challenge.id === 4 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-purple-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3">🎭</div>
+                                            <p className="text-purple-400 text-2xl font-bold mb-4">QUEM É SATOSHI NAKAMOTO?</p>
+                                            <p className="surveillance-text text-sm">Tentativas restantes: {Math.max(0, 5 - attempts)}/5</p>
+                                        </div>
+                                    </div>
+                                    <div className="terminal-text space-y-3 text-sm mb-4">
+                                        <div className="bg-black/50 p-3 rounded">
+                                            <p className="font-bold mb-1">📅 Timeline suspeita:</p>
+                                            <p className="text-xs">• Hal Finney (RIP 2014) - recebeu primeira transação BTC</p>
+                                            <p className="text-xs">• Nick Szabo - criou Bit Gold (precursor do Bitcoin)</p>
+                                            <p className="text-xs">• Wei Dai - autor do B-Money</p>
+                                        </div>
+                                        <div className="bg-black/50 p-3 rounded">
+                                            <p className="font-bold mb-1">📧 Comunicações:</p>
+                                            <p className="text-xs">• Email: satoshin@gmx.com</p>
+                                            <p className="text-xs">• White Paper publicado: 31 de outubro de 2008</p>
+                                            <p className="text-xs">• Última mensagem pública: 23 de abril de 2011</p>
+                                        </div>
+                                        <div className="bg-black/50 p-3 rounded">
+                                            <p className="font-bold mb-1">₿ Holdings:</p>
+                                            <p className="text-xs">• ~1.000.000 BTC nunca foram movimentados</p>
+                                            <p className="text-xs">• Valor atual: dezenas de bilhões de dólares</p>
+                                        </div>
+                                        <p className="text-yellow-400 text-center mt-4">
+                                            💭 Pense: Por que a identidade de Satoshi permanecer desconhecida é importante?
+                                        </p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Digite sua resposta (PT-BR ou EN)..."
+                                        className="w-full p-4 rounded mb-4"
+                                        disabled={attempts >= 5}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 5: Proof of Work */}
+                            {challenge.id === 5 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-orange-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3">⛏️</div>
+                                            <p className="text-orange-400 text-2xl font-bold mb-4">MINERAÇÃO & PROOF OF WORK</p>
+                                        </div>
+                                        <div className="bg-gray-900 p-4 rounded mb-4 font-mono text-xs">
+                                            <p className="text-yellow-400">Bloco #123456</p>
+                                            <p className="terminal-text">Previous Hash: 00000000000000000abc123...</p>
+                                            <p className="terminal-text">Nonce: 2,847,392,847</p>
+                                            <p className="terminal-text">Data: {"Lucas enviou 1 BTC para Ana"}</p>
+                                            <p className="text-red-400 mt-2">Hash atual: 8a9f7e2d... ❌ INVÁLIDO!</p>
+                                            <p className="text-xs text-gray-500 mt-2">Precisa começar com zeros...</p>
+                                        </div>
+                                    </div>
+                                    <div className="terminal-text text-sm mb-4">
+                                        <p className="mb-3">🎯 <strong>Desafio:</strong> Gere um hash válido que comece com 4 zeros</p>
+                                        <p className="mb-2">💡 <strong>Como funciona:</strong></p>
+                                        <p className="text-xs mb-2 opacity-75">• Mineradores tentam diferentes números (nonce) até encontrar um hash que comece com zeros</p>
+                                        <p className="text-xs mb-2 opacity-75">• Quanto mais zeros, mais difícil (mais segurança)</p>
+                                        <p className="text-xs mb-2 opacity-75">• Isso é o "trabalho" em Proof of Work - gasto computacional real</p>
+                                        <p className="text-yellow-400 mt-3">⚠️ Para este exercício, digite qualquer hash que comece com 0000</p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="0000abc123def456... (mínimo 10 caracteres)"
+                                        className="w-full p-4 rounded mb-4 font-mono"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 6: Break Surveillance */}
+                            {challenge.id === 6 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-red-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3 camera-icon">📹</div>
+                                            <p className="surveillance-text text-2xl font-bold mb-4">SISTEMA DE VIGILÂNCIA ATIVO</p>
+                                        </div>
+                                        <div className="bg-red-900/20 p-4 rounded border border-red-500 mb-4">
+                                            <p className="text-red-400 font-bold mb-3">⚠️ DADOS PESSOAIS EXPOSTOS:</p>
+                                            <div className="text-red-300 text-sm space-y-1">
+                                                <p>📛 Nome: João Silva Santos</p>
+                                                <p>🆔 CPF: 123.456.789-00</p>
+                                                <p>🏠 Endereço: Rua das Flores, 123 - São Paulo, SP</p>
+                                                <p>🍕 Última compra: Pizza Margherita - R$ 45,00</p>
+                                                <p>📧 Email: joao.silva@email.com</p>
+                                                <p>💬 Mensagem interceptada: "Preciso de mais privacidade"</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-center">
+                                            <p className="terminal-text font-bold text-lg">🔐 PARA DESATIVAR A VIGILÂNCIA:</p>
+                                            <p className="text-green-400 text-sm mt-2">Crie uma transação Bitcoin TOTALMENTE PSEUDÔNIMA</p>
+                                        </div>
+                                    </div>
+                                    <div className="terminal-text space-y-3 mb-4 text-sm">
+                                        <p><strong>🎯 O que fazer:</strong> Gere um endereço Bitcoin que NÃO revele sua identidade</p>
+                                        <div className="bg-black/50 p-3 rounded">
+                                            <p className="font-bold mb-2">💡 Como Bitcoin protege privacidade:</p>
+                                            <p className="text-xs mb-1">✓ Endereços são strings alfanuméricas (não nomes)</p>
+                                            <p className="text-xs mb-1">✓ Você pode criar quantos endereços quiser</p>
+                                            <p className="text-xs mb-1">✓ Ninguém sabe quem controla um endereço (sem KYC)</p>
+                                            <p className="text-xs text-yellow-400 mt-2">⚠️ Bitcoin é PSEUDÔNIMO, não anônimo!</p>
+                                        </div>
+                                        <p className="text-green-400">🔐 <strong>Exemplo real de endereço Bitcoin:</strong></p>
+                                        <p className="font-mono text-xs bg-black/70 p-2 rounded">1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+                                        <p className="text-xs opacity-75">(Este é o endereço do Genesis Block!)</p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Cole ou crie seu endereço pseudônimo (15+ caracteres)..."
+                                        className="w-full p-4 rounded mb-4 font-mono text-sm"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 7: Double Spend Problem */}
+                            {challenge.id === 7 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-purple-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3">💰</div>
+                                            <p className="text-purple-400 text-2xl font-bold mb-4">O PROBLEMA DO GASTO DUPLO</p>
+                                            <p className="text-sm text-gray-400">Byzantine Generals Problem</p>
+                                        </div>
+                                        <div className="bg-red-900/20 p-4 rounded border border-red-500 mb-4">
+                                            <p className="text-red-400 font-bold mb-3">🚨 CENÁRIO PROBLEMÁTICO:</p>
+                                            <div className="text-sm space-y-2">
+                                                <p>👤 Alice tem 1 BTC</p>
+                                                <p>→ Alice envia 1 BTC para Bob</p>
+                                                <p>→ Alice TAMBÉM envia o mesmo 1 BTC para Carol</p>
+                                                <p className="text-red-300 mt-3">⚠️ Como o sistema sabe qual transação é válida?</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="terminal-text text-sm mb-4">
+                                        <p className="mb-3 font-bold">🤔 <strong>O Problema Byzantine:</strong></p>
+                                        <p className="text-xs mb-2 opacity-75">
+                                            Imagine generais cercando uma cidade. Eles precisam atacar ao mesmo tempo,
+                                            mas não confiam uns nos outros. Como coordenar sem líder central?
+                                        </p>
+                                        <div className="bg-black/50 p-3 rounded my-3">
+                                            <p className="font-bold mb-2">💡 Solução do Bitcoin:</p>
+                                            <p className="text-xs mb-1">1. Todas as transações são públicas</p>
+                                            <p className="text-xs mb-1">2. Mineradores competem para validar blocos</p>
+                                            <p className="text-xs mb-1">3. Requer trabalho computacional (energia real)</p>
+                                            <p className="text-xs mb-1">4. A chain mais longa vence</p>
+                                        </div>
+                                        <p className="text-yellow-400 mt-3">
+                                            🎯 Como Bitcoin resolve o gasto duplo? (2-3 palavras)
+                                        </p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value)}
+                                        placeholder="Digite a solução (PT-BR ou EN)..."
+                                        className="w-full p-4 rounded mb-4"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Challenge 8: Genesis Block Final */}
+                            {challenge.id === 8 && (
+                                <div>
+                                    <div className="bg-black/70 p-6 rounded border-2 border-yellow-500 mb-4">
+                                        <div className="text-center mb-4">
+                                            <div className="text-5xl mb-3 bitcoin-symbol">₿</div>
+                                            <p className="text-yellow-400 text-2xl font-bold mb-4">O BLOCO GÊNESIS</p>
+                                            <p className="terminal-text text-sm">3 de Janeiro de 2009 - 18:15:05 UTC</p>
+                                            <p className="text-xs text-gray-500 mt-1">Block #0 - O início de tudo</p>
+                                        </div>
+                                        <div className="terminal-text text-center mb-4">
+                                            <p className="mb-3 font-bold">📟 CÓDIGOS NECESSÁRIOS:</p>
+                                            <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                                {collectedCodes.map((code, idx) => (
+                                                    <span key={idx} className="code-display bg-green-900/50 px-4 py-2 rounded text-base border border-green-500">
+                                                        {code}
+                                                    </span>
+                                                ))}
+                                                <span className="code-display bg-gray-900/50 px-4 py-2 rounded text-base border border-gray-600 opacity-50">
+                                                    ?????
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="bg-black/70 p-4 rounded border-2 border-blue-500 mb-4">
+                                        <p className="text-blue-400 text-xs font-mono text-center mb-3">
+                                            MENSAGEM OCULTA NO GENESIS BLOCK:
+                                        </p>
+                                        <blockquote className="text-yellow-300 text-sm text-center italic border-l-4 border-yellow-500 pl-4">
+                                            "The Times 03/Jan/2009<br />
+                                            Chancellor on brink of second bailout for banks"
+                                        </blockquote>
+                                        <p className="text-xs text-gray-400 text-center mt-3">
+                                            (Manchete do jornal The Times de Londres, 3 de janeiro de 2009)
+                                        </p>
+                                    </div>
+                                    <div className="terminal-text mb-4 text-sm">
+                                        <p className="mb-3">🧠 <strong>Por que Satoshi colocou esta mensagem?</strong></p>
+                                        <p className="text-xs mb-2 opacity-75">
+                                            Em 2008-2009, bancos faliram e governos usaram dinheiro público para salvá-los.
+                                            Bitcoin nasce como alternativa ao sistema financeiro tradicional.
+                                        </p>
+                                        <p className="text-green-400 mt-4 font-bold">
+                                            💡 O código final: Sobre o que Bitcoin realmente é?
+                                        </p>
+                                        <p className="text-xs text-yellow-400 mt-2">
+                                            Dica: Não é sobre dinheiro, é sobre...
+                                        </p>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={answer}
+                                        onChange={(e) => setAnswer(e.target.value.toUpperCase())}
+                                        placeholder={`Digite todos os códigos: ${collectedCodes.join(' + ')} + ?????`}
+                                        className="w-full p-4 rounded mb-4 uppercase font-bold text-lg"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Error Message */}
+                            {error && (
+                                <div className="bg-red-900/30 border-2 border-red-500 p-4 rounded fade-in">
+                                    <p className="text-red-400 text-center font-semibold">{error}</p>
+                                </div>
+                            )}
+
+                            {/* Hint */}
+                            {hint && (
+                                <div className="bg-yellow-900/30 border-2 border-yellow-500 p-4 rounded fade-in">
+                                    <p className="text-yellow-400 text-center">{hint}</p>
+                                </div>
+                            )}
+
+                            {/* Submit Button */}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={
+                                    (challenge.id === 3 && lockCode.some(d => !d)) ||
+                                    (challenge.id !== 3 && !answer.trim()) ||
+                                    (challenge.id === 4 && attempts >= 5)
+                                }
+                                className="btn-cyber text-black px-6 py-3 rounded-lg font-bold w-full text-lg orbitron disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {challenge.isFinal ? '🔓 ACESSAR GENESIS BLOCK' : '✓ VERIFICAR RESPOSTA'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Win Screen Component
+        const WinScreen = ({ timeUsed, difficulty, score, errors }) => {
+            const minutes = Math.floor(timeUsed / 60);
+            const seconds = timeUsed % 60;
+            const diffName = DIFFICULTIES[difficulty].name;
+
+            let rank = 'Cypherpunk Iniciante';
+            if (difficulty === 'hard' && errors < 5) rank = 'Cypherpunk Master';
+            else if (difficulty === 'medium' && errors < 8) rank = 'Cypherpunk Avançado';
+
+            return (
+                <div className="matrix-bg min-h-screen scanline flex items-center justify-center p-4">
+                    <div className="terminal rounded-lg p-8 md:p-12 max-w-4xl w-full fade-in">
+                        <div className="text-center">
+                            <div className="text-8xl mb-6 bitcoin-symbol">₿</div>
+                            <h1 className="text-4xl md:text-6xl font-bold terminal-text mb-4 orbitron glitch">
+                                MISSÃO CUMPRIDA!
+                            </h1>
+
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                <div className="bg-black/70 p-4 rounded border border-green-500">
+                                    <p className="text-green-400 text-sm mb-1">Tempo</p>
+                                    <p className="text-2xl font-bold terminal-text">{minutes}:{seconds.toString().padStart(2, '0')}</p>
+                                </div>
+                                <div className="bg-black/70 p-4 rounded border border-yellow-500">
+                                    <p className="text-yellow-400 text-sm mb-1">Dificuldade</p>
+                                    <p className="text-2xl font-bold terminal-text">{diffName}</p>
+                                </div>
+                                <div className="bg-black/70 p-4 rounded border border-blue-500">
+                                    <p className="text-blue-400 text-sm mb-1">Pontos</p>
+                                    <p className="text-2xl font-bold terminal-text">{score}</p>
+                                </div>
+                                <div className="bg-black/70 p-4 rounded border border-red-500">
+                                    <p className="text-red-400 text-sm mb-1">Erros</p>
+                                    <p className="text-2xl font-bold terminal-text">{errors}</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-black/70 p-8 rounded border-2 border-green-500 mb-8">
+                                <p className="terminal-text text-lg leading-relaxed mb-6">
+                                    🎉 <strong>Parabéns, Cypherpunk!</strong>
+                                </p>
+                                <div className="terminal-text text-left space-y-4 max-w-2xl mx-auto">
+                                    <p>Você não apenas escapou - você <strong>COMPREENDEU</strong> a essência.</p>
+                                    <p>Bitcoin não é sobre dinheiro. É sobre <strong className="text-green-400">LIBERDADE</strong>.</p>
+                                    <p>É sobre <strong>privacidade</strong> numa era de vigilância em massa.</p>
+                                    <p>É sobre <strong>descentralização</strong> quando o poder está concentrado.</p>
+                                    <p>É sobre <strong>resistência</strong> quando o sistema financeiro falha.</p>
+                                    <p className="text-yellow-400 font-bold mt-6">
+                                        Satoshi nos deu a ferramenta em 2009.<br />
+                                        Os Cypherpunks plantaram a semente nos anos 90.<br />
+                                        Agora, em 2025, cabe a NÓS usar essa tecnologia com sabedoria.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mb-8">
+                                <div className="text-6xl mb-4">🏆</div>
+                                <div className="inline-block bg-gradient-to-r from-yellow-500 to-orange-500 text-black px-8 py-4 rounded-lg font-bold text-xl orbitron mb-4">
+                                    🎖️ {rank.toUpperCase()}
+                                </div>
+                                <p className="text-green-400 text-sm">Badge desbloqueado!</p>
+                            </div>
+
+                            <div className="terminal-text text-sm opacity-75 mb-8">
+                                <blockquote className="italic border-l-4 border-green-500 pl-4 mb-3">
+                                    "Privacy is necessary for an open society in the electronic age."
+                                </blockquote>
+                                <p>- Eric Hughes, Cypherpunk Manifesto, 1993</p>
+                                <blockquote className="italic border-l-4 border-yellow-500 pl-4 mt-4 mb-3">
+                                    "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+                                </blockquote>
+                                <p>- Satoshi Nakamoto, Genesis Block, 2009</p>
+                            </div>
+
+                            <button
+                                onClick={() => window.location.reload()}
+                                className="btn-cyber text-black px-8 py-4 rounded-lg font-bold text-lg orbitron"
+                            >
+                                🔄 JOGAR NOVAMENTE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Lost Screen Component
+        const LostScreen = ({ onRestart, completedChallenges, totalChallenges }) => {
+            return (
+                <div className="matrix-bg min-h-screen scanline flex items-center justify-center p-4">
+                    <div className="terminal rounded-lg p-8 md:p-12 max-w-4xl w-full fade-in">
+                        <div className="text-center">
+                            <div className="text-8xl mb-6 camera-icon">🚨</div>
+                            <h1 className="text-4xl md:text-6xl font-bold surveillance-text mb-4 orbitron glitch">
+                                TEMPO ESGOTADO
+                            </h1>
+                            <p className="text-2xl terminal-text mb-8">
+                                As autoridades chegaram ao bunker...
+                            </p>
+
+                            <div className="bg-red-900/30 p-8 rounded border-2 border-red-500 mb-8">
+                                <p className="text-red-400 text-lg mb-4">
+                                    A vigilância venceu desta vez.
+                                </p>
+                                <div className="terminal-text mb-4">
+                                    <p>Você completou {completedChallenges} de {totalChallenges} estações.</p>
+                                </div>
+                                <p className="terminal-text">
+                                    Mas a luta pela privacidade continua...<br />
+                                    Os Cypherpunks <strong>NUNCA</strong> desistem.
+                                </p>
+                            </div>
+
+                            <div className="terminal-text text-sm opacity-75 mb-8">
+                                <blockquote className="italic border-l-4 border-red-500 pl-4 mb-3">
+                                    "We must defend our own privacy if we expect to have any."
+                                </blockquote>
+                                <p>- Eric Hughes</p>
+                            </div>
+
+                            <button
+                                onClick={onRestart}
+                                className="btn-cyber text-black px-8 py-4 rounded-lg font-bold text-lg orbitron"
+                            >
+                                🔄 TENTAR NOVAMENTE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+    <script defer
+        src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
+        integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
+        data-cf-beacon='{"version":"2024.11.0","token":"96b1a09e72b94c528f87940fd811e9d1","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

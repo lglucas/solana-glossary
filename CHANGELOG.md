@@ -1,0 +1,107 @@
+# Changelog — Solana Glossary Competition
+
+Todas as mudancas notaveis do projeto serao documentadas aqui.
+Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
+
+---
+
+## [0.3.0] - 2026-04-04
+
+### Adicionado
+- `examples/escape-room-solana/` — app Vite independente (PR #1)
+  - 16 arquivos fonte, todas ≤200 linhas
+  - Paginas: Home (landing), ThemeSelect, GamePlay, Leaderboard
+  - Componentes: Layout, AnimatedBlobs, ThemeCard
+  - Libs: supabase.ts, wallet.tsx, audio.ts, i18n.ts
+  - i18n: pt-BR.json + es.json
+  - Build de producao: sucesso
+- `examples/jogo-da-vida-solana/` — app Vite independente (PR #2)
+  - 17 arquivos fonte, todas ≤200 linhas
+  - Paginas: Home (landing), BoardSelect, Lobby, GamePlay, Leaderboard
+  - Componentes: Layout, NeonGrid (3 variantes), BoardCard (3 estilos)
+  - Libs: supabase.ts, wallet.tsx, audio.ts, i18n.ts
+  - i18n: pt-BR.json + es.json
+  - Build de producao: sucesso
+- `docs/SUPABASE-SCHEMA.md` — schema completo (profiles, leaderboards, rooms, RLS, Realtime)
+- Dependencias instaladas: wallet-adapter, supabase-js, react-i18next, framer-motion, howler
+
+### Decidido
+- Arquitetura de PRs: cada jogo e um app independente em examples/
+- Ambos compartilham mesmo projeto Supabase (auth unificado)
+- Landing page do deploy fica fora dos PRs (HTML simples no servidor)
+- Leaderboard geral via view SQL que soma pontos dos dois jogos
+
+### Verificado
+- TypeScript: zero erros em ambos os projetos
+- Build producao: sucesso em ambos (escape-room 1.31s, jogo-da-vida 1.17s)
+- 33 arquivos fonte totais, todos ≤200 linhas com cabecalho padrao
+
+---
+
+## [0.2.0] - 2026-04-04
+
+### Adicionado
+- `docs/SPRINTS.md` — planejamento completo Sprint 0-12 com versionamento semantico
+- `prototipo-visual/` — scaffold Vite + React 18 + TypeScript + Tailwind CSS v4
+- 4 paginas de prototipo visual com estilos profundamente distintos:
+  - `EscapeGenesis.tsx` — Solana fluido/organico (Space Grotesk, glassmorphism, blobs)
+  - `EscapeDefi.tsx` — Solana geometrico/angular (Orbitron, hexagonos, scanlines)
+  - `VidaNormie.tsx` — Futurista/Neon (Share Tech Mono, glows ciano/violeta)
+  - `VidaStartup.tsx` — Matrix (monoespaçado verde, chuva de caracteres, terminal)
+- `Hub.tsx` — pagina hub de selecao dos 4 prototipos
+- Componentes extraidos: `IconsSvg.tsx`, `GenesisBlobs.tsx`, `CasaTabuleiro.tsx`
+- Integracao local do SDK `@stbr/solana-glossary` (1001 termos confirmados)
+- Dependencias: react-router-dom, framer-motion, tailwindcss, @tailwindcss/vite
+
+### Decidido (20 decisoes no total — questionario 100% respondido)
+- Stack: Vite + React 18 + TypeScript + Tailwind CSS
+- Escape Room: 3 temas × 4 niveis = 12 desafios, 12 formatos de puzzle distintos
+- Temas: "O Bloco Genesis" (fundamentos), "O Cofre DeFi" (financeiro), "O Laboratorio do Dev" (construcao)
+- Dificuldade por metafora Solana: Surface → Confirmation → Finality → Consensus
+- Jogo da Vida: 3 tabuleiros independentes × ~50 casas, 2-8 jogadores online
+- Tabuleiros: "De Normie a Validator" (neon), "Startup Solana" (matrix), "A Timeline" (pixel art)
+- Multiplayer real via Supabase Realtime (link/QR code convite)
+- Login por wallet Solana + nickname/avatar, leaderboard por jogo + geral
+- i18n obrigatorio (pt-BR + es), audio 8-bit/16-bit, estetica Solana-branded
+- Deploy em aceleradora.eco.br via cPanel
+- Conteudo curado manualmente com 3x variacoes para sensacao de aleatoriedade
+
+### Configurado
+- Fork: github.com/lglucas/solana-glossary
+- Branches: feat/escape-room-solana, feat/jogo-da-vida-solana
+- Remotes: origin (fork) + upstream (solanabr/solana-glossary)
+- SDK buildado localmente para linkagem
+
+### Verificado
+- Build de producao: zero erros, zero warnings
+- TypeScript: zero erros
+- Todos os arquivos ≤200 linhas (regra de ouro respeitada)
+- 11 arquivos fonte, 1075 linhas totais
+
+---
+
+## [0.1.0] - 2026-04-03
+
+### Adicionado
+- Estrutura inicial do projeto multi-game para competicao Superteam Brazil
+- `CLAUDE.md` com regras de desenvolvimento adaptadas do instrucoes-master
+- Pasta `projeto-1-escape-room/` com PLANNING.md inicial
+- Pasta `projeto-2-jogo-da-vida/` com PLANNING.md inicial
+- 6 skills Claude Code instaladas em `.claude/skills/`:
+  - brand-guidelines, frontend-design, pptx, skill-creator, theme-factory, ui-ux-pro-max
+- `docs/questionario-projetos.md` — questionario estrategico para definir escopo de cada jogo
+- `docs/decisions.md` — registro de 9 decisoes tomadas na sessao de planejamento
+- `docs/codigofonte/` — codigos-fonte de inspiracao (escaperoom.html + jogodavida.html)
+- Memorias do projeto salvas (competicao + perfil do usuario)
+
+### Analisado
+- PDF da competicao "Bring back the Solana Glossary" (regras, premios, criterios)
+- SDK `@stbr/solana-glossary` (1001 termos, 14 categorias, API reference)
+- Codigos-fonte existentes (Operation Cypherpunk 1413 linhas + Jogo da Vida 999 linhas)
+- Metodologia Experience Learning da Perestroika (4 pilares)
+
+### Decidido
+- 2 projetos: Escape Room + Jogo da Vida (refatorados com tema Solana)
+- PRs separados para maximizar bonus na competicao
+- Planejamento completo antes da execucao
+- Stack tecnica a definir apos questionario
