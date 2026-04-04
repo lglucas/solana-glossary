@@ -1,6 +1,6 @@
 /**
  * @arquivo VidaPlay.tsx
- * @descricao Pagina de gameplay do Jogo da Vida — orquestrador
+ * @descricao Pagina de gameplay do Jogo da Vida — lobby online → jogo
  * @projeto Solana Glossary — Jogo da Vida Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
@@ -13,18 +13,18 @@ import type { BoardThemeId } from "../engine/types";
 import { useVidaGame } from "../hooks/useVidaGame";
 import Board from "../components/Board";
 import Dice from "../components/Dice";
-import PlayerSetup from "../components/PlayerSetup";
+import Lobby from "../components/Lobby";
 import EventCardModal from "../components/EventCardModal";
 import ChallengeModal from "../components/ChallengeModal";
 
-type Phase = "setup" | "playing";
+type Phase = "lobby" | "playing";
 
 export default function VidaPlay() {
-  const { tema } = useParams<{ tema: string }>();
+  const { tema, code } = useParams<{ tema: string; code?: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const theme = (tema ?? "normie") as BoardThemeId;
-  const [phase, setPhase] = useState<Phase>("setup");
+  const [phase, setPhase] = useState<Phase>("lobby");
   const [playersCfg, setPlayersCfg] = useState<
     Array<{ name: string; color: string }>
   >([]);
@@ -34,11 +34,11 @@ export default function VidaPlay() {
     setPhase("playing");
   };
 
-  if (phase === "setup") {
+  if (phase === "lobby") {
     return (
       <Layout>
         <div className="min-h-screen bg-[#0a0015] text-white flex items-center justify-center px-4 py-20">
-          <PlayerSetup onStart={handleStart} />
+          <Lobby theme={theme} roomCode={code} onStart={handleStart} />
         </div>
       </Layout>
     );
@@ -69,7 +69,6 @@ function GameBoard({
     skipToNext,
   } = useVidaGame(theme, players);
 
-  // Navega para resultado quando ha vencedor
   if (state.winner) {
     setTimeout(() => {
       navigate(`/vida/resultado/${theme}`, {
@@ -87,7 +86,6 @@ function GameBoard({
     <Layout>
       <div className="min-h-screen bg-[#0a0015] text-white px-4 py-20">
         <div className="max-w-3xl mx-auto">
-          {/* HUD do jogador atual */}
           <div className="flex items-center justify-between mb-4 px-2">
             <div className="flex items-center gap-2">
               <div
@@ -107,15 +105,11 @@ function GameBoard({
               <span>Turno {state.turnCount + 1}</span>
             </div>
           </div>
-
-          {/* Tabuleiro */}
           <Board
             spaces={state.board}
             players={state.players}
             currentPlayerId={currentPlayer.id}
           />
-
-          {/* Dado + controles */}
           <div className="flex justify-center mt-6">
             <Dice
               value={state.diceValue}
@@ -123,9 +117,7 @@ function GameBoard({
               onRoll={roll}
             />
           </div>
-
-          {/* Barra de jogadores */}
-          <div className="flex justify-center gap-3 mt-4">
+          <div className="flex justify-center gap-3 mt-4 flex-wrap">
             {state.players.map((p) => (
               <div
                 key={p.id}
@@ -140,8 +132,6 @@ function GameBoard({
               </div>
             ))}
           </div>
-
-          {/* Fase resolve: botao para avancar se casa normal */}
           {state.turnPhase === "resolve" &&
             !state.activeEvent &&
             !state.activeChallenge &&
@@ -156,8 +146,6 @@ function GameBoard({
               </div>
             )}
         </div>
-
-        {/* Modais */}
         <AnimatePresence>
           {state.activeEvent && (
             <EventCardModal card={state.activeEvent} onDismiss={dismissEvent} />
