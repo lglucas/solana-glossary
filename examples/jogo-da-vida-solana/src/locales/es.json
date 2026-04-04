@@ -1,0 +1,40 @@
+{
+  "common": {
+    "back": "Volver",
+    "play": "Jugar",
+    "score": "Puntuacion",
+    "players": "Jugadores",
+    "turn": "Turno de",
+    "roll": "Lanzar Dado",
+    "leaderboard": "Ranking",
+    "connectWallet": "Conectar Billetera",
+    "profile": "Perfil",
+    "language": "Idioma",
+    "mute": "Silenciar",
+    "unmute": "Activar Sonido",
+    "invite": "Invitar",
+    "waiting": "Esperando...",
+    "start": "Iniciar Juego"
+  },
+  "vida": {
+    "title": "Juego de la Vida Solana",
+    "selectBoard": "Elige un Tablero",
+    "boards": {
+      "normie": "De Normie a Validator",
+      "startup": "Startup Solana",
+      "timeline": "La Timeline"
+    },
+    "house": "Casilla {{number}}",
+    "event": "Evento",
+    "challenge": "Desafio",
+    "advance": "Avanza {{count}} casillas!",
+    "retreat": "Retrocede {{count}} casillas!",
+    "yourTurn": "Tu turno!",
+    "victory": "Has ganado!",
+    "gameOver": "Fin del juego!",
+    "createRoom": "Crear Sala",
+    "joinRoom": "Entrar a la Sala",
+    "roomCode": "Codigo de la Sala",
+    "shareLink": "Compartir Enlace"
+  }
+}

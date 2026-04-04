@@ -1,0 +1,12 @@
+/**
+ * @arquivo index.css
+ * @descricao Estilos globais — fontes, Tailwind e resets
+ * @projeto Solana Glossary — Jogo da Vida Solana
+ * @autor Lucas Galvao — AceleradoraECO
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+@import "tailwindcss";
+
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+#root { min-height: 100svh; }
