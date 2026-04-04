@@ -5,6 +5,32 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.5.1] - 2026-04-04
+
+### Corrigido (Escape Room — 8 bugs criticos)
+- Termos apareciam em ingles — GamePlay agora passa `i18n.language` ao SDK
+- Shuffle quebrado (resposta sempre letra D) — seed normalizado para evitar overflow `MAX_SAFE_INTEGER`
+- Stats zeradas na tela de resultado — campos alinhados: `correctCount`, `wrongCount`, `hintsUsed`, `won`
+- "Tempo esgotado" aparecia ao vencer — corrigido para exibir "Voce escapou!" quando `phase=won`
+- Sem curva de dificuldade — termos ordenados por tamanho de definicao (menor = mais facil)
+- Pagina /temas duplicava a Home — removida, rota eliminada do App.tsx
+- Sem progressao de niveis — novo `lib/progression.ts` com localStorage
+- Strings hardcoded no GameResult — movidas para i18n (pt-BR + es)
+
+### Adicionado
+- `lib/progression.ts` — desbloqueio progressivo de niveis (Surface → Consensus)
+- `components/ThemeProgressCard.tsx` — card de tema com barra de progresso
+- `components/Confetti.tsx` — extraido do GameResult para respeitar limite 200 linhas
+- i18n: chaves `home.*` e `result.*` em pt-BR e es
+
+### Removido
+- Rota `/temas` e import de ThemeSelect no App.tsx
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso | Todos arquivos ≤200 linhas
+
+---
+
 ## [0.5.0] - 2026-04-04
 
 ### Adicionado (Escape Room — Sprint 4: 12 Puzzles)

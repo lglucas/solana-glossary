@@ -56,6 +56,7 @@
 - [x] GamePlay refatorado: per-term (8 puzzles) + batch (4 puzzles)
 - [x] i18n de todo conteudo (pt-BR + es) — 48 chaves de puzzle
 - [x] Build: zero erros TS, Vite 1.47s, 22 arquivos ≤200 linhas
+- [x] **Hotfix v0.5.1**: 8 bugs criticos corrigidos (locale pt-BR, shuffle, stats, progressao, pagina duplicada)
 
 ## Sprint 5 — Escape Room: Polish (v0.6.0)
 **Objetivo:** Acabamento profissional do Escape Room

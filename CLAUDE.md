@@ -80,10 +80,12 @@ Run `/setup-mcp` to configure API keys and verify connections.
 
 Enabled. Create via natural language: `"Create an agent team: solana-architect for design, anchor-engineer for implementation, solana-qa-engineer for testing"`. Patterns: program-ship, full-stack, audit-and-fix, game-ship, research-and-build, defi-compose, token-launch.
 
-## Entrega de Fim de Sessao (OBRIGATORIO)
-<!-- Protocolo que DEVE ser seguido ao final de TODA sessao de trabalho com o Lucas. -->
+## Protocolo de Entrega (OBRIGATORIO — SEM EXCECAO)
+<!-- Protocolo que DEVE ser seguido TODA VEZ que codigo e commitado. Nao e opcional. -->
 
-Ao final de cada sessao, executar os 4 blocos na ordem:
+**Quando:** Ao final de CADA sessao E apos CADA commit de feature ou bugfix.
+**Regra:** NUNCA commitar sem antes executar TODOS os 4 blocos abaixo.
+**Versionamento:** feature = bump MINOR (v0.X.0), bugfix = bump PATCH (v0.5.X).
 
 ### Bloco 1 — Relatorio
 Entregar ao Lucas um relatorio conciso com:
