@@ -101,6 +101,25 @@
     "playAgain": "Jogar Novamente",
     "backToThemes": "Voltar aos Temas"
   },
+  "vida": {
+    "title": "Jogo da Vida Solana",
+    "subtitle": "Percorra o tabuleiro do Normie ao Validator. Multiplayer online com amigos.",
+    "houses": "~50 casas",
+    "players": "2-8 jogadores",
+    "comingSoon": "EM BREVE...",
+    "multiplayerInfo": "Multiplayer online via Supabase Realtime — convide amigos por link ou QR code",
+    "dice": "Dado virtual",
+    "cards": "Cartas de evento",
+    "quiz": "Quiz rapido",
+    "boards": {
+      "normie": "De Normie a Validator",
+      "normieDesc": "Comece como um leigo total e evolua ate se tornar um validator da rede Solana.",
+      "startup": "Startup Solana",
+      "startupDesc": "Funde sua startup Web3, enfrente desafios de mercado e chegue ao unicornio.",
+      "timeline": "A Timeline",
+      "timelineDesc": "Viaje pela historia da blockchain, do whitepaper ao futuro descentralizado."
+    }
+  },
   "puzzle": {
     "multipleChoice": "Multipla Escolha",
     "multipleChoiceHint": "Qual termo corresponde a esta definicao?",
