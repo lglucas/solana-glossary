@@ -74,7 +74,7 @@
 - [x] Traduzir definicoes pt-BR: Genesis (272 termos) — 100%
 - [x] Traduzir definicoes pt-BR: DeFi (412 termos) — 100%
 - [x] Traduzir definicoes pt-BR: Lab (317 termos) — 100%
-- [ ] Traduzir definicoes es: todas as 14 categorias (1001 termos)
+- [x] Traduzir definicoes es: todas as 14 categorias (1001 termos) — 100%
 - [x] Identidade visual por tema: Genesis (roxo/circuitos), DeFi (verde/cofre), Lab (azul-laranja/terminal)
 - [x] Sons distintos por tema: 3 paletas sonoras (square/sawtooth/triangle, oitavas diferentes)
 - [x] Todos 12 puzzles recebem prop theme e aplicam estilo visual do tema

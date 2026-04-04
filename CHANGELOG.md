@@ -5,6 +5,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.7.2] - 2026-04-04
+
+### Adicionado
+- 1001 definicoes traduzidas para espanhol (es) no SDK (`data/i18n/es.json`)
+  - Genesis: 272 termos | DeFi: 412 termos | Lab: 317 termos
+- `scripts/merge-translations-es.js` — ferramenta de merge para patches ES
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.93s)
+
+---
+
 ## [0.7.1] - 2026-04-04
 
 ### Corrigido
