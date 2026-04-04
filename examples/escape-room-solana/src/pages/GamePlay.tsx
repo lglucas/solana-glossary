@@ -23,6 +23,7 @@ import { getPuzzleEntry } from "../engine/puzzleRegistry";
 import type { PuzzleResult } from "../engine/puzzleTypes";
 import { completeLevel } from "../lib/progression";
 import { audioManager } from "../lib/audio";
+import { startBgm, stopBgm } from "../lib/bgm";
 import Layout from "../components/Layout";
 import AnimatedBlobs, { type BlobVariant } from "../components/AnimatedBlobs";
 import GameHud from "../components/GameHud";
@@ -38,15 +39,12 @@ export default function GamePlay() {
   const tId = (tema ?? "genesis") as ThemeId;
   const lId = (nivel ?? "surface") as LevelId;
   const lc = useMemo(() => getLevelConfig(tId, lId), [tId, lId]);
-  const blob: BlobVariant =
-    tId === "defi" ? "defi" : tId === "lab" ? "lab" : "genesis";
+  const blob = tId as BlobVariant;
 
-  // Resolve puzzle do registry
   const entry = useMemo(() => getPuzzleEntry(tId, lId), [tId, lId]);
   const PuzzleComponent = entry.component;
   const isBatch = entry.mode === "batch";
 
-  // Termos do puzzle e pool de distratores
   const seedRef = useRef(Date.now());
   const terms = useMemo(
     () => selectPuzzleTerms(tId, lId, locale, seedRef.current),
@@ -57,7 +55,6 @@ export default function GamePlay() {
     [tId, lId, locale],
   );
 
-  // Estado do jogo
   const [idx, setIdx] = useState(0);
   const [phase, setPhase] = useState<GamePhase>("playing");
   const [fb, setFb] = useState(false);
@@ -73,18 +70,22 @@ export default function GamePlay() {
   });
   const score = useScore({ multiplier: lc.scoreMultiplier });
 
+  // BGM: inicia ao montar, para ao desmontar
+  useEffect(() => {
+    startBgm(tId);
+    return () => stopBgm();
+  }, [tId]);
+
   // Callback unificado para resultados de qualquer puzzle
   const handleResult = useCallback(
     (result: PuzzleResult) => {
       if (phase !== "playing") return;
-      // Atualiza score e toca SFX
       for (let i = 0; i < result.correct; i++) score.addCorrect();
       for (let i = 0; i < result.wrong; i++) score.addWrong();
       if (result.correct > 0) audioManager.playSfx("correct", tId);
       else if (result.wrong > 0) audioManager.playSfx("wrong", tId);
 
       if (isBatch && result.done) {
-        // Batch puzzle concluido — ir para resultado
         setPhase("won");
         return;
       }
@@ -112,6 +113,7 @@ export default function GamePlay() {
   useEffect(() => {
     if (phase === "playing") return;
     timer.pause();
+    stopBgm();
     audioManager.playSfx(phase === "won" ? "unlock" : "wrong", tId);
     if (phase === "won") completeLevel(tId, lId);
     const fs = score.calculateFinal(timer.remaining, hints.totalPenalty);

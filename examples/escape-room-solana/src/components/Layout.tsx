@@ -9,6 +9,7 @@ import { type ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { audioManager } from "../lib/audio";
+import { muteBgm } from "../lib/bgm";
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
 
@@ -30,9 +31,10 @@ export default function Layout({ children, hideBack = false }: LayoutProps) {
     i18n.changeLanguage(next);
   };
 
-  /** Alterna mute global */
+  /** Alterna mute global (SFX + BGM) */
   const toggleMute = () => {
     const nowMuted = audioManager.toggleMute();
+    muteBgm(nowMuted);
     setMuted(nowMuted);
   };
 

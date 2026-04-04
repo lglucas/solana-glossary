@@ -5,6 +5,27 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.7.3] - 2026-04-04
+
+### Adicionado (Sprint 5 — BGM sintetizado)
+- `lib/bgm.ts` — musica ambiente sintetizada via Web Audio API, zero mp3
+  - Genesis: square wave, C minor, grave/misterioso (loop 5s)
+  - DeFi: sawtooth wave, A minor pentatonic, ritmico/metalico (loop 3.5s)
+  - Lab: triangle wave, E minor, rapido/eletronico (loop 2.2s)
+- BGM inicia automaticamente ao entrar no gameplay
+- BGM para com fade-out ao concluir ou perder
+- Toggle mute agora controla SFX + BGM juntos
+
+### Modificado
+- `lib/audio.ts` — exporta `getAudioContext()` para compartilhar contexto com BGM
+- `pages/GamePlay.tsx` — integra `startBgm()`/`stopBgm()` no ciclo de vida
+- `components/Layout.tsx` — toggle mute chama `muteBgm()` em paralelo
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.36s) | Todos arquivos ≤200 linhas
+
+---
+
 ## [0.7.2] - 2026-04-04
 
 ### Adicionado

@@ -66,7 +66,7 @@
 - [x] Estetica Solana-branded: glassmorphism, gradientes, Orbitron, blobs animados
 - [x] Responsividade: grids adaptativos, safe-area, scroll suave
 - [x] HintsPanel: i18n completo (removido hardcoded)
-- [ ] Musica BGM por tema — adiado (requer composicao)
+- [x] Musica BGM por tema — sintetizado via Web Audio API (3 loops distintos)
 - [x] **Hotfix v0.6.1**: locale pt-BR→pt normalizado para SDK, audio init em user gesture
 
 ## Sprint 5b — Traducao + Identidade Visual (v0.7.0)

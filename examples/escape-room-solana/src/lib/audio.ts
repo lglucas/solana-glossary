@@ -139,3 +139,12 @@ class AudioManager {
 }
 
 export const audioManager = new AudioManager();
+
+/** Retorna o AudioContext compartilhado (para uso pelo BGM) */
+export function getAudioContext(): AudioContext | null {
+  try {
+    return getCtx();
+  } catch {
+    return null;
+  }
+}
