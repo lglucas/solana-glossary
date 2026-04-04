@@ -13,6 +13,7 @@ import {
   useRef,
   Suspense,
 } from "react";
+import { useTranslation } from "react-i18next";
 import { useTimer } from "../hooks/useTimer";
 import { useHints } from "../hooks/useHints";
 import { useScore } from "../hooks/useScore";
@@ -20,6 +21,7 @@ import { selectPuzzleTerms } from "../lib/glossary";
 import { getLevelConfig, type ThemeId, type LevelId } from "../engine/themes";
 import { getPuzzleEntry } from "../engine/puzzleRegistry";
 import type { PuzzleResult } from "../engine/puzzleTypes";
+import { completeLevel } from "../lib/progression";
 import Layout from "../components/Layout";
 import AnimatedBlobs, { type BlobVariant } from "../components/AnimatedBlobs";
 import GameHud from "../components/GameHud";
@@ -30,6 +32,8 @@ type GamePhase = "playing" | "won" | "lost";
 export default function GamePlay() {
   const { tema, nivel } = useParams<{ tema: string; nivel: string }>();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const locale = i18n.language;
   const tId = (tema ?? "genesis") as ThemeId;
   const lId = (nivel ?? "surface") as LevelId;
   const lc = useMemo(() => getLevelConfig(tId, lId), [tId, lId]);
@@ -44,12 +48,12 @@ export default function GamePlay() {
   // Termos do puzzle e pool de distratores
   const seedRef = useRef(Date.now());
   const terms = useMemo(
-    () => selectPuzzleTerms(tId, lId, undefined, seedRef.current),
-    [tId, lId],
+    () => selectPuzzleTerms(tId, lId, locale, seedRef.current),
+    [tId, lId, locale],
   );
   const pool = useMemo(
-    () => selectPuzzleTerms(tId, lId, undefined, seedRef.current + 7),
-    [tId, lId],
+    () => selectPuzzleTerms(tId, lId, locale, seedRef.current + 7),
+    [tId, lId, locale],
   );
 
   // Estado do jogo
@@ -98,15 +102,18 @@ export default function GamePlay() {
   useEffect(() => {
     if (phase === "playing") return;
     timer.pause();
+    if (phase === "won") completeLevel(tId, lId);
     const fs = score.calculateFinal(timer.remaining, hints.totalPenalty);
     navigate(`/resultado/${tId}/${lId}`, {
       state: {
+        won: phase === "won",
         score: fs,
-        correct: score.correctCount,
-        wrong: score.wrongCount,
         timeLeft: timer.remaining,
-        hintPenalty: hints.totalPenalty,
-        phase,
+        correctCount: score.correctCount,
+        wrongCount: score.wrongCount,
+        hintsUsed: hints.usedCount,
+        theme: tId,
+        level: lId,
       },
     });
   }, [phase]);

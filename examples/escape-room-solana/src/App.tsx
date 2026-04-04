@@ -11,7 +11,6 @@ import { Routes, Route } from "react-router-dom";
 // ─── Paginas lazy-loaded ────────────────────────────────────────────────────
 
 const Home = lazy(() => import("./pages/Home"));
-const ThemeSelect = lazy(() => import("./pages/ThemeSelect"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
 const GameResult = lazy(() => import("./pages/GameResult"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
@@ -33,7 +32,6 @@ export default function App() {
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/temas" element={<ThemeSelect />} />
         <Route path="/jogar/:tema/:nivel" element={<GamePlay />} />
         <Route path="/resultado/:tema/:nivel" element={<GameResult />} />
         <Route path="/ranking" element={<Leaderboard />} />

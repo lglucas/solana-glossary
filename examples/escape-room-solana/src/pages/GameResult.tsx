@@ -1,17 +1,17 @@
 /**
  * @arquivo GameResult.tsx
- * @descricao Tela de resultado (vitoria/derrota) com estatisticas e particulas
+ * @descricao Tela de resultado (vitoria/derrota) com estatisticas
  * @projeto Solana Glossary — Escape Room Solana
  * @autor Lucas Galvao — AceleradoraECO
  */
-
-import { useMemo } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
 import AnimatedBlobs from "../components/AnimatedBlobs";
+import Confetti from "../components/Confetti";
 import type { BlobVariant } from "../components/AnimatedBlobs";
+
 interface ResultState {
   won: boolean;
   score: number;
@@ -22,6 +22,7 @@ interface ResultState {
   theme: string;
   level: string;
 }
+
 const stagger = {
   hidden: { opacity: 0 },
   visible: {
@@ -33,49 +34,7 @@ const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
-const COLORS = ["#9945FF", "#14F195", "#00D1FF", "#FFD700", "#FF6B6B"];
-function Confetti() {
-  const dots = useMemo(
-    () =>
-      Array.from({ length: 30 }, (_, i) => ({
-        id: i,
-        color: COLORS[i % 5],
-        x: Math.random() * 100,
-        delay: Math.random() * 2,
-        dur: 2 + Math.random() * 3,
-        size: 4 + Math.random() * 8,
-      })),
-    [],
-  );
-  return (
-    <div className="fixed inset-0 pointer-events-none z-20 overflow-hidden">
-      {dots.map((d) => (
-        <motion.div
-          key={d.id}
-          className="absolute rounded-full"
-          style={{
-            background: d.color,
-            width: d.size,
-            height: d.size,
-            left: `${d.x}%`,
-            top: -10,
-          }}
-          animate={{
-            y: ["0vh", "110vh"],
-            rotate: [0, 360],
-            opacity: [1, 0.6, 0],
-          }}
-          transition={{
-            duration: d.dur,
-            delay: d.delay,
-            repeat: Infinity,
-            ease: "easeIn",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+
 export default function GameResult() {
   const { t } = useTranslation();
   const { state: locState } = useLocation();
@@ -94,17 +53,27 @@ export default function GameResult() {
   const blob: BlobVariant =
     s.theme === "defi" ? "defi" : s.theme === "lab" ? "lab" : "genesis";
   const timeFmt = `${Math.floor(s.timeLeft / 60)}:${String(s.timeLeft % 60).padStart(2, "0")}`;
+
   const stats = [
     {
-      label: "Pontuacao",
+      label: t("common.score"),
       val: s.score,
       color: s.won ? "text-cyan-400" : "text-orange-400",
     },
-    { label: "Tempo Restante", val: timeFmt, color: "text-green-400" },
-    { label: "Acertos", val: s.correctCount, color: "text-emerald-400" },
-    { label: "Erros", val: s.wrongCount, color: "text-red-400" },
-    { label: "Dicas Usadas", val: s.hintsUsed, color: "text-yellow-400" },
+    { label: t("result.timeLeft"), val: timeFmt, color: "text-green-400" },
+    {
+      label: t("result.correct"),
+      val: s.correctCount,
+      color: "text-emerald-400",
+    },
+    { label: t("result.wrong"), val: s.wrongCount, color: "text-red-400" },
+    {
+      label: t("result.hintsUsed"),
+      val: s.hintsUsed,
+      color: "text-yellow-400",
+    },
   ];
+
   const titleGrad = s.won
     ? "from-green-400 via-cyan-400 to-green-300"
     : "from-red-500 via-orange-400 to-red-500";
@@ -121,7 +90,6 @@ export default function GameResult() {
           initial="hidden"
           animate="visible"
         >
-          {/* Titulo — vitoria ou derrota com shake na derrota */}
           <motion.h1
             variants={fadeUp}
             animate={s.won ? undefined : { x: [0, -8, 8, -6, 6, -3, 3, 0] }}
@@ -131,7 +99,6 @@ export default function GameResult() {
             {s.won ? t("escape.victory") : t("escape.defeat")}
           </motion.h1>
 
-          {/* Subtitulo com tema e nivel */}
           <motion.p
             variants={fadeUp}
             className="text-gray-400 text-center mb-8"
@@ -140,14 +107,14 @@ export default function GameResult() {
             {t(`escape.levels.${s.level}`)}
           </motion.p>
 
-          {/* Card de estatisticas — glassmorphism */}
+          {/* Card de estatisticas */}
           <motion.div
             variants={fadeUp}
             className="w-full max-w-md rounded-2xl p-[1px] bg-gradient-to-br from-purple-600/50 via-cyan-400/30 to-green-400/50 mb-10"
           >
             <div className="rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-6">
               <h2 className="text-center text-sm text-gray-400 uppercase tracking-wider mb-4">
-                Estatisticas
+                {t("result.stats")}
               </h2>
               <div className="grid grid-cols-3 gap-2 mb-3">
                 {stats.slice(0, 3).map((st) => (
@@ -178,19 +145,18 @@ export default function GameResult() {
             </div>
           </motion.div>
 
-          {/* Botoes de acao */}
           <motion.div variants={fadeUp} className="flex gap-4">
             <Link
               to={`/jogar/${s.theme}/${s.level}`}
               className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-semibold hover:opacity-90 transition-opacity text-sm"
             >
-              Jogar Novamente
+              {t("result.playAgain")}
             </Link>
             <Link
-              to="/temas"
+              to="/"
               className="px-6 py-3 rounded-xl border border-white/20 text-gray-300 hover:text-white hover:border-white/40 transition-colors text-sm"
             >
-              Voltar aos Temas
+              {t("result.backToThemes")}
             </Link>
           </motion.div>
         </motion.div>

@@ -41,6 +41,22 @@
     "defeat": "Tiempo agotado!",
     "footer": "Solana Glossary — Superteam Brazil"
   },
+  "home": {
+    "terms": "terminos",
+    "playLevel": "Jugar {{level}}",
+    "replay": "Jugar de Nuevo",
+    "showLevels": "Ver todos los niveles",
+    "hideLevels": "Ocultar niveles"
+  },
+  "result": {
+    "stats": "Estadisticas",
+    "timeLeft": "Tiempo Restante",
+    "correct": "Aciertos",
+    "wrong": "Errores",
+    "hintsUsed": "Pistas Usadas",
+    "playAgain": "Jugar de Nuevo",
+    "backToThemes": "Volver a los Temas"
+  },
   "puzzle": {
     "multipleChoice": "Opcion Multiple",
     "multipleChoiceHint": "Cual termino corresponde a esta definicion?",

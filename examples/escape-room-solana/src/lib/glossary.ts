@@ -50,10 +50,12 @@ function getThemeTerms(themeId: ThemeId, locale?: string): GlossaryTerm[] {
  */
 export function shuffle<T>(arr: T[], seed?: number): T[] {
   const copy = [...arr];
-  let rand = seed
+  // Normaliza seed para evitar overflow em Date.now() * 16807
+  let s = seed ? (Math.abs(seed) % 2147483646) + 1 : 0;
+  const rand = s
     ? () => {
-        seed = (seed! * 16807) % 2147483647;
-        return (seed - 1) / 2147483646;
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
       }
     : Math.random;
 
@@ -84,6 +86,9 @@ export function selectPuzzleTerms(
   // Embaralha e pega o necessario
   const shuffled = shuffle(valid, sessionSeed);
   const selected = shuffled.slice(0, level.termCount);
+
+  // Ordena por dificuldade crescente (definicao menor = mais facil)
+  selected.sort((a, b) => a.definition.length - b.definition.length);
 
   return selected.map((t) => ({
     id: t.id,
