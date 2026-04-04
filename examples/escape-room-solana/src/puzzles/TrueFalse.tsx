@@ -15,6 +15,7 @@ export default function TrueFalse({
   pool,
   seed,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -83,6 +84,7 @@ export default function TrueFalse({
       puzzleKey={currentIndex}
       titleKey="puzzle.trueFalse"
       hintKey="puzzle.trueFalseHint"
+      theme={theme}
     >
       {/* Card com termo + definicao */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6">

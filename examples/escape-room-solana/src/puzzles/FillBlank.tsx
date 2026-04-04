@@ -14,6 +14,7 @@ import PuzzleShell from "./shared/PuzzleShell";
 export default function FillBlank({
   terms,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -62,6 +63,7 @@ export default function FillBlank({
       puzzleKey={currentIndex}
       titleKey="puzzle.fillBlank"
       hintKey="puzzle.fillBlankHint"
+      theme={theme}
     >
       {/* Definicao mascarada */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6">

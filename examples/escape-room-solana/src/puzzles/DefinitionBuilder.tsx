@@ -19,6 +19,7 @@ export default function DefinitionBuilder({
   terms,
   seed,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -85,6 +86,7 @@ export default function DefinitionBuilder({
       puzzleKey={currentIndex}
       titleKey="puzzle.definitionBuilder"
       hintKey="puzzle.definitionBuilderHint"
+      theme={theme}
     >
       {/* Termo sendo definido */}
       <div className="text-center mb-4">

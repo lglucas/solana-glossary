@@ -14,6 +14,7 @@ import PuzzleShell from "./shared/PuzzleShell";
 export default function CodeBreaker({
   terms,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -58,6 +59,7 @@ export default function CodeBreaker({
       puzzleKey={currentIndex}
       titleKey="puzzle.codeBreaker"
       hintKey="puzzle.codeBreakerHint"
+      theme={theme}
     >
       {/* Definicao cifrada com estetica "terminal" */}
       <div className="bg-black/60 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-6 mb-6 font-mono">

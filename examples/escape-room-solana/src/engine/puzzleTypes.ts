@@ -5,6 +5,7 @@
  * @autor Lucas Galvao — AceleradoraECO
  */
 import type { PuzzleTerm } from "../lib/glossary";
+import type { ThemeId } from "./themes";
 
 /** Resultado de uma interacao do jogador com um puzzle */
 export interface PuzzleResult {
@@ -23,6 +24,8 @@ interface PuzzleBaseProps {
   pool: PuzzleTerm[];
   seed: number;
   disabled: boolean;
+  /** Tema visual herdado do GamePlay */
+  theme?: ThemeId;
   onResult: (result: PuzzleResult) => void;
 }
 

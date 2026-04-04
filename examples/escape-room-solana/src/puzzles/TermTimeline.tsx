@@ -53,6 +53,7 @@ export default function TermTimeline({
   terms,
   seed,
   disabled,
+  theme,
   onResult,
 }: BatchPuzzleProps) {
   const { t } = useTranslation();
@@ -118,6 +119,7 @@ export default function TermTimeline({
       puzzleKey="term-timeline"
       titleKey="puzzle.termTimeline"
       hintKey="puzzle.termTimelineHint"
+      theme={theme}
     >
       {/* Instrucao */}
       <div className="text-center mb-4 text-sm text-gray-400">

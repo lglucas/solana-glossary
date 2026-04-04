@@ -8,6 +8,9 @@
 /** Efeitos sonoros disponiveis */
 export type SfxName = "correct" | "wrong" | "tick" | "hint" | "unlock";
 
+/** Tema sonoro — altera oitava e waveform */
+export type AudioTheme = "genesis" | "defi" | "lab";
+
 // ─── Contexto global ────────────────────────────────────────────────────────
 
 let ctx: AudioContext | null = null;
@@ -42,40 +45,51 @@ function playNote(
   osc.stop(c.currentTime + delay + duration);
 }
 
-// ─── Definicoes dos SFX ─────────────────────────────────────────────────────
+// ─── Configuracao por tema ──────────────────────────────────────────────────
 
-/** Acerto: duas notas ascendentes (Do-Mi) */
-function sfxCorrect(): void {
-  playNote(523, "square", 0.12, 0, 0.12);
-  playNote(659, "square", 0.18, 0.1, 0.12);
+interface ThemeAudioCfg {
+  wave: OscillatorType;
+  /** Multiplicador de oitava (0.5 = oitava abaixo, 2 = oitava acima) */
+  octave: number;
 }
 
-/** Erro: nota descendente com buzz */
-function sfxWrong(): void {
-  playNote(200, "sawtooth", 0.25, 0, 0.1);
-  playNote(150, "sawtooth", 0.2, 0.08, 0.08);
+const THEME_CFG: Record<AudioTheme, ThemeAudioCfg> = {
+  genesis: { wave: "square", octave: 0.5 },
+  defi: { wave: "sawtooth", octave: 1 },
+  lab: { wave: "triangle", octave: 1.5 },
+};
+
+// ─── Definicoes dos SFX (parametrizadas) ────────────────────────────────────
+
+function sfxCorrect(cfg: ThemeAudioCfg): void {
+  playNote(523 * cfg.octave, cfg.wave, 0.12, 0, 0.12);
+  playNote(659 * cfg.octave, cfg.wave, 0.18, 0.1, 0.12);
 }
 
-/** Tick do timer (sutil) */
-function sfxTick(): void {
-  playNote(800, "sine", 0.05, 0, 0.06);
+function sfxWrong(cfg: ThemeAudioCfg): void {
+  playNote(200 * cfg.octave, cfg.wave, 0.25, 0, 0.1);
+  playNote(150 * cfg.octave, cfg.wave, 0.2, 0.08, 0.08);
 }
 
-/** Dica revelada: 3 notas ascendentes */
-function sfxHint(): void {
-  playNote(440, "triangle", 0.1, 0, 0.1);
-  playNote(554, "triangle", 0.1, 0.08, 0.1);
-  playNote(659, "triangle", 0.15, 0.16, 0.1);
+function sfxTick(cfg: ThemeAudioCfg): void {
+  playNote(800 * cfg.octave, "sine", 0.05, 0, 0.06);
 }
 
-/** Desbloqueio / vitoria: escala ascendente rapida */
-function sfxUnlock(): void {
+function sfxHint(cfg: ThemeAudioCfg): void {
+  playNote(440 * cfg.octave, cfg.wave, 0.1, 0, 0.1);
+  playNote(554 * cfg.octave, cfg.wave, 0.1, 0.08, 0.1);
+  playNote(659 * cfg.octave, cfg.wave, 0.15, 0.16, 0.1);
+}
+
+function sfxUnlock(cfg: ThemeAudioCfg): void {
   [523, 587, 659, 784, 880].forEach((f, i) => {
-    playNote(f, "square", 0.12, i * 0.08, 0.1);
+    playNote(f * cfg.octave, cfg.wave, 0.12, i * 0.08, 0.1);
   });
 }
 
-const SFX_MAP: Record<SfxName, () => void> = {
+type SfxFn = (cfg: ThemeAudioCfg) => void;
+
+const SFX_MAP: Record<SfxName, SfxFn> = {
   correct: sfxCorrect,
   wrong: sfxWrong,
   tick: sfxTick,
@@ -100,12 +114,13 @@ class AudioManager {
     }
   }
 
-  /** Toca um efeito sonoro sintetizado */
-  playSfx(name: SfxName): void {
+  /** Toca um efeito sonoro sintetizado, variando por tema */
+  playSfx(name: SfxName, theme?: AudioTheme): void {
     if (this.muted) return;
     if (!this.initialized) this.init();
+    const cfg = THEME_CFG[theme ?? "genesis"];
     try {
-      SFX_MAP[name]();
+      SFX_MAP[name](cfg);
     } catch {
       /* AudioContext nao disponivel */
     }

@@ -16,6 +16,7 @@ export default function OddOneOut({
   pool,
   seed,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -84,6 +85,7 @@ export default function OddOneOut({
       puzzleKey={currentIndex}
       titleKey="puzzle.oddOneOut"
       hintKey="puzzle.oddOneOutHint"
+      theme={theme}
     >
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6">
         <p className="text-xs text-purple-300 uppercase tracking-wider mb-2">

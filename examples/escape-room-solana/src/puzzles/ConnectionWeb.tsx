@@ -27,6 +27,7 @@ export default function ConnectionWeb({
   terms,
   seed,
   disabled,
+  theme,
   onResult,
 }: BatchPuzzleProps) {
   const { t } = useTranslation();
@@ -119,6 +120,7 @@ export default function ConnectionWeb({
       puzzleKey="connection-web"
       titleKey="puzzle.connectionWeb"
       hintKey="puzzle.connectionWebHint"
+      theme={theme}
     >
       {/* Contador de conexoes */}
       <div className="text-center mb-4 text-sm text-gray-400">

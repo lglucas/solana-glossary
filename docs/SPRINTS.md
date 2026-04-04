@@ -68,9 +68,19 @@
 - [x] HintsPanel: i18n completo (removido hardcoded)
 - [ ] Musica BGM por tema — adiado (requer composicao)
 - [x] **Hotfix v0.6.1**: locale pt-BR→pt normalizado para SDK, audio init em user gesture
-- [ ] Testes de usabilidade
 
-## Sprint 6 — Jogo da Vida: Engine Core (v0.7.0)
+## Sprint 5b — Traducao + Identidade Visual (v0.7.0)
+**Objetivo:** Conteudo 100% pt-BR, cada tema com identidade propria
+- [ ] Traduzir definicoes pt-BR: Genesis (core-protocol, blockchain-general, network, infrastructure — 272 termos)
+- [ ] Traduzir definicoes pt-BR: DeFi (token-ecosystem, defi, web3, solana-ecosystem — 412 termos)
+- [ ] Traduzir definicoes pt-BR: Lab (programming-model, dev-tools, programming-fundamentals, security, zk-compression, ai-ml — 317 termos)
+- [ ] Traduzir definicoes es: todas as 14 categorias (1001 termos)
+- [ ] Identidade visual por tema: Genesis (roxo/circuitos), DeFi (verde/cofre), Lab (azul-laranja/terminal)
+- [ ] Sons distintos por tema: 3 paletas sonoras (frequencias e timbres diferentes)
+- [ ] Cada puzzle visualmente diferente do outro (nao so mecanica diferente)
+- [ ] Testes de usabilidade em todos os 12 puzzles
+
+## Sprint 6 — Jogo da Vida: Engine Core (v0.8.0)
 **Objetivo:** Motor do Jogo da Vida funcionando
 - [ ] Sistema de tabuleiro (~50 casas) modular
 - [ ] Dado virtual com animacao
@@ -144,8 +154,9 @@
 | 3 | v0.4.0 | Escape Room engine |
 | 4 | v0.5.0 | 12 puzzles implementados |
 | 5 | v0.6.0 | Escape Room polido |
-| 6 | v0.7.0 | Jogo da Vida engine |
-| 7 | v0.8.0 | Multiplayer online |
+| 5b | v0.7.0 | Traducao pt-BR + identidade visual |
+| 6 | v0.8.0 | Jogo da Vida engine |
+| 7 | v0.9.0 | Multiplayer online |
 | 8 | v0.9.0 | 3 tabuleiros completos |
 | 9 | v0.10.0 | Jogo da Vida polido |
 | 10 | v0.11.0 | Leaderboard + integracao |

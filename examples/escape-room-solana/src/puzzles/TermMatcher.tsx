@@ -18,6 +18,7 @@ export default function TermMatcher({
   terms,
   seed,
   disabled,
+  theme,
   onResult,
 }: BatchPuzzleProps) {
   const { t } = useTranslation();
@@ -91,6 +92,7 @@ export default function TermMatcher({
       puzzleKey="term-matcher"
       titleKey="puzzle.termMatcher"
       hintKey="puzzle.termMatcherHint"
+      theme={theme}
     >
       {/* Progresso */}
       <div className="text-center mb-4 text-sm text-gray-400">

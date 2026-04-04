@@ -6,6 +6,7 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import type { ThemeId } from "../../engine/themes";
 
 interface PuzzleShellProps {
   /** Chave para AnimatePresence (trocar reseta animacao) */
@@ -14,6 +15,8 @@ interface PuzzleShellProps {
   titleKey: string;
   /** Instrucao para o jogador (chave i18n) */
   hintKey?: string;
+  /** Tema visual do puzzle */
+  theme?: ThemeId;
   /** Conteudo do puzzle */
   children: React.ReactNode;
 }
@@ -25,13 +28,31 @@ const variants = {
   exit: { opacity: 0, x: -30 },
 };
 
+/** Mapa de estilos CSS por tema */
+const THEME_STYLES: Record<ThemeId, { label: string; wrapper: string }> = {
+  genesis: {
+    label: "text-purple-300",
+    wrapper: "puzzle-shell--genesis",
+  },
+  defi: {
+    label: "text-emerald-300",
+    wrapper: "puzzle-shell--defi",
+  },
+  lab: {
+    label: "text-sky-300",
+    wrapper: "puzzle-shell--lab",
+  },
+};
+
 export default function PuzzleShell({
   puzzleKey,
   titleKey,
   hintKey,
+  theme = "genesis",
   children,
 }: PuzzleShellProps) {
   const { t } = useTranslation();
+  const style = THEME_STYLES[theme];
 
   return (
     <AnimatePresence mode="wait">
@@ -42,11 +63,13 @@ export default function PuzzleShell({
         animate="animate"
         exit="exit"
         transition={{ duration: 0.35 }}
-        className="flex-1"
+        className={`flex-1 rounded-2xl p-5 ${style.wrapper}`}
       >
         {/* Cabecalho do puzzle */}
         <div className="mb-4">
-          <span className="text-xs text-purple-300 uppercase tracking-wider font-semibold">
+          <span
+            className={`text-xs uppercase tracking-wider font-semibold ${style.label}`}
+          >
             {t(titleKey)}
           </span>
           {hintKey && (

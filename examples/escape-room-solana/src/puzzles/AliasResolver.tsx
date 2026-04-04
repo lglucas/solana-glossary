@@ -18,6 +18,7 @@ export default function AliasResolver({
   pool,
   seed,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -76,6 +77,7 @@ export default function AliasResolver({
       puzzleKey={currentIndex}
       titleKey="puzzle.aliasResolver"
       hintKey="puzzle.aliasResolverHint"
+      theme={theme}
     >
       {/* Alias em destaque */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 text-center">

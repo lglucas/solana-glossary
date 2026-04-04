@@ -20,6 +20,7 @@ export default function CategorySort({
   terms,
   seed,
   disabled,
+  theme,
   onResult,
 }: BatchPuzzleProps) {
   const { t } = useTranslation();
@@ -99,6 +100,7 @@ export default function CategorySort({
       puzzleKey="category-sort"
       titleKey="puzzle.categorySort"
       hintKey="puzzle.categorySortHint"
+      theme={theme}
     >
       {/* Buckets de categoria */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">

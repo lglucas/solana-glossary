@@ -8,6 +8,7 @@
 import { useTranslation } from "react-i18next";
 import type { Hint } from "../hooks/useHints";
 import { audioManager } from "../lib/audio";
+import type { AudioTheme } from "../lib/audio";
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
 
@@ -19,6 +20,8 @@ interface HintsPanelProps {
   totalPenalty: number;
   hintPenaltyCost: number;
   disabled: boolean;
+  /** Tema sonoro opcional */
+  theme?: AudioTheme;
   onUseHint: () => void;
 }
 
@@ -32,6 +35,7 @@ export default function HintsPanel({
   totalPenalty,
   hintPenaltyCost,
   disabled,
+  theme,
   onUseHint,
 }: HintsPanelProps) {
   const { t } = useTranslation();
@@ -64,7 +68,7 @@ export default function HintsPanel({
         <button
           onClick={() => {
             onUseHint();
-            audioManager.playSfx("hint");
+            audioManager.playSfx("hint", theme);
           }}
           disabled={!canUseHint || disabled}
           className={`w-full text-sm font-medium px-4 py-2.5 rounded-xl border transition-all ${

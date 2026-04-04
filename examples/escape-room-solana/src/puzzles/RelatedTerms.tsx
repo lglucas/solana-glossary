@@ -16,6 +16,7 @@ export default function RelatedTerms({
   pool,
   seed,
   disabled,
+  theme,
   currentIndex,
   onResult,
 }: PerTermPuzzleProps) {
@@ -99,6 +100,7 @@ export default function RelatedTerms({
       puzzleKey={currentIndex}
       titleKey="puzzle.relatedTerms"
       hintKey="puzzle.relatedTermsHint"
+      theme={theme}
     >
       {/* Termo central */}
       <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 mb-6 text-center">

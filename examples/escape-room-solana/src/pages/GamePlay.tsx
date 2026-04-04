@@ -80,8 +80,8 @@ export default function GamePlay() {
       // Atualiza score e toca SFX
       for (let i = 0; i < result.correct; i++) score.addCorrect();
       for (let i = 0; i < result.wrong; i++) score.addWrong();
-      if (result.correct > 0) audioManager.playSfx("correct");
-      else if (result.wrong > 0) audioManager.playSfx("wrong");
+      if (result.correct > 0) audioManager.playSfx("correct", tId);
+      else if (result.wrong > 0) audioManager.playSfx("wrong", tId);
 
       if (isBatch && result.done) {
         // Batch puzzle concluido — ir para resultado
@@ -105,14 +105,14 @@ export default function GamePlay() {
   useEffect(() => {
     if (phase !== "playing" || timer.remaining > 30 || timer.remaining <= 0)
       return;
-    if (timer.remaining % 5 === 0) audioManager.playSfx("tick");
+    if (timer.remaining % 5 === 0) audioManager.playSfx("tick", tId);
   }, [timer.remaining, phase]);
 
   // Navega para resultado quando fase muda
   useEffect(() => {
     if (phase === "playing") return;
     timer.pause();
-    audioManager.playSfx(phase === "won" ? "unlock" : "wrong");
+    audioManager.playSfx(phase === "won" ? "unlock" : "wrong", tId);
     if (phase === "won") completeLevel(tId, lId);
     const fs = score.calculateFinal(timer.remaining, hints.totalPenalty);
     navigate(`/resultado/${tId}/${lId}`, {
@@ -163,6 +163,7 @@ export default function GamePlay() {
                   pool={pool}
                   seed={seedRef.current}
                   disabled={fb || phase !== "playing"}
+                  theme={tId}
                   onResult={handleResult}
                 />
               ) : (
@@ -172,6 +173,7 @@ export default function GamePlay() {
                   pool={pool}
                   seed={seedRef.current}
                   disabled={fb || phase !== "playing"}
+                  theme={tId}
                   currentIndex={idx}
                   onResult={handleResult}
                 />
@@ -186,6 +188,7 @@ export default function GamePlay() {
             totalPenalty={hints.totalPenalty}
             hintPenaltyCost={lc.hintPenalty}
             disabled={fb || phase !== "playing"}
+            theme={tId}
             onUseHint={hints.revealNext}
           />
         </div>
