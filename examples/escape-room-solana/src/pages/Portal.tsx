@@ -1,6 +1,6 @@
 /**
  * @arquivo Portal.tsx
- * @descricao Pagina de entrada retro-Solana estilo Sonic/Mega Man X
+ * @descricao Portal retro estilo Mega Man X / Sonic — stage select dos jogos
  * @projeto Solana Glossary — Escape Room Solana + Jogo da Vida
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
@@ -8,192 +8,164 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
-import { getTopScores } from "../lib/leaderboard";
+import Footer from "../components/Footer";
+import ArcadeScores from "../components/ArcadeScores";
 
-const stagger = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
-  },
-};
-const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.85 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+const PX = "font-['Press_Start_2P',monospace]";
+const flicker = {
+  animate: { opacity: [1, 0.7, 1, 0.9, 1] },
+  transition: { duration: 3, repeat: Infinity },
 };
 
-const GAMES = [
+const STAGES = [
   {
     id: "escape",
     path: "/escape",
-    gradient: "from-purple-600 via-cyan-500 to-green-400",
-    border: "border-purple-500/40 hover:border-cyan-400/60",
-    glow: "shadow-purple-500/20",
     icon: "🔓",
-    bgPattern:
-      "bg-[radial-gradient(circle_at_30%_50%,rgba(153,69,255,0.15),transparent_50%)]",
+    border: "#9945FF",
+    glow: "0 0 20px #9945FF, 0 0 40px #9945FF40",
+    bar: "bg-purple-500",
   },
   {
     id: "vida",
     path: "/vida",
-    gradient: "from-emerald-400 via-yellow-400 to-orange-500",
-    border: "border-emerald-500/40 hover:border-yellow-400/60",
-    glow: "shadow-emerald-500/20",
     icon: "🎲",
-    bgPattern:
-      "bg-[radial-gradient(circle_at_70%_50%,rgba(16,185,129,0.15),transparent_50%)]",
+    border: "#14F195",
+    glow: "0 0 20px #14F195, 0 0 40px #14F19540",
+    bar: "bg-emerald-500",
   },
 ];
 
 export default function Portal() {
   const { t, i18n } = useTranslation();
-  const topScores = getTopScores(5);
 
   return (
     <Layout hideBack>
-      <div className="relative min-h-screen bg-[#0a0015] text-white overflow-hidden">
+      <div className="relative min-h-screen bg-black text-white overflow-hidden">
+        {/* CRT scanlines + vignette */}
         <div
-          className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]"
+          className="fixed inset-0 pointer-events-none z-30 opacity-[0.08]"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.1) 2px,rgba(255,255,255,0.1) 4px)",
+              "repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(0,0,0,0.3) 1px,rgba(0,0,0,0.3) 2px)",
           }}
         />
         <div
-          className="fixed inset-0 pointer-events-none z-0 opacity-20"
+          className="fixed inset-0 pointer-events-none z-30"
+          style={{
+            background:
+              "radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,0.6) 100%)",
+          }}
+        />
+        {/* Star field */}
+        <div
+          className="fixed inset-0 z-0"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(153,69,255,0.1) 1px,transparent 1px),linear-gradient(90deg,rgba(20,241,149,0.1) 1px,transparent 1px)",
-            backgroundSize: "60px 60px",
+              "radial-gradient(1px 1px at 10% 20%,#fff3 0%,transparent 100%),radial-gradient(1px 1px at 80% 40%,#fff2 0%,transparent 100%),radial-gradient(1px 1px at 50% 70%,#fff2 0%,transparent 100%),radial-gradient(1px 1px at 30% 90%,#fff1 0%,transparent 100%)",
           }}
         />
 
-        <motion.div
-          className="relative z-10 flex flex-col items-center px-6 pt-16 pb-12"
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={fadeUp} className="mb-2">
-            <h1 className="text-5xl md:text-7xl font-extrabold text-center font-['Orbitron',sans-serif] tracking-wider">
-              <span className="bg-gradient-to-r from-purple-400 via-cyan-400 to-green-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(153,69,255,0.5)]">
-                SOLANA
-              </span>
+        <div className="relative z-10 flex flex-col items-center px-4 pt-14 pb-10">
+          <motion.div
+            initial={{ y: -40, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="mb-1"
+          >
+            <h1
+              className={`${PX} text-2xl md:text-4xl text-center tracking-wider text-[#9945FF] drop-shadow-[0_0_15px_#9945FF]`}
+            >
+              SOLANA
             </h1>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-center font-['Orbitron',sans-serif] tracking-widest mt-1">
-              <span className="bg-gradient-to-r from-cyan-300 via-green-300 to-emerald-400 bg-clip-text text-transparent">
-                GLOSSARY
-              </span>
+            <h2
+              className={`${PX} text-lg md:text-2xl text-center tracking-widest mt-2 text-[#14F195] drop-shadow-[0_0_15px_#14F195]`}
+            >
+              GLOSSARY GAMES
             </h2>
           </motion.div>
-          <motion.p
-            variants={fadeUp}
-            className="text-sm text-gray-500 font-mono tracking-widest mb-2"
-          >
-            ━━━ PRESS START ━━━
-          </motion.p>
-          <motion.p
-            variants={fadeUp}
-            className="text-gray-400 text-center max-w-md mb-8 text-sm"
-          >
-            {t("portal.subtitle")}
-          </motion.p>
 
-          {/* Idioma */}
-          <motion.div variants={fadeUp} className="flex gap-2 mb-10">
+          <motion.p
+            {...flicker}
+            className={`${PX} text-[10px] text-yellow-400 tracking-[0.3em] mt-3 mb-1 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]`}
+          >
+            ▶ INSERT COIN ◀
+          </motion.p>
+          <p className="text-[10px] text-gray-600 mb-6">
+            {t("portal.subtitle")}
+          </p>
+
+          <div className="flex gap-3 mb-8">
             {["pt-BR", "es"].map((lang) => (
               <button
                 key={lang}
                 onClick={() => i18n.changeLanguage(lang)}
-                className={`text-xs px-4 py-1.5 rounded-full border font-mono transition-colors ${i18n.language === lang ? "border-cyan-400 text-cyan-300" : "border-white/20 text-gray-500 hover:text-white"}`}
+                className={`${PX} text-[8px] px-3 py-1.5 border-2 transition-all ${i18n.language === lang ? "border-yellow-400 text-yellow-300 shadow-[0_0_10px_rgba(250,204,21,0.3)]" : "border-gray-700 text-gray-600 hover:border-gray-500"}`}
               >
-                {lang === "pt-BR" ? "PT-BR" : "ES"}
+                {lang === "pt-BR" ? "PT-BR" : "ESPAÑOL"}
               </button>
             ))}
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl mb-12">
-            {GAMES.map((g) => (
-              <motion.div key={g.id} variants={scaleIn}>
+          <div
+            className={`${PX} text-[10px] text-cyan-400 tracking-[0.2em] mb-4 drop-shadow-[0_0_8px_rgba(6,182,212,0.4)]`}
+          >
+            — STAGE SELECT —
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl mb-10">
+            {STAGES.map((s) => (
+              <motion.div
+                key={s.id}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
                 <Link
-                  to={g.path}
-                  className={`block rounded-2xl p-[1px] bg-gradient-to-br ${g.gradient} shadow-xl ${g.glow} hover:shadow-2xl transition-all duration-300 group`}
+                  to={s.path}
+                  className="block border-2 p-5 transition-all duration-200 hover:brightness-110 group"
+                  style={{
+                    borderColor: s.border,
+                    boxShadow: s.glow,
+                    background: `linear-gradient(135deg, ${s.border}08, ${s.border}15)`,
+                  }}
                 >
-                  <div
-                    className={`rounded-2xl bg-[#0a0015]/90 backdrop-blur-xl p-8 ${g.bgPattern} h-full`}
-                  >
-                    <div className="text-5xl mb-4">{g.icon}</div>
-                    <h3
-                      className={`text-2xl font-bold font-['Orbitron',sans-serif] bg-gradient-to-r ${g.gradient} bg-clip-text text-transparent mb-2`}
-                    >
-                      {t(`portal.games.${g.id}`)}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-4">
-                      {t(`portal.games.${g.id}Desc`)}
-                    </p>
-                    <span
-                      className={`inline-block text-xs px-4 py-1.5 rounded-full border ${g.border} font-mono tracking-wider group-hover:text-white transition-colors`}
-                    >
-                      {t("portal.play")} →
-                    </span>
+                  <div className="flex items-start gap-4">
+                    <span className="text-4xl">{s.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <h3
+                        className={`${PX} text-[11px] mb-2 group-hover:text-white`}
+                        style={{ color: s.border }}
+                      >
+                        {t(`portal.games.${s.id}`)}
+                      </h3>
+                      <p className="text-[10px] text-gray-500 leading-relaxed">
+                        {t(`portal.games.${s.id}Desc`)}
+                      </p>
+                      <div className="mt-3 flex items-center gap-2">
+                        <div className="h-1 flex-1 bg-gray-800 overflow-hidden">
+                          <motion.div
+                            className={`h-full ${s.bar}`}
+                            initial={{ width: 0 }}
+                            animate={{ width: "100%" }}
+                            transition={{ duration: 1.5, delay: 0.5 }}
+                          />
+                        </div>
+                        <span
+                          className={`${PX} text-[7px] text-gray-600 group-hover:text-gray-400`}
+                        >
+                          READY
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </Link>
               </motion.div>
             ))}
           </div>
 
-          {/* Mini leaderboard */}
-          <motion.div variants={fadeUp} className="w-full max-w-3xl mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-mono text-gray-500 tracking-widest uppercase">
-                {t("portal.topPlayers")}
-              </h3>
-              <Link
-                to="/ranking"
-                className="text-xs text-cyan-400 hover:text-cyan-300 font-mono"
-              >
-                {t("portal.viewAll")} →
-              </Link>
-            </div>
-            {topScores.length === 0 ? (
-              <p className="text-gray-600 text-sm font-mono text-center py-6">
-                {t("portal.noScores")}
-              </p>
-            ) : (
-              <div className="grid gap-2">
-                {topScores.map((s, i) => (
-                  <div
-                    key={s.id}
-                    className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/[0.02] border border-white/5"
-                  >
-                    <span className="text-sm font-bold w-6">
-                      {i < 3 ? ["🥇", "🥈", "🥉"][i] : `${i + 1}.`}
-                    </span>
-                    <span className="text-lg">{s.avatar}</span>
-                    <span className="text-sm text-white flex-1">
-                      {s.nickname}
-                    </span>
-                    <span className="text-sm font-bold text-cyan-400 font-mono">
-                      {s.score}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-
-          {/* Footer */}
-          <motion.footer
-            variants={fadeUp}
-            className="text-xs text-gray-600 text-center font-mono"
-          >
-            {t("portal.footer")}
-          </motion.footer>
-        </motion.div>
+          <ArcadeScores />
+          <Footer className="font-mono" />
+        </div>
       </div>
     </Layout>
   );

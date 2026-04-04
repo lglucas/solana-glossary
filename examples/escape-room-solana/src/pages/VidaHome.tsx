@@ -7,6 +7,7 @@
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
+import Footer from "../components/Footer";
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -161,6 +162,9 @@ export default function VidaHome() {
                 🧩 {t("vida.quiz")}
               </span>
             </div>
+          </motion.div>
+          <motion.div variants={fadeUp} className="mt-10">
+            <Footer />
           </motion.div>
         </motion.div>
       </div>

@@ -46,7 +46,7 @@
     "topPlayers": "Top Jogadores",
     "viewAll": "Ver ranking completo",
     "noScores": "Nenhuma pontuacao registrada ainda",
-    "footer": "Superteam Brazil × Tokenfy.me — @lg_lucas",
+    "footer": "Superteam Brazil Solana x Tokenfy.me",
     "games": {
       "escape": "Escape Room",
       "escapeDesc": "Desvende 12 puzzles em 3 temas. Resolva desafios de blockchain contra o relogio.",
@@ -78,7 +78,7 @@
     "hintLocked": "Dica bloqueada — resolva mais termos",
     "victory": "Voce escapou!",
     "defeat": "Tempo esgotado!",
-    "footer": "Solana Glossary — Tokenfy.me (@lg_lucas)"
+    "footer": "Solana Glossary — Tokenfy.me"
   },
   "hints": {
     "useHint": "Usar Dica (-{{cost}} pts)",

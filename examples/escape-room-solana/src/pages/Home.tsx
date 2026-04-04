@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import AnimatedBlobs from "../components/AnimatedBlobs";
 import Layout from "../components/Layout";
+import Footer from "../components/Footer";
 import ThemeProgressCard from "../components/ThemeProgressCard";
 import { THEMES } from "../engine/themes";
 
@@ -109,12 +110,9 @@ export default function Home() {
             {t("common.connectWallet")}
           </motion.button>
 
-          <motion.footer
-            variants={item}
-            className="text-xs text-gray-600 text-center"
-          >
-            {t("escape.footer")}
-          </motion.footer>
+          <motion.div variants={item}>
+            <Footer />
+          </motion.div>
         </motion.div>
       </div>
     </Layout>
