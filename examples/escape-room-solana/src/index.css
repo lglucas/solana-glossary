@@ -1,0 +1,13 @@
+/**
+ * @arquivo index.css
+ * @descricao Estilos globais e importacao de fontes para o Escape Room
+ * @projeto Solana Glossary — Escape Room Solana
+ * @autor Lucas Galvao — AceleradoraECO
+ */
+
+/* Google Fonts for the escape room themes */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+body { margin: 0; -webkit-font-smoothing: antialiased; }
+#root { min-height: 100svh; }

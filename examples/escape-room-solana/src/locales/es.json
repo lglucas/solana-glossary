@@ -1,0 +1,44 @@
+{
+  "common": {
+    "back": "Volver",
+    "play": "Jugar",
+    "score": "Puntuacion",
+    "time": "Tiempo",
+    "hints": "Pistas",
+    "check": "Verificar",
+    "next": "Siguiente",
+    "leaderboard": "Ranking",
+    "connectWallet": "Conectar Billetera",
+    "profile": "Perfil",
+    "language": "Idioma",
+    "mute": "Silenciar",
+    "unmute": "Activar Sonido",
+    "loading": "Cargando..."
+  },
+  "escape": {
+    "title": "Escape Room Solana",
+    "subtitle": "Descubre los secretos de la blockchain Solana",
+    "selectTheme": "Elige un Tema",
+    "viewAllThemes": "Ver todos los temas",
+    "themes": {
+      "genesis": "El Bloque Genesis",
+      "genesisDesc": "Explora el origen de la red Solana y los conceptos fundamentales de blockchain.",
+      "defi": "La Boveda DeFi",
+      "defiDesc": "Desbloquea los secretos de las finanzas descentralizadas en Solana.",
+      "lab": "El Laboratorio del Dev",
+      "labDesc": "Construye y depura programas on-chain como un verdadero dev Solana."
+    },
+    "levels": {
+      "surface": "Surface",
+      "confirmation": "Confirmation",
+      "finality": "Finality",
+      "consensus": "Consensus"
+    },
+    "levelsCount": "{{count}} niveles",
+    "station": "Estacion {{current}} de {{total}}",
+    "hintLocked": "Pista bloqueada — resuelve mas terminos",
+    "victory": "Has escapado!",
+    "defeat": "Tiempo agotado!",
+    "footer": "Solana Glossary — Superteam Brazil"
+  }
+}
