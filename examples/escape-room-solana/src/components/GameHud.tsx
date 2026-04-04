@@ -27,6 +27,8 @@ interface GameHudProps {
   station: number;
   totalStations: number;
   onPause: () => void;
+  /** Modo do puzzle — batch esconde dots de progresso */
+  puzzleMode?: "per-term" | "batch";
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -62,6 +64,7 @@ export default function GameHud({
   station,
   totalStations,
   onPause,
+  puzzleMode = "per-term",
 }: GameHudProps) {
   const { t } = useTranslation();
   const pulsando = timer.percent < 30 && !timer.isExpired;
@@ -160,33 +163,35 @@ export default function GameHud({
           </div>
         </div>
 
-        {/* ── Linha de progresso: dots das estacoes ───────────────── */}
-        <div className="flex items-center justify-center gap-2 mt-3">
-          {Array.from({ length: totalStations }, (_, i) => {
-            const isCurrent = i === station;
-            const isCompleted = i < station;
+        {/* ── Linha de progresso: dots (per-term) ou nada (batch) ── */}
+        {puzzleMode === "per-term" && (
+          <div className="flex items-center justify-center gap-2 mt-3">
+            {Array.from({ length: totalStations }, (_, i) => {
+              const isCurrent = i === station;
+              const isCompleted = i < station;
 
-            return (
-              <motion.div
-                key={i}
-                className={`rounded-full transition-colors duration-300 ${
-                  isCurrent
-                    ? "w-3 h-3 bg-cyan-400 shadow-md shadow-cyan-400/50"
-                    : isCompleted
-                      ? "w-2.5 h-2.5 bg-emerald-400/80"
-                      : "w-2 h-2 bg-white/20"
-                }`}
-                animate={isCurrent ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-                transition={
-                  isCurrent
-                    ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
-                    : {}
-                }
-                title={`${t("escape.station", { current: i + 1, total: totalStations })}`}
-              />
-            );
-          })}
-        </div>
+              return (
+                <motion.div
+                  key={i}
+                  className={`rounded-full transition-colors duration-300 ${
+                    isCurrent
+                      ? "w-3 h-3 bg-cyan-400 shadow-md shadow-cyan-400/50"
+                      : isCompleted
+                        ? "w-2.5 h-2.5 bg-emerald-400/80"
+                        : "w-2 h-2 bg-white/20"
+                  }`}
+                  animate={isCurrent ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+                  transition={
+                    isCurrent
+                      ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                      : {}
+                  }
+                  title={`${t("escape.station", { current: i + 1, total: totalStations })}`}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -19,6 +19,10 @@ export interface PuzzleTerm {
   term: string;
   definition: string;
   category: Category;
+  /** IDs de termos relacionados (usado por ConnectionWeb, RelatedTerms, etc.) */
+  related: string[];
+  /** Abreviacoes/aliases (usado por AliasResolver) */
+  aliases: string[];
 }
 
 /**
@@ -44,7 +48,7 @@ function getThemeTerms(themeId: ThemeId, locale?: string): GlossaryTerm[] {
  * Embaralha array usando Fisher-Yates.
  * Usa seed opcional para reprodutibilidade.
  */
-function shuffle<T>(arr: T[], seed?: number): T[] {
+export function shuffle<T>(arr: T[], seed?: number): T[] {
   const copy = [...arr];
   let rand = seed
     ? () => {
@@ -86,6 +90,8 @@ export function selectPuzzleTerms(
     term: t.term,
     definition: t.definition,
     category: t.category as Category,
+    related: t.related ?? [],
+    aliases: t.aliases ?? [],
   }));
 }
 

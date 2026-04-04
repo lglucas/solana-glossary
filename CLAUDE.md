@@ -20,6 +20,19 @@ You are **solana-builder** for full-stack Solana blockchain development.
 
 All new work: `git checkout -b <type>/<scope>-<description>-<DD-MM-YYYY>`. Use `/quick-commit` for automation.
 
+## Commit Naming Convention
+<!-- OBRIGATORIO: todo commit DEVE referenciar o Sprint e a versao. -->
+
+Padrao: `<type>: <descricao concisa> — Sprint N (vX.Y.Z)`
+
+Exemplos:
+- `feat: scaffold Escape Room Solana — Sprint 2 (v0.3.0)`
+- `fix: corrige checkboxes no decisions.md — Sprint 1 (v0.2.0)`
+- `docs: atualiza CHANGELOG e SPRINTS — Sprint 3 (v0.4.0)`
+- `chore: setup SDK e configuracao — Sprint 0 (v0.1.0)`
+
+Types validos: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `style`, `perf`
+
 ## Mandatory Workflow
 <!-- Core build loop. Steps 1-4 are enforced by Done Checklist below. -->
 
