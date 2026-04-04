@@ -50,10 +50,8 @@ export default function EventCardModal({ card, onDismiss }: Props) {
             {card.term}
           </h3>
         </div>
-        <p className="text-sm text-gray-400 text-center mb-4 leading-relaxed">
-          {card.definition.length > 120
-            ? card.definition.slice(0, 120) + "..."
-            : card.definition}
+        <p className="text-sm text-gray-400 text-center mb-4 leading-relaxed max-h-32 overflow-y-auto">
+          {card.definition}
         </p>
         <div
           className={`text-center text-lg font-bold mb-4 ${EFFECT_COLORS[card.effect]}`}

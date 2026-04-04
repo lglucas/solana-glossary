@@ -135,6 +135,7 @@
     "waitingPlayers": "Esperando jugadores...",
     "waitingHost": "Esperando que el host inicie...",
     "roomNotFound": "Sala no encontrada o llena",
+    "waitingTurn": "Esperando el turno del otro jugador...",
     "effects": {
       "advance": "Avanza {{value}} casillas!",
       "retreat": "Retrocede {{value}} casillas!",

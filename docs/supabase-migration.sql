@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS multiplayer_rooms (
   host_wallet TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'waiting',
   max_players INTEGER NOT NULL DEFAULT 8,
+  game_state JSONB,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

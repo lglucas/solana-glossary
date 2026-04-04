@@ -19,7 +19,10 @@ import {
 interface Props {
   theme: string;
   roomCode?: string;
-  onStart: (players: Array<{ name: string; color: string }>) => void;
+  onStart: (
+    players: Array<{ name: string; color: string }>,
+    roomCode?: string,
+  ) => void;
 }
 
 export default function Lobby({ theme, roomCode, onStart }: Props) {
@@ -82,7 +85,10 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
 
   const handleStart = () => {
     if (!room || room.players.length < 2) return;
-    onStart(room.players.map((p) => ({ name: p.nickname, color: p.color })));
+    onStart(
+      room.players.map((p) => ({ name: p.nickname, color: p.color })),
+      room.code,
+    );
   };
 
   const isHost = room && profile && room.hostWallet === profile.walletAddress;

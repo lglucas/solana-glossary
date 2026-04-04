@@ -177,6 +177,36 @@ export async function updateRoomStatus(
     .eq("code", code);
 }
 
+/** Salva game state JSON na sala (chamado a cada acao) */
+export async function saveGameState(
+  code: string,
+  state: unknown,
+): Promise<void> {
+  await supabase
+    .from("multiplayer_rooms" as never)
+    .update({
+      game_state: JSON.stringify(state),
+      updated_at: new Date().toISOString(),
+    } as never)
+    .eq("code", code);
+}
+
+/** Carrega game state JSON da sala */
+export async function loadGameState(code: string): Promise<unknown | null> {
+  const { data } = await supabase
+    .from("multiplayer_rooms" as never)
+    .select("game_state")
+    .eq("code", code)
+    .single();
+  if (!data) return null;
+  const raw = (data as { game_state: string | null }).game_state;
+  try {
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Gera URL de convite */
 export function getInviteUrl(code: string): string {
   return `${window.location.origin}/vida/sala/${code}`;

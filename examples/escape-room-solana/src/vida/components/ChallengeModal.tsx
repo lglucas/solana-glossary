@@ -44,10 +44,8 @@ export default function ChallengeModal({ question, onAnswer }: Props) {
             {t("vida.challengeTitle")}
           </h3>
         </div>
-        <p className="text-sm text-gray-300 text-center mb-5 leading-relaxed">
-          {question.definition.length > 150
-            ? question.definition.slice(0, 150) + "..."
-            : question.definition}
+        <p className="text-sm text-gray-300 text-center mb-5 leading-relaxed max-h-32 overflow-y-auto">
+          {question.definition}
         </p>
         <div className="grid grid-cols-1 gap-2">
           {question.options.map((opt, idx) => {

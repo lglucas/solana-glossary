@@ -28,9 +28,14 @@ export default function VidaPlay() {
   const [playersCfg, setPlayersCfg] = useState<
     Array<{ name: string; color: string }>
   >([]);
+  const [activeCode, setActiveCode] = useState<string | undefined>(code);
 
-  const handleStart = (ps: Array<{ name: string; color: string }>) => {
+  const handleStart = (
+    ps: Array<{ name: string; color: string }>,
+    roomCode?: string,
+  ) => {
     setPlayersCfg(ps);
+    if (roomCode) setActiveCode(roomCode);
     setPhase("playing");
   };
 
@@ -45,29 +50,38 @@ export default function VidaPlay() {
   }
 
   return (
-    <GameBoard theme={theme} players={playersCfg} navigate={navigate} t={t} />
+    <GameBoard
+      theme={theme}
+      players={playersCfg}
+      roomCode={activeCode}
+      navigate={navigate}
+      t={t}
+    />
   );
 }
 
 function GameBoard({
   theme,
   players,
+  roomCode,
   navigate,
   t,
 }: {
   theme: BoardThemeId;
   players: Array<{ name: string; color: string }>;
+  roomCode?: string;
   navigate: ReturnType<typeof useNavigate>;
   t: ReturnType<typeof useTranslation>["t"];
 }) {
   const {
     state,
     currentPlayer,
+    isMyTurn,
     roll,
     dismissEvent,
     answerChallenge,
     skipToNext,
-  } = useVidaGame(theme, players);
+  } = useVidaGame({ theme, players, roomCode });
 
   if (state.winner) {
     setTimeout(() => {
@@ -113,9 +127,14 @@ function GameBoard({
           <div className="flex justify-center mt-6">
             <Dice
               value={state.diceValue}
-              disabled={state.turnPhase !== "roll"}
+              disabled={state.turnPhase !== "roll" || !isMyTurn}
               onRoll={roll}
             />
+            {!isMyTurn && state.turnPhase === "roll" && (
+              <p className="text-xs text-gray-500 mt-2">
+                {t("vida.waitingTurn")}
+              </p>
+            )}
           </div>
           <div className="flex justify-center gap-3 mt-4 flex-wrap">
             {state.players.map((p) => (
