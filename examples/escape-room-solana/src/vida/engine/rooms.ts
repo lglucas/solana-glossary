@@ -52,21 +52,34 @@ export async function createRoom(
 ): Promise<string> {
   const code = generateCode();
 
-  await supabase.from("multiplayer_rooms" as never).insert({
-    code,
-    board: theme,
-    host_wallet: host.walletAddress,
-    status: "waiting",
-  } as never);
+  const { error: e1 } = await supabase
+    .from("multiplayer_rooms" as never)
+    .insert({
+      code,
+      board: theme,
+      host_wallet: host.walletAddress,
+      status: "waiting",
+    } as never);
+  if (e1) console.error("[rooms] createRoom insert:", e1.message, e1);
 
-  await supabase.from("room_players" as never).insert({
-    room_id: await getRoomId(code),
+  const roomId = await getRoomId(code);
+  if (!roomId) {
+    console.error(
+      "[rooms] createRoom: room not found after insert, code:",
+      code,
+    );
+    return code;
+  }
+
+  const { error: e2 } = await supabase.from("room_players" as never).insert({
+    room_id: roomId,
     wallet_address: host.walletAddress,
     nickname: host.nickname,
     avatar: host.avatar,
     color: COLORS[0],
     is_host: true,
   } as never);
+  if (e2) console.error("[rooms] createRoom player insert:", e2.message, e2);
 
   return code;
 }
@@ -77,31 +90,46 @@ export async function joinRoom(
   code: string,
   player: { nickname: string; avatar: string; walletAddress: string },
 ): Promise<Room | null> {
-  const roomId = await getRoomId(code);
-  if (!roomId) return null;
+  console.log("[rooms] joinRoom attempt:", code, player.walletAddress);
 
-  const { data: room } = await supabase
+  const roomId = await getRoomId(code);
+  if (!roomId) {
+    console.error("[rooms] joinRoom: room not found for code:", code);
+    return null;
+  }
+
+  const { data: room, error: e1 } = await supabase
     .from("multiplayer_rooms" as never)
     .select("*")
     .eq("code", code)
     .single();
-  if (!room || (room as { status: string }).status !== "waiting") return null;
+  if (e1) console.error("[rooms] joinRoom select room:", e1.message);
+  if (!room || (room as { status: string }).status !== "waiting") {
+    console.error("[rooms] joinRoom: room status invalid or null", room);
+    return null;
+  }
 
   const { data: existing } = await supabase
     .from("room_players" as never)
     .select("*")
     .eq("room_id", roomId)
     .eq("wallet_address", player.walletAddress);
-  if (existing && (existing as unknown[]).length > 0) return getRoom(code);
+  if (existing && (existing as unknown[]).length > 0) {
+    console.log("[rooms] joinRoom: player already in room");
+    return getRoom(code);
+  }
 
   const { data: allPlayers } = await supabase
     .from("room_players" as never)
     .select("*")
     .eq("room_id", roomId);
   const count = (allPlayers as unknown[] | null)?.length ?? 0;
-  if (count >= 8) return null;
+  if (count >= 8) {
+    console.error("[rooms] joinRoom: room full", count);
+    return null;
+  }
 
-  await supabase.from("room_players" as never).insert({
+  const { error: e2 } = await supabase.from("room_players" as never).insert({
     room_id: roomId,
     wallet_address: player.walletAddress,
     nickname: player.nickname,
@@ -109,6 +137,8 @@ export async function joinRoom(
     color: COLORS[count % COLORS.length],
     is_host: false,
   } as never);
+  if (e2) console.error("[rooms] joinRoom player insert:", e2.message, e2);
+  else console.log("[rooms] joinRoom: player inserted successfully");
 
   return getRoom(code);
 }
@@ -116,11 +146,15 @@ export async function joinRoom(
 // ─── Buscar sala ───────────────────────────────────────────────────────────
 
 export async function getRoom(code: string): Promise<Room | null> {
-  const { data: room } = await supabase
+  const { data: room, error: e1 } = await supabase
     .from("multiplayer_rooms" as never)
     .select("*")
     .eq("code", code)
     .single();
+  if (e1) {
+    console.error("[rooms] getRoom:", e1.message);
+    return null;
+  }
   if (!room) return null;
   const r = room as {
     id: string;
@@ -130,11 +164,12 @@ export async function getRoom(code: string): Promise<Room | null> {
     status: string;
   };
 
-  const { data: players } = await supabase
+  const { data: players, error: e2 } = await supabase
     .from("room_players" as never)
     .select("*")
     .eq("room_id", r.id)
     .order("joined_at" as never);
+  if (e2) console.error("[rooms] getRoom players:", e2.message);
 
   const mapped: RoomPlayer[] = ((players as unknown[]) ?? []).map(
     (p: unknown) => {
@@ -177,18 +212,19 @@ export async function updateRoomStatus(
     .eq("code", code);
 }
 
-/** Salva game state JSON na sala (chamado a cada acao) */
+/** Salva game state JSON na sala */
 export async function saveGameState(
   code: string,
   state: unknown,
 ): Promise<void> {
-  await supabase
+  const { error } = await supabase
     .from("multiplayer_rooms" as never)
     .update({
       game_state: JSON.stringify(state),
       updated_at: new Date().toISOString(),
     } as never)
     .eq("code", code);
+  if (error) console.error("[rooms] saveGameState:", error.message);
 }
 
 /** Carrega game state JSON da sala */
@@ -215,10 +251,11 @@ export function getInviteUrl(code: string): string {
 // ─── Helper ────────────────────────────────────────────────────────────────
 
 async function getRoomId(code: string): Promise<string | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("multiplayer_rooms" as never)
     .select("id")
     .eq("code", code)
     .single();
+  if (error) console.error("[rooms] getRoomId:", error.message, "code:", code);
   return data ? (data as { id: string }).id : null;
 }

@@ -39,8 +39,15 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     if (!profile || !roomCode) return;
     setLoading(true);
     joinRoom(roomCode, profile).then((r) => {
-      if (r) setRoom(r);
-      else setError(t("vida.roomNotFound"));
+      if (r) {
+        setRoom(r);
+        console.log(
+          "[lobby] Joined room:",
+          r.code,
+          r.players.length,
+          "players",
+        );
+      } else setError(t("vida.roomNotFound") + " (ver console F12)");
       setLoading(false);
     });
   }, [roomCode, profile]);
@@ -72,7 +79,7 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     if (r) {
       setRoom(r);
       setError("");
-    } else setError(t("vida.roomNotFound"));
+    } else setError(t("vida.roomNotFound") + " (ver console F12)");
     setLoading(false);
   }, [profile, joinCode]);
 
