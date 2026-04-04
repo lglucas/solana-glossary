@@ -4,7 +4,7 @@
  * @projeto Solana Glossary — Jogo da Vida Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { GameState, BoardThemeId } from "../engine/types";
 import {
@@ -25,6 +25,11 @@ interface UseVidaGameOpts {
   myWallet: string;
 }
 
+/** Salva state no Supabase (fire-and-forget) */
+function save(code: string | undefined, s: GameState): void {
+  if (code) saveGameState(code, s);
+}
+
 export function useVidaGame({
   theme,
   players,
@@ -33,44 +38,28 @@ export function useVidaGame({
 }: UseVidaGameOpts) {
   const { i18n } = useTranslation();
   const locale = i18n.language;
-  const [state, setState] = useState<GameState>(() =>
-    createInitialState(theme, players),
-  );
-  const fromPollRef = useRef(false);
-  const initialRef = useRef(true);
+  const [state, setState] = useState<GameState>(() => {
+    const s = createInitialState(theme, players);
+    save(roomCode, s);
+    return s;
+  });
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   const isMyTurn = currentPlayer?.wallet === myWallet;
 
-  // Salva state no Supabase apos acao local (pula poll e render inicial)
-  useEffect(() => {
-    if (!roomCode || fromPollRef.current || initialRef.current) {
-      fromPollRef.current = false;
-      initialRef.current = false;
-      return;
-    }
-    saveGameState(roomCode, state);
-  }, [state, roomCode]);
-
-  // Poll Supabase para receber state do jogador ativo
+  // Poll Supabase para receber state do outro jogador
   useEffect(() => {
     if (!roomCode) return;
     const interval = setInterval(async () => {
       const remote = await loadGameState(roomCode);
       if (!remote) return;
       const rs = remote as GameState;
-      // Atualiza se qualquer campo relevante mudou
       const changed =
         rs.turnCount !== state.turnCount ||
         rs.turnPhase !== state.turnPhase ||
         rs.currentPlayerIndex !== state.currentPlayerIndex ||
-        rs.diceValue !== state.diceValue ||
-        JSON.stringify(rs.players.map((p) => p.position)) !==
-          JSON.stringify(state.players.map((p) => p.position));
-      if (changed) {
-        fromPollRef.current = true;
-        setState(rs);
-      }
+        rs.diceValue !== state.diceValue;
+      if (changed) setState(rs);
     }, 1000);
     return () => clearInterval(interval);
   }, [
@@ -85,34 +74,66 @@ export function useVidaGame({
     audioManager.playSfx("tick");
     setState((s) => {
       const rolled = performRoll(s);
+      save(roomCode, rolled);
       setTimeout(() => {
+        setState((s2) => {
+          const resolved = resolveSpace(s2, locale);
+          save(roomCode, resolved);
+          // Auto-pass se casa normal (sem evento/desafio)
+          if (
+            !resolved.activeEvent &&
+            !resolved.activeChallenge &&
+            !resolved.winner
+          ) {
+            setTimeout(() => {
+              setState((s3) => {
+                const nx = nextTurn(s3);
+                save(roomCode, nx);
+                return nx;
+              });
+            }, 600);
+          }
+          return resolved;
+        });
         audioManager.playSfx("correct");
-        setState((s2) => resolveSpace(s2, locale));
       }, 800);
       return rolled;
     });
-  }, [locale]);
+  }, [locale, roomCode]);
 
   const dismissEvent = useCallback(() => {
     setState((s) => {
       const applied = applyEvent(s);
-      setTimeout(() => setState(nextTurn), 300);
+      save(roomCode, applied);
+      setTimeout(() => {
+        setState((s2) => {
+          const nx = nextTurn(s2);
+          save(roomCode, nx);
+          return nx;
+        });
+      }, 300);
       return applied;
     });
-  }, []);
+  }, [roomCode]);
 
-  const answerChallenge = useCallback((correct: boolean) => {
-    audioManager.playSfx(correct ? "correct" : "wrong");
-    setState((s) => {
-      const applied = applyChallenge(s, correct);
-      setTimeout(() => setState(nextTurn), 300);
-      return applied;
-    });
-  }, []);
-
-  const skipToNext = useCallback(() => {
-    setState((s) => (s.turnPhase === "resolve" ? nextTurn(s) : s));
-  }, []);
+  const answerChallenge = useCallback(
+    (correct: boolean) => {
+      audioManager.playSfx(correct ? "correct" : "wrong");
+      setState((s) => {
+        const applied = applyChallenge(s, correct);
+        save(roomCode, applied);
+        setTimeout(() => {
+          setState((s2) => {
+            const nx = nextTurn(s2);
+            save(roomCode, nx);
+            return nx;
+          });
+        }, 800);
+        return applied;
+      });
+    },
+    [roomCode],
+  );
 
   return {
     state,
@@ -121,6 +142,5 @@ export function useVidaGame({
     roll,
     dismissEvent,
     answerChallenge,
-    skipToNext,
   };
 }
