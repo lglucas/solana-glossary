@@ -13,7 +13,7 @@ import { generateChallenge } from "./challenges";
 /** Cria estado inicial do jogo */
 export function createInitialState(
   theme: BoardThemeId,
-  players: Array<{ name: string; color: string }>,
+  players: Array<{ name: string; color: string; wallet: string }>,
 ): GameState {
   const board = generateBoard(theme);
   return {
@@ -21,6 +21,7 @@ export function createInitialState(
     players: players.map((p, i) => ({
       id: i,
       name: p.name,
+      wallet: p.wallet,
       color: p.color,
       position: 0,
       score: 0,

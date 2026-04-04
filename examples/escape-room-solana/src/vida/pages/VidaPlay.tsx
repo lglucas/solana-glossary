@@ -28,12 +28,12 @@ export default function VidaPlay() {
   const theme = (tema ?? "normie") as BoardThemeId;
   const [phase, setPhase] = useState<Phase>("lobby");
   const [playersCfg, setPlayersCfg] = useState<
-    Array<{ name: string; color: string }>
+    Array<{ name: string; color: string; wallet: string }>
   >([]);
   const [activeCode, setActiveCode] = useState<string | undefined>(code);
 
   const handleStart = (
-    ps: Array<{ name: string; color: string }>,
+    ps: Array<{ name: string; color: string; wallet: string }>,
     roomCode?: string,
   ) => {
     setPlayersCfg(ps);
@@ -70,13 +70,13 @@ function GameBoard({
   t,
 }: {
   theme: BoardThemeId;
-  players: Array<{ name: string; color: string }>;
+  players: Array<{ name: string; color: string; wallet: string }>;
   roomCode?: string;
   navigate: ReturnType<typeof useNavigate>;
   t: ReturnType<typeof useTranslation>["t"];
 }) {
   const { profile } = useProfile();
-  const myName = profile?.nickname ?? players[0]?.name ?? "";
+  const myWallet = profile?.walletAddress ?? "";
 
   useEffect(() => {
     startBgm("defi");
@@ -91,7 +91,7 @@ function GameBoard({
     dismissEvent,
     answerChallenge,
     skipToNext,
-  } = useVidaGame({ theme, players, roomCode, myName });
+  } = useVidaGame({ theme, players, roomCode, myWallet });
 
   if (state.winner) {
     setTimeout(() => {

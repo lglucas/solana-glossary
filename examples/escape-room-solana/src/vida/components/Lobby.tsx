@@ -21,7 +21,7 @@ interface Props {
   theme: string;
   roomCode?: string;
   onStart: (
-    players: Array<{ name: string; color: string }>,
+    players: Array<{ name: string; color: string; wallet: string }>,
     roomCode?: string,
   ) => void;
 }
@@ -64,7 +64,11 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
         if (updated.status === "playing") {
           clearInterval(interval);
           onStart(
-            updated.players.map((p) => ({ name: p.nickname, color: p.color })),
+            updated.players.map((p) => ({
+              name: p.nickname,
+              color: p.color,
+              wallet: p.walletAddress,
+            })),
             updated.code,
           );
         }
@@ -104,7 +108,11 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     if (!room || room.players.length < 2) return;
     await updateRoomStatus(room.code, "playing");
     onStart(
-      room.players.map((p) => ({ name: p.nickname, color: p.color })),
+      room.players.map((p) => ({
+        name: p.nickname,
+        color: p.color,
+        wallet: p.walletAddress,
+      })),
       room.code,
     );
   };

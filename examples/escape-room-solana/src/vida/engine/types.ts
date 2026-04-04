@@ -41,6 +41,7 @@ export const PLAYER_COLORS = [
 export interface Player {
   id: number;
   name: string;
+  wallet: string;
   color: string;
   position: number;
   score: number;

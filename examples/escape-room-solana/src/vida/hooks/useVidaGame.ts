@@ -20,52 +20,56 @@ import { audioManager } from "../../lib/audio";
 
 interface UseVidaGameOpts {
   theme: BoardThemeId;
-  players: Array<{ name: string; color: string }>;
+  players: Array<{ name: string; color: string; wallet: string }>;
   roomCode?: string;
-  myName: string;
+  myWallet: string;
 }
 
 export function useVidaGame({
   theme,
   players,
   roomCode,
-  myName,
+  myWallet,
 }: UseVidaGameOpts) {
   const { i18n } = useTranslation();
   const locale = i18n.language;
   const [state, setState] = useState<GameState>(() =>
     createInitialState(theme, players),
   );
-  const syncRef = useRef(false);
+  const fromPollRef = useRef(false);
 
   const currentPlayer = state.players[state.currentPlayerIndex];
-  const isMyTurn = currentPlayer?.name === myName;
+  const isMyTurn = currentPlayer?.wallet === myWallet;
 
-  // Salva state no Supabase apos cada mudanca
+  // Salva state no Supabase — SO quando e minha vez (evita race condition)
   useEffect(() => {
-    if (!roomCode || !syncRef.current) {
-      syncRef.current = true;
+    if (!roomCode || !isMyTurn || fromPollRef.current) {
+      fromPollRef.current = false;
       return;
     }
     saveGameState(roomCode, state);
-  }, [state, roomCode]);
+  }, [state, roomCode, isMyTurn]);
 
-  // Poll Supabase para receber state de outros jogadores
+  // Poll Supabase para receber state do jogador ativo
   useEffect(() => {
     if (!roomCode) return;
     const interval = setInterval(async () => {
       const remote = await loadGameState(roomCode);
       if (!remote) return;
       const rs = remote as GameState;
-      if (
+      // Atualiza se qualquer campo relevante mudou
+      const changed =
         rs.turnCount !== state.turnCount ||
         rs.turnPhase !== state.turnPhase ||
         rs.currentPlayerIndex !== state.currentPlayerIndex ||
-        rs.diceValue !== state.diceValue
-      ) {
+        rs.diceValue !== state.diceValue ||
+        JSON.stringify(rs.players.map((p) => p.position)) !==
+          JSON.stringify(state.players.map((p) => p.position));
+      if (changed) {
+        fromPollRef.current = true;
         setState(rs);
       }
-    }, 1200);
+    }, 1000);
     return () => clearInterval(interval);
   }, [
     roomCode,
