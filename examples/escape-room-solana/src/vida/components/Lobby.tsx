@@ -4,7 +4,7 @@
  * @projeto Solana Glossary — Jogo da Vida Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { useProfile } from "../../hooks/useProfile";
@@ -29,41 +29,49 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
   const [joinCode, setJoinCode] = useState(roomCode ?? "");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Auto-criar ou entrar na sala se tem roomCode
+  // Auto-entrar se veio por link de convite
   useEffect(() => {
-    if (!profile) return;
-    if (roomCode) {
-      const r = joinRoom(roomCode, profile);
+    if (!profile || !roomCode) return;
+    setLoading(true);
+    joinRoom(roomCode, profile).then((r) => {
       if (r) setRoom(r);
       else setError(t("vida.roomNotFound"));
-    }
+      setLoading(false);
+    });
   }, [roomCode, profile]);
 
-  // Poll para atualizar jogadores (simula realtime)
+  // Poll Supabase para atualizar jogadores
   useEffect(() => {
     if (!room) return;
     const interval = setInterval(() => {
-      const updated = getRoom(room.code);
-      if (updated) setRoom({ ...updated });
+      getRoom(room.code).then((updated) => {
+        if (updated) setRoom(updated);
+      });
     }, 2000);
     return () => clearInterval(interval);
   }, [room?.code]);
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(async () => {
     if (!profile) return;
-    const code = createRoom(theme, profile);
-    setRoom(getRoom(code));
-  };
+    setLoading(true);
+    const code = await createRoom(theme, profile);
+    const r = await getRoom(code);
+    setRoom(r);
+    setLoading(false);
+  }, [theme, profile]);
 
-  const handleJoin = () => {
+  const handleJoin = useCallback(async () => {
     if (!profile || !joinCode.trim()) return;
-    const r = joinRoom(joinCode.trim().toUpperCase(), profile);
+    setLoading(true);
+    const r = await joinRoom(joinCode.trim().toUpperCase(), profile);
     if (r) {
       setRoom(r);
       setError("");
     } else setError(t("vida.roomNotFound"));
-  };
+    setLoading(false);
+  }, [profile, joinCode]);
 
   const handleCopy = () => {
     if (!room) return;
@@ -79,7 +87,6 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
 
   const isHost = room && profile && room.hostWallet === profile.walletAddress;
 
-  // Wallet nao conectada
   if (!connected || !profile) {
     return (
       <div className="text-center py-12">
@@ -89,7 +96,14 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     );
   }
 
-  // Ainda nao tem sala — mostrar opcoes criar/entrar
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (!room) {
     return (
       <motion.div
@@ -132,7 +146,6 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     );
   }
 
-  // Lobby — sala criada, aguardando jogadores
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -151,7 +164,6 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
           {copied ? "✓ " + t("vida.copied") : t("vida.copyLink")}
         </button>
       </div>
-
       <div className="space-y-2 mb-6">
         <p className="text-xs text-gray-500 uppercase tracking-wider">
           {t("vida.playersInRoom", { count: room.players.length })}
@@ -175,7 +187,6 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
           </div>
         ))}
       </div>
-
       {isHost ? (
         <button
           onClick={handleStart}
