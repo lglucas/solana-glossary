@@ -17,14 +17,14 @@
 - [x] Documento de decisoes completo (docs/decisions.md)
 - [x] Regras de desenvolvimento estabelecidas (CLAUDE.md)
 
-## Sprint 1 — Prototipagem Visual (v0.2.0)
+## Sprint 1 — Prototipagem Visual (v0.2.0) ✓
 **Objetivo:** Prototipos de UI para validacao antes de implementar
-- [ ] Scaffold Vite + React + TS + Tailwind
-- [ ] Instalacao do SDK @stbr/solana-glossary
-- [ ] 4 paginas de prototipo (escape-genesis, escape-defi, vida-normie, vida-startup)
-- [ ] Teste de tipografia, paletas, layouts, animacoes, componentes
-- [ ] Build e lint passando sem erros
-- [ ] Avaliacao do Lucas e escolha das melhores tecnicas
+- [x] Scaffold Vite + React + TS + Tailwind (prototipo-visual/)
+- [x] Instalacao do SDK @stbr/solana-glossary (linkado localmente)
+- [x] 4 paginas de prototipo (escape-genesis, escape-defi, vida-normie, vida-startup)
+- [x] Teste de tipografia, paletas, layouts, animacoes, componentes
+- [x] Build e lint passando sem erros
+- [x] Avaliacao do Lucas: todos aprovados, Matrix precisa ajuste no tabuleiro
 
 ## Sprint 2 — Arquitetura Base (v0.3.0) ✓
 **Objetivo:** Estrutura compartilhada entre os dois jogos
