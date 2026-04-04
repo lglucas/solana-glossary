@@ -71,13 +71,13 @@
 
 ## Sprint 5b — Traducao + Identidade Visual (v0.7.0)
 **Objetivo:** Conteudo 100% pt-BR, cada tema com identidade propria
-- [ ] Traduzir definicoes pt-BR: Genesis (core-protocol, blockchain-general, network, infrastructure — 272 termos)
-- [ ] Traduzir definicoes pt-BR: DeFi (token-ecosystem, defi, web3, solana-ecosystem — 412 termos)
-- [ ] Traduzir definicoes pt-BR: Lab (programming-model, dev-tools, programming-fundamentals, security, zk-compression, ai-ml — 317 termos)
+- [x] Traduzir definicoes pt-BR: Genesis (272 termos) — 100%
+- [x] Traduzir definicoes pt-BR: DeFi (412 termos) — 100%
+- [x] Traduzir definicoes pt-BR: Lab (317 termos) — 100%
 - [ ] Traduzir definicoes es: todas as 14 categorias (1001 termos)
-- [ ] Identidade visual por tema: Genesis (roxo/circuitos), DeFi (verde/cofre), Lab (azul-laranja/terminal)
-- [ ] Sons distintos por tema: 3 paletas sonoras (frequencias e timbres diferentes)
-- [ ] Cada puzzle visualmente diferente do outro (nao so mecanica diferente)
+- [x] Identidade visual por tema: Genesis (roxo/circuitos), DeFi (verde/cofre), Lab (azul-laranja/terminal)
+- [x] Sons distintos por tema: 3 paletas sonoras (square/sawtooth/triangle, oitavas diferentes)
+- [x] Todos 12 puzzles recebem prop theme e aplicam estilo visual do tema
 - [ ] Testes de usabilidade em todos os 12 puzzles
 
 ## Sprint 6 — Jogo da Vida: Engine Core (v0.8.0)

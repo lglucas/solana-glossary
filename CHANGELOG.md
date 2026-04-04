@@ -5,6 +5,35 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.7.0] - 2026-04-04
+
+### Adicionado (Sprint 5b — Traducao + Identidade Visual)
+- 979/1001 definicoes traduzidas para pt-BR no SDK (`data/i18n/pt.json`)
+  - Genesis: core-protocol (86), blockchain-general (84), network (58), infrastructure (44)
+  - DeFi: token-ecosystem (59), defi (135), web3 (80), solana-ecosystem (138)
+  - Lab: programming-model (69), dev-tools (64), programming-fundamentals (47), security (48), zk-compression (34), ai-ml (55)
+- Identidade visual por tema via CSS:
+  - Genesis: roxo/violeta com grid de circuitos
+  - DeFi: verde/teal com estetica de cofre
+  - Lab: azul/laranja com linhas de terminal
+- Sons distintos por tema (Web Audio API):
+  - Genesis: square wave, oitava grave (digital)
+  - DeFi: sawtooth wave, oitava media (metalico)
+  - Lab: triangle wave, oitava aguda (eletronico)
+- `scripts/merge-translations.js` — ferramenta de merge de patches de traducao
+- PuzzleShell e todos 12 puzzles aceitam prop `theme` para estilizacao
+
+### Modificado
+- `data/i18n/pt.json` — 822 definicoes traduzidas de EN para PT-BR (de 182 para 979)
+- `lib/audio.ts` — playSfx() agora aceita tema, sons variam por tema
+- `index.css` — 3 classes CSS de tema (puzzle-shell--genesis/defi/lab)
+- `engine/puzzleTypes.ts` — theme? adicionado a PuzzleBaseProps
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (2.76s) | 98% cobertura traducao
+
+---
+
 ## [0.6.1] - 2026-04-04
 
 ### Corrigido
