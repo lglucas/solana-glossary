@@ -5,6 +5,39 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.5.0] - 2026-04-04
+
+### Adicionado (Escape Room — Sprint 4: 12 Puzzles)
+- `engine/puzzleTypes.ts` — interfaces PuzzleResult, PerTermPuzzleProps, BatchPuzzleProps
+- `engine/puzzleRegistry.ts` — registro lazy dos 12 puzzles com mapeamento tema:nivel
+- `puzzles/shared/PuzzleShell.tsx` — wrapper visual glassmorphism com AnimatePresence
+- `puzzles/shared/textUtils.ts` — Levenshtein, fuzzyMatch, maskTerm, cipherDefinition
+- `puzzles/MultipleChoice.tsx` — definicao → 4 opcoes (Genesis/Surface)
+- `puzzles/TrueFalse.tsx` — termo + definicao real/trocada (Genesis/Confirmation)
+- `puzzles/FillBlank.tsx` — definicao mascarada, digitar termo (Genesis/Finality)
+- `puzzles/ConnectionWeb.tsx` — conectar termos related em grid (Genesis/Consensus)
+- `puzzles/TermMatcher.tsx` — parear termos com definicoes em colunas (DeFi/Surface)
+- `puzzles/CategorySort.tsx` — classificar termos em buckets de categoria (DeFi/Confirmation)
+- `puzzles/DefinitionBuilder.tsx` — montar definicao com chips ordenados (DeFi/Finality)
+- `puzzles/OddOneOut.tsx` — identificar intruso de outra categoria (DeFi/Consensus)
+- `puzzles/AliasResolver.tsx` — alias/abreviacao → termo correto (Lab/Surface)
+- `puzzles/RelatedTerms.tsx` — multi-select termos relacionados (Lab/Confirmation)
+- `puzzles/CodeBreaker.tsx` — definicao cifrada estilo terminal (Lab/Finality)
+- `puzzles/TermTimeline.tsx` — reordenar por dependencia conceitual (Lab/Consensus)
+- i18n: 48 chaves de puzzle em pt-BR + es
+
+### Modificado
+- `lib/glossary.ts` — PuzzleTerm estendido com `related[]` e `aliases[]`, `shuffle` exportada
+- `pages/GamePlay.tsx` — refatorado: puzzle registry + dois modos (per-term/batch)
+- `components/GameHud.tsx` — suporte a `puzzleMode` batch (esconde dots de progresso)
+- `CLAUDE.md` — adicionada convencao de commit obrigatoria
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.47s) | 22 arquivos novos ≤200 linhas
+- 12 puzzles lazy-loaded como chunks separados
+
+---
+
 ## [0.4.0] - 2026-04-04
 
 ### Adicionado (Escape Room — Sprint 3: Engine Core)

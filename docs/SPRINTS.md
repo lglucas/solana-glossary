@@ -47,13 +47,15 @@
 - [x] Pagina de selecao de temas — pages/ThemeSelect.tsx
 - [x] Gameplay funcional (quiz multiple-choice) — pages/GamePlay.tsx
 
-## Sprint 4 — Escape Room: 12 Puzzles (v0.5.0)
+## Sprint 4 — Escape Room: 12 Puzzles (v0.5.0) ✓
 **Objetivo:** Todos os 12 formatos de puzzle implementados
-- [ ] Tema 1 "O Bloco Genesis" — 4 puzzles (Surface a Consensus)
-- [ ] Tema 2 "O Cofre DeFi" — 4 puzzles (Surface a Consensus)
-- [ ] Tema 3 "O Laboratorio do Dev" — 4 puzzles (Surface a Consensus)
-- [ ] Conteudo curado: termos fixos + 3x variacoes por puzzle
-- [ ] i18n de todo o conteudo (pt-BR + es)
+- [x] Tema 1 "O Bloco Genesis" — MultipleChoice, TrueFalse, FillBlank, ConnectionWeb
+- [x] Tema 2 "O Cofre DeFi" — TermMatcher, CategorySort, DefinitionBuilder, OddOneOut
+- [x] Tema 3 "O Laboratorio do Dev" — AliasResolver, RelatedTerms, CodeBreaker, TermTimeline
+- [x] Arquitetura: PuzzleRegistry, PuzzleTypes, PuzzleShell, textUtils
+- [x] GamePlay refatorado: per-term (8 puzzles) + batch (4 puzzles)
+- [x] i18n de todo conteudo (pt-BR + es) — 48 chaves de puzzle
+- [x] Build: zero erros TS, Vite 1.47s, 22 arquivos ≤200 linhas
 
 ## Sprint 5 — Escape Room: Polish (v0.6.0)
 **Objetivo:** Acabamento profissional do Escape Room
