@@ -2,7 +2,7 @@
  * @arquivo nft.ts
  * @descricao Busca NFTs da wallet via DAS API — fallback graceful se nao suportado
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────

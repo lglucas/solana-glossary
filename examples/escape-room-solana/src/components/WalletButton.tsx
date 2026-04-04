@@ -2,7 +2,7 @@
  * @arquivo WalletButton.tsx
  * @descricao Botao de conexao wallet Solana com dropdown de perfil
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useRef, useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";

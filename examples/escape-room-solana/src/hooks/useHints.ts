@@ -2,7 +2,7 @@
  * @arquivo useHints.ts
  * @descricao Hook para sistema de dicas progressivo com penalidade
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useCallback } from "react";
 import type { PuzzleTerm } from "../lib/glossary";

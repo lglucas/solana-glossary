@@ -2,7 +2,7 @@
  * @arquivo AnimatedBlobs.tsx
  * @descricao Blobs animados de fundo com variantes por tema
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { motion } from "framer-motion";

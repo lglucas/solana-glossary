@@ -2,7 +2,7 @@
  * @arquivo useScore.ts
  * @descricao Hook para sistema de pontuacao com bonus de tempo e multiplicador
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useCallback } from "react";
 

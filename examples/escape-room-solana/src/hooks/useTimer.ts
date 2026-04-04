@@ -2,7 +2,7 @@
  * @arquivo useTimer.ts
  * @descricao Hook de timer com contagem regressiva, pause e callbacks
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useRef, useCallback, useEffect } from "react";
 

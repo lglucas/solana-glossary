@@ -2,7 +2,7 @@
  * @arquivo GameResult.tsx
  * @descricao Tela de resultado (vitoria/derrota) com estatisticas
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";

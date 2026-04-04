@@ -2,7 +2,7 @@
  * @arquivo GameHud.tsx
  * @descricao Barra HUD do jogo — timer, pontuacao, progresso e controles
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { motion, AnimatePresence } from "framer-motion";

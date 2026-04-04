@@ -2,7 +2,7 @@
  * @arquivo PuzzleCard.tsx
  * @descricao Card do puzzle — exibe definicao e opcoes de resposta
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { useMemo } from "react";

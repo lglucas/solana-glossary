@@ -2,7 +2,7 @@
  * @arquivo ThemeProgressCard.tsx
  * @descricao Card de tema com barra de progresso e desbloqueio de niveis
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState } from "react";
 import { Link } from "react-router-dom";

@@ -2,7 +2,7 @@
  * @arquivo merge-translations-es.js
  * @descricao Merge de patches de traducao espanhol no es.json
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  *
  * Uso: node scripts/merge-translations-es.js
  */

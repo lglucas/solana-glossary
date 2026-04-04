@@ -2,7 +2,7 @@
  * @arquivo CategorySort.tsx
  * @descricao Puzzle classificar categorias — arrastar termos para buckets (batch)
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

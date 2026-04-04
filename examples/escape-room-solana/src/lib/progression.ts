@@ -2,7 +2,7 @@
  * @arquivo progression.ts
  * @descricao Sistema de progressao — desbloqueio de niveis via localStorage
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import type { ThemeId, LevelId } from "../engine/themes";
 

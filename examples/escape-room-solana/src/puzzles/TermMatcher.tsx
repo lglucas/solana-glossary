@@ -2,7 +2,7 @@
  * @arquivo TermMatcher.tsx
  * @descricao Puzzle combinar termos — parear termos com definicoes (batch)
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

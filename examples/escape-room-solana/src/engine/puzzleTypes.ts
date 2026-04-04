@@ -2,7 +2,7 @@
  * @arquivo puzzleTypes.ts
  * @descricao Tipos e interfaces compartilhados entre todos os puzzles
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import type { PuzzleTerm } from "../lib/glossary";
 import type { ThemeId } from "./themes";

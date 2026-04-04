@@ -2,7 +2,7 @@
  * @arquivo GamePlay.tsx
  * @descricao Orquestrador do gameplay — resolve puzzle do registry e gerencia game loop
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useParams, useNavigate } from "react-router-dom";
 import {

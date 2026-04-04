@@ -2,7 +2,7 @@
  * @arquivo OddOneOut.tsx
  * @descricao Puzzle intruso — identificar o termo que nao pertence ao grupo
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

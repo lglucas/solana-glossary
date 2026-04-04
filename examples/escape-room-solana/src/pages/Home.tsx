@@ -2,7 +2,7 @@
  * @arquivo Home.tsx
  * @descricao Landing page com selecao de temas e progressao de niveis
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";

@@ -2,7 +2,7 @@
  * @arquivo main.tsx
  * @descricao Ponto de entrada da aplicacao — monta providers e renderiza App
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { StrictMode } from "react";

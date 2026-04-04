@@ -2,7 +2,7 @@
  * @arquivo AliasResolver.tsx
  * @descricao Puzzle resolver alias — dado uma abreviacao, identificar o termo
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

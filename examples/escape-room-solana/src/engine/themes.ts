@@ -2,7 +2,7 @@
  * @arquivo themes.ts
  * @descricao Configuracao dos temas, niveis e mapeamento de categorias do SDK
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import type { Category } from "@stbr/solana-glossary";
 

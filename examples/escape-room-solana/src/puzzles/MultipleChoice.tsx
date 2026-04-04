@@ -2,7 +2,7 @@
  * @arquivo MultipleChoice.tsx
  * @descricao Puzzle multipla escolha — definicao → escolher termo correto
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

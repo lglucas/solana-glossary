@@ -2,7 +2,7 @@
  * @arquivo HintsPanel.tsx
  * @descricao Painel lateral de dicas — exibe dicas reveladas e bloqueadas
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { useTranslation } from "react-i18next";

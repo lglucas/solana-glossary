@@ -46,7 +46,7 @@
     "topPlayers": "Top Jogadores",
     "viewAll": "Ver ranking completo",
     "noScores": "Nenhuma pontuacao registrada ainda",
-    "footer": "Superteam Brazil × AceleradoraECO — 2026",
+    "footer": "Superteam Brazil × Tokenfy.me — @lg_lucas",
     "games": {
       "escape": "Escape Room",
       "escapeDesc": "Desvende 12 puzzles em 3 temas. Resolva desafios de blockchain contra o relogio.",
@@ -78,7 +78,7 @@
     "hintLocked": "Dica bloqueada — resolva mais termos",
     "victory": "Voce escapou!",
     "defeat": "Tempo esgotado!",
-    "footer": "Solana Glossary — Superteam Brazil"
+    "footer": "Solana Glossary — Tokenfy.me (@lg_lucas)"
   },
   "hints": {
     "useHint": "Usar Dica (-{{cost}} pts)",

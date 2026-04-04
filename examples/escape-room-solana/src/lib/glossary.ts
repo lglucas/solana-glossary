@@ -2,7 +2,7 @@
  * @arquivo glossary.ts
  * @descricao Integracao com SDK @stbr/solana-glossary — busca e selecao de termos
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import {
   getTermsByCategory,

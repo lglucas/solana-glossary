@@ -2,7 +2,7 @@
  * @arquivo Layout.tsx
  * @descricao Layout compartilhado com barra superior (nav, idioma, audio, wallet)
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { type ReactNode, useState } from "react";

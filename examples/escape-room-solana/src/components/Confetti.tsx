@@ -2,7 +2,7 @@
  * @arquivo Confetti.tsx
  * @descricao Particulas de confetti para tela de vitoria
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo } from "react";
 import { motion } from "framer-motion";

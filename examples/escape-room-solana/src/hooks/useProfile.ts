@@ -2,7 +2,7 @@
  * @arquivo useProfile.ts
  * @descricao Hook de perfil do jogador — localStorage + Supabase opcional
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";

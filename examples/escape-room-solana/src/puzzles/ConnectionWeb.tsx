@@ -2,7 +2,7 @@
  * @arquivo ConnectionWeb.tsx
  * @descricao Puzzle rede de conexoes — conectar termos relacionados (batch)
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

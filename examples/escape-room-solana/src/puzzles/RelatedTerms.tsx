@@ -2,7 +2,7 @@
  * @arquivo RelatedTerms.tsx
  * @descricao Puzzle termos relacionados — selecionar quais termos sao related
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

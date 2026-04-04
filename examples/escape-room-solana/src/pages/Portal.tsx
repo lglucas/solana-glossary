@@ -2,7 +2,7 @@
  * @arquivo Portal.tsx
  * @descricao Pagina de entrada retro-Solana estilo Sonic/Mega Man X
  * @projeto Solana Glossary — Escape Room Solana + Jogo da Vida
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";

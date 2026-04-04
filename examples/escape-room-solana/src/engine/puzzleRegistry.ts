@@ -2,7 +2,7 @@
  * @arquivo puzzleRegistry.ts
  * @descricao Registro dos 12 puzzles — mapeia (tema, nivel) para componente
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { lazy } from "react";
 import type { ThemeId, LevelId } from "./themes";

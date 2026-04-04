@@ -2,7 +2,7 @@
  * @arquivo PuzzleShell.tsx
  * @descricao Wrapper visual compartilhado — glassmorphism, animacao entrada/saida
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";

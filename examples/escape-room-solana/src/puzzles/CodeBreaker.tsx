@@ -2,7 +2,7 @@
  * @arquivo CodeBreaker.tsx
  * @descricao Puzzle quebra-codigo — definicao cifrada, digitar o termo
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";

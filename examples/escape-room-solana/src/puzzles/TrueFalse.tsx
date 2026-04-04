@@ -2,7 +2,7 @@
  * @arquivo TrueFalse.tsx
  * @descricao Puzzle verdadeiro/falso — termo + definicao, jogador valida
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";

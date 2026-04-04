@@ -2,7 +2,7 @@
  * @arquivo textUtils.ts
  * @descricao Utilidades de texto para puzzles — fuzzy match, mascaramento, cifra
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 /** Distancia de Levenshtein entre duas strings */

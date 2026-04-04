@@ -2,7 +2,7 @@
  * @arquivo ThemeCard.tsx
  * @descricao Card glassmorphism de tema com gradiente e animacao hover
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { Link } from "react-router-dom";

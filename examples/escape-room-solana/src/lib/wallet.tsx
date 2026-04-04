@@ -2,7 +2,7 @@
  * @arquivo wallet.tsx
  * @descricao Provider de wallet Solana com Phantom e Solflare
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { type FC, type ReactNode, useMemo } from "react";

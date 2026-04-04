@@ -2,7 +2,7 @@
  * @arquivo i18n.ts
  * @descricao Configuracao do react-i18next com pt-BR e es
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import i18n from "i18next";

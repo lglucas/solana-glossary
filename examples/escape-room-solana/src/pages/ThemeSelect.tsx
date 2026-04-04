@@ -2,7 +2,7 @@
  * @arquivo ThemeSelect.tsx
  * @descricao Pagina de selecao de tema — 3 temas com niveis de dificuldade
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { useTranslation } from "react-i18next";

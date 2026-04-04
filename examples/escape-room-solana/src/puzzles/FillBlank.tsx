@@ -2,7 +2,7 @@
  * @arquivo FillBlank.tsx
  * @descricao Puzzle preencher lacuna — definicao com termo omitido, digitar resposta
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useRef, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";

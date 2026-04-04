@@ -2,7 +2,7 @@
  * @arquivo App.tsx
  * @descricao Componente raiz com rotas lazy-loaded da aplicacao
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { lazy, Suspense } from "react";

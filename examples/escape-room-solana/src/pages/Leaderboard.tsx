@@ -2,7 +2,7 @@
  * @arquivo Leaderboard.tsx
  * @descricao Ranking de pontuacoes com filtro por tema e destaque do jogador
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";

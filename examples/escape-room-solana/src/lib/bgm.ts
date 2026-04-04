@@ -2,7 +2,7 @@
  * @arquivo bgm.ts
  * @descricao Musica ambiente sintetizada por tema via Web Audio API — zero mp3
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 import { getAudioContext } from "./audio";
 

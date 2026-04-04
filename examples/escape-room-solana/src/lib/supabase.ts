@@ -2,7 +2,7 @@
  * @arquivo supabase.ts
  * @descricao Cliente Supabase singleton com tipagem do schema do banco
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 import { createClient } from "@supabase/supabase-js";

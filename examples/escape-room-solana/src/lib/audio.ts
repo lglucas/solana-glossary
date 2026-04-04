@@ -2,7 +2,7 @@
  * @arquivo audio.ts
  * @descricao Audio sintetizado 8-bit via Web Audio API — zero dependencias de mp3
  * @projeto Solana Glossary — Escape Room Solana
- * @autor Lucas Galvao — AceleradoraECO
+ * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
 
 /** Efeitos sonoros disponiveis */
