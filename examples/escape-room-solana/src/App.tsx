@@ -13,6 +13,7 @@ import { Routes, Route } from "react-router-dom";
 const Home = lazy(() => import("./pages/Home"));
 const ThemeSelect = lazy(() => import("./pages/ThemeSelect"));
 const GamePlay = lazy(() => import("./pages/GamePlay"));
+const GameResult = lazy(() => import("./pages/GameResult"));
 const Leaderboard = lazy(() => import("./pages/Leaderboard"));
 
 // ─── Spinner de carregamento ────────────────────────────────────────────────
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/temas" element={<ThemeSelect />} />
         <Route path="/jogar/:tema/:nivel" element={<GamePlay />} />
+        <Route path="/resultado/:tema/:nivel" element={<GameResult />} />
         <Route path="/ranking" element={<Leaderboard />} />
       </Routes>
     </Suspense>
