@@ -115,13 +115,15 @@
 - [ ] Responsividade (mobile + desktop)
 - [ ] Testes de usabilidade
 
-## Sprint 10 — Leaderboard e Integracao (v0.11.0)
+## Sprint 10 — Leaderboard e Integracao (v0.8.0) ✓
 **Objetivo:** Sistema de ranking e integracao final
-- [ ] Leaderboard por jogo (Escape Room + Jogo da Vida)
-- [ ] Leaderboard geral (soma dos dois jogos)
-- [ ] Perfil do jogador (nickname, avatar, historico)
-- [ ] Landing page final com navegacao entre jogos
-- [ ] Testes end-to-end
+- [x] Conexao wallet real (Phantom + Solflare) com WalletButton
+- [x] Perfil do jogador (nickname, avatar emoji, localStorage + Supabase)
+- [x] Leaderboard por tema (Geral / Genesis / DeFi / Lab)
+- [x] Score auto-submetido ao vencer (rank + flag novo recorde)
+- [x] i18n: wallet, profile, leaderboard (pt-BR + es)
+- [ ] Landing page final com navegacao entre jogos (Sprint 12)
+- [ ] Testes end-to-end (Sprint 11)
 
 ## Sprint 11 — Deploy e QA (v0.12.0)
 **Objetivo:** Deploy em producao e garantia de qualidade
@@ -159,6 +161,6 @@
 | 7 | v0.9.0 | Multiplayer online |
 | 8 | v0.9.0 | 3 tabuleiros completos |
 | 9 | v0.10.0 | Jogo da Vida polido |
-| 10 | v0.11.0 | Leaderboard + integracao |
+| 10 | v0.8.0 | Wallet + Perfil + Leaderboard |
 | 11 | v0.12.0 | Deploy + QA |
 | 12 | v1.0.0 | Submissao final |

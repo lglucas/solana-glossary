@@ -5,14 +5,16 @@
  * @autor Lucas Galvao — AceleradoraECO
  */
 import { Link, useLocation, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import Layout from "../components/Layout";
-import AnimatedBlobs from "../components/AnimatedBlobs";
+import AnimatedBlobs, { type BlobVariant } from "../components/AnimatedBlobs";
 import Confetti from "../components/Confetti";
-import type { BlobVariant } from "../components/AnimatedBlobs";
+import { useProfile } from "../hooks/useProfile";
+import { submitGameScore } from "../lib/leaderboard";
 
-interface ResultState {
+type ResultState = {
   won: boolean;
   score: number;
   timeLeft: number;
@@ -21,7 +23,7 @@ interface ResultState {
   hintsUsed: number;
   theme: string;
   level: string;
-}
+};
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -39,20 +41,37 @@ export default function GameResult() {
   const { t } = useTranslation();
   const { state: locState } = useLocation();
   const { tema, nivel } = useParams<{ tema: string; nivel: string }>();
-
-  const s: ResultState = (locState as ResultState) ?? {
-    won: false,
-    score: 0,
-    timeLeft: 0,
-    correctCount: 0,
-    wrongCount: 0,
-    hintsUsed: 0,
-    theme: tema ?? "genesis",
-    level: nivel ?? "surface",
-  };
-  const blob: BlobVariant =
-    s.theme === "defi" ? "defi" : s.theme === "lab" ? "lab" : "genesis";
+  const { profile } = useProfile();
+  const [rank, setRank] = useState<number | null>(null);
+  const [isNewRecord, setIsNewRecord] = useState(false);
+  const s =
+    (locState as ResultState) ??
+    ({
+      won: false,
+      score: 0,
+      timeLeft: 0,
+      correctCount: 0,
+      wrongCount: 0,
+      hintsUsed: 0,
+      theme: tema ?? "genesis",
+      level: nivel ?? "surface",
+    } as ResultState);
+  const blob = s.theme as BlobVariant;
   const timeFmt = `${Math.floor(s.timeLeft / 60)}:${String(s.timeLeft % 60).padStart(2, "0")}`;
+
+  useEffect(() => {
+    if (!s.won || !profile || rank !== null) return;
+    const g = {
+      theme: s.theme,
+      level: s.level,
+      score: s.score,
+      timeSeconds: s.timeLeft,
+      hintsUsed: s.hintsUsed,
+    };
+    const r = submitGameScore(profile, g);
+    setRank(r.rank);
+    setIsNewRecord(r.isNewRecord);
+  }, [s.won, profile]);
 
   const stats = [
     {
@@ -73,8 +92,7 @@ export default function GameResult() {
       color: "text-yellow-400",
     },
   ];
-
-  const titleGrad = s.won
+  const grad = s.won
     ? "from-green-400 via-cyan-400 to-green-300"
     : "from-red-500 via-orange-400 to-red-500";
 
@@ -83,7 +101,6 @@ export default function GameResult() {
       <div className="relative min-h-screen bg-[#0a0015] text-white font-['Space_Grotesk',sans-serif]">
         <AnimatedBlobs variant={blob} />
         {s.won && <Confetti />}
-
         <motion.div
           className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-16"
           variants={stagger}
@@ -94,7 +111,7 @@ export default function GameResult() {
             variants={fadeUp}
             animate={s.won ? undefined : { x: [0, -8, 8, -6, 6, -3, 3, 0] }}
             transition={s.won ? undefined : { duration: 0.6, delay: 0.5 }}
-            className={`text-5xl md:text-6xl font-extrabold text-center mb-4 font-['Orbitron',sans-serif] bg-gradient-to-r ${titleGrad} bg-clip-text text-transparent`}
+            className={`text-5xl md:text-6xl font-extrabold text-center mb-4 font-['Orbitron',sans-serif] bg-gradient-to-r ${grad} bg-clip-text text-transparent`}
           >
             {s.won ? t("escape.victory") : t("escape.defeat")}
           </motion.h1>
@@ -107,7 +124,6 @@ export default function GameResult() {
             {t(`escape.levels.${s.level}`)}
           </motion.p>
 
-          {/* Card de estatisticas */}
           <motion.div
             variants={fadeUp}
             className="w-full max-w-md rounded-2xl p-[1px] bg-gradient-to-br from-purple-600/50 via-cyan-400/30 to-green-400/50 mb-10"
@@ -144,6 +160,18 @@ export default function GameResult() {
               </div>
             </div>
           </motion.div>
+          {rank !== null && (
+            <motion.div variants={fadeUp} className="flex gap-3 mb-6">
+              <span className="text-sm text-cyan-400 bg-cyan-400/10 px-4 py-1.5 rounded-full">
+                {t("leaderboard.yourRank", { rank })}
+              </span>
+              {isNewRecord && (
+                <span className="text-sm text-yellow-400 bg-yellow-400/10 px-4 py-1.5 rounded-full animate-pulse">
+                  {t("leaderboard.newRecord")}
+                </span>
+              )}
+            </motion.div>
+          )}
 
           <motion.div variants={fadeUp} className="flex gap-4">
             <Link
@@ -157,6 +185,12 @@ export default function GameResult() {
               className="px-6 py-3 rounded-xl border border-white/20 text-gray-300 hover:text-white hover:border-white/40 transition-colors text-sm"
             >
               {t("result.backToThemes")}
+            </Link>
+            <Link
+              to="/ranking"
+              className="px-6 py-3 rounded-xl border border-cyan-500/30 text-cyan-400 hover:border-cyan-400/60 transition-colors text-sm"
+            >
+              {t("common.leaderboard")}
             </Link>
           </motion.div>
         </motion.div>

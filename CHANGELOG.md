@@ -5,6 +5,39 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.8.0] - 2026-04-04
+
+### Adicionado (Sprint 10 — Wallet + Perfil + Leaderboard)
+- `components/WalletButton.tsx` — botao de conexao wallet real (Phantom/Solflare)
+  - Dropdown: avatar + nickname, copiar endereco, editar perfil, desconectar
+  - Edicao inline de nickname (max 16 chars) e avatar (10 emojis tematicos)
+- `hooks/useProfile.ts` — hook de perfil com localStorage + Supabase opcional
+  - Auto-cria perfil no primeiro connect (nickname "Anon", avatar aleatorio)
+  - Sync para Supabase em melhor esforco (funciona sem backend)
+- `lib/leaderboard.ts` — sistema de scores com localStorage + Supabase opcional
+  - submitScore(), getTopScores(), getUserScores(), getBestScore(), submitGameScore()
+  - Ranking automatico por pontuacao decrescente
+- `pages/Leaderboard.tsx` — pagina de ranking completa
+  - Tabs: Geral / Genesis / DeFi / Lab
+  - Tabela: rank, avatar, nickname, score, tema, nivel
+  - Destaque do jogador atual (highlight ciano)
+  - Medalhas top 3 (ouro, prata, bronze)
+- Score auto-submetido ao vencer qualquer nivel
+- Indicador de posicao no ranking + "Novo recorde!" na tela de resultado
+- Link "Ranking" adicionado na tela de resultado
+- i18n: 15 novas chaves em wallet.*, profile.*, leaderboard.* (pt-BR + es)
+
+### Modificado
+- `components/Layout.tsx` — botao placeholder substituido por WalletButton real
+- `pages/GameResult.tsx` — integra submitGameScore(), exibe rank e recorde
+- `locales/pt-BR.json` — +15 chaves (wallet, profile, leaderboard)
+- `locales/es.json` — +15 chaves (wallet, profile, leaderboard)
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.42s) | Todos arquivos ≤200 linhas
+
+---
+
 ## [0.7.3] - 2026-04-04
 
 ### Adicionado (Sprint 5 — BGM sintetizado)

@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { audioManager } from "../lib/audio";
 import { muteBgm } from "../lib/bgm";
+import WalletButton from "./WalletButton";
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
 
@@ -80,10 +81,8 @@ export default function Layout({ children, hideBack = false }: LayoutProps) {
             {muted ? "🔇" : "🔊"}
           </button>
 
-          {/* Placeholder wallet */}
-          <button className="text-xs px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-medium hover:opacity-90 transition-opacity">
-            {t("common.connectWallet")}
-          </button>
+          {/* Wallet Solana */}
+          <WalletButton />
         </div>
       </header>
 

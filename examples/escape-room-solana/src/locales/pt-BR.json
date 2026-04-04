@@ -13,7 +13,32 @@
     "language": "Idioma",
     "mute": "Silenciar",
     "unmute": "Ativar Som",
-    "loading": "Carregando..."
+    "loading": "Carregando...",
+    "noData": "Nenhum dado ainda"
+  },
+  "wallet": {
+    "copyAddress": "Copiar Endereco",
+    "disconnect": "Desconectar",
+    "connected": "Conectado"
+  },
+  "profile": {
+    "edit": "Editar Perfil",
+    "save": "Salvar",
+    "nickPlaceholder": "Seu nickname..."
+  },
+  "leaderboard": {
+    "title": "Ranking Escape Room",
+    "all": "Geral",
+    "rank": "#",
+    "player": "Jogador",
+    "bestScore": "Melhor Pontuacao",
+    "theme": "Tema",
+    "level": "Nivel",
+    "date": "Data",
+    "empty": "Nenhuma pontuacao registrada",
+    "yourRank": "Sua posicao: #{{rank}}",
+    "scoreSaved": "Pontuacao salva!",
+    "newRecord": "Novo recorde!"
   },
   "escape": {
     "title": "Escape Room Solana",
