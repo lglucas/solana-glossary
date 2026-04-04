@@ -14,7 +14,7 @@ export default function WalletButton() {
   const { t } = useTranslation();
   const { publicKey, disconnect, connected } = useWallet();
   const { setVisible } = useWalletModal();
-  const { profile, avatars, updateProfile } = useProfile();
+  const { profile, avatars, nftAvatars, updateProfile } = useProfile();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [nick, setNick] = useState("");
@@ -50,6 +50,18 @@ export default function WalletButton() {
     setEditing(false);
   };
 
+  const isImageAvatar = profile?.avatar?.startsWith("http");
+  const AvatarImg = ({ size = "text-base" }: { size?: string }) =>
+    isImageAvatar ? (
+      <img
+        src={profile!.avatar}
+        alt="NFT"
+        className={`${size === "text-3xl" ? "w-9 h-9" : "w-5 h-5"} rounded-full object-cover`}
+      />
+    ) : (
+      <span className={size}>{profile?.avatar ?? "⚡"}</span>
+    );
+
   // ── Nao conectado ─────────────────────────────────────────────────────
   if (!connected) {
     return (
@@ -69,7 +81,7 @@ export default function WalletButton() {
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-purple-500/40 bg-purple-900/30 text-white hover:border-purple-400/60 transition-colors"
       >
-        <span className="text-base">{profile?.avatar ?? "⚡"}</span>
+        <AvatarImg size="text-base" />
         <span>{profile?.nickname ?? "Anon"}</span>
         <span className="text-gray-500">{truncated}</span>
       </button>
@@ -78,7 +90,7 @@ export default function WalletButton() {
         <div className="absolute right-0 top-full mt-2 w-64 rounded-xl bg-gray-900/95 backdrop-blur-xl border border-white/10 shadow-2xl p-3 z-50">
           {/* Avatar + Nick */}
           <div className="flex items-center gap-3 mb-3 pb-3 border-b border-white/10">
-            <span className="text-3xl">{profile?.avatar ?? "⚡"}</span>
+            <AvatarImg size="text-3xl" />
             <div>
               <p className="text-white font-medium text-sm">
                 {profile?.nickname}
@@ -97,6 +109,24 @@ export default function WalletButton() {
                 placeholder={t("profile.nickPlaceholder")}
                 className="w-full px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:border-purple-400 outline-none"
               />
+              {nftAvatars.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {nftAvatars.map((nft) => (
+                    <button
+                      key={nft.mint}
+                      onClick={() => updateProfile({ avatar: nft.image })}
+                      title={nft.name}
+                      className={`w-9 h-9 rounded-lg overflow-hidden transition-all ${profile?.avatar === nft.image ? "ring-2 ring-purple-400 scale-110" : "hover:scale-105 opacity-80 hover:opacity-100"}`}
+                    >
+                      <img
+                        src={nft.image}
+                        alt={nft.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex flex-wrap gap-1.5">
                 {avatars.map((av) => (
                   <button

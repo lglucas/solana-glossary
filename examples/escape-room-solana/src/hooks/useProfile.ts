@@ -7,6 +7,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { supabase } from "../lib/supabase";
+import { fetchNftAvatars, type NftAvatar } from "../lib/nft";
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────
 
@@ -69,6 +70,7 @@ async function syncToSupabase(profile: PlayerProfile): Promise<void> {
 export function useProfile() {
   const { publicKey, connected } = useWallet();
   const [profile, setProfile] = useState<PlayerProfile | null>(loadProfile());
+  const [nftAvatars, setNftAvatars] = useState<NftAvatar[]>([]);
 
   // Auto-cria perfil quando wallet conecta pela primeira vez
   useEffect(() => {
@@ -91,9 +93,22 @@ export function useProfile() {
     syncToSupabase(newProfile);
   }, [connected, publicKey]);
 
+  // Busca NFTs da wallet para usar como avatar
+  useEffect(() => {
+    if (!connected || !publicKey) {
+      setNftAvatars([]);
+      return;
+    }
+    const rpc = import.meta.env.VITE_SOLANA_RPC_URL || "";
+    fetchNftAvatars(rpc, publicKey.toBase58()).then(setNftAvatars);
+  }, [connected, publicKey]);
+
   // Limpa profile ao desconectar
   useEffect(() => {
-    if (!connected) setProfile(null);
+    if (!connected) {
+      setProfile(null);
+      setNftAvatars([]);
+    }
   }, [connected]);
 
   /** Atualiza nickname e/ou avatar */
@@ -112,6 +127,7 @@ export function useProfile() {
     profile,
     connected,
     avatars: AVATARS,
+    nftAvatars,
     updateProfile,
   };
 }
