@@ -87,10 +87,23 @@ const SFX_MAP: Record<SfxName, () => void> = {
 
 class AudioManager {
   private muted = false;
+  private initialized = false;
+
+  /** Inicializa AudioContext — chamar em qualquer click do usuario */
+  init(): void {
+    if (this.initialized) return;
+    try {
+      getCtx();
+      this.initialized = true;
+    } catch {
+      /* noop */
+    }
+  }
 
   /** Toca um efeito sonoro sintetizado */
   playSfx(name: SfxName): void {
     if (this.muted) return;
+    if (!this.initialized) this.init();
     try {
       SFX_MAP[name]();
     } catch {

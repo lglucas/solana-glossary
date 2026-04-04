@@ -26,15 +26,25 @@ export interface PuzzleTerm {
 }
 
 /**
+ * Normaliza locale do i18n para o formato do SDK.
+ * i18n usa "pt-BR" mas SDK tem "pt.json", nao "pt-BR.json".
+ */
+function normalizeLocale(locale: string): string {
+  const map: Record<string, string> = { "pt-BR": "pt", "pt-br": "pt" };
+  return map[locale] ?? locale;
+}
+
+/**
  * Busca todos os termos das categorias de um tema.
  * Retorna termos localizados se locale != 'en'.
  */
 function getThemeTerms(themeId: ThemeId, locale?: string): GlossaryTerm[] {
   const theme = getThemeConfig(themeId);
+  const sdkLocale = locale ? normalizeLocale(locale) : undefined;
 
-  if (locale && locale !== "en") {
+  if (sdkLocale && sdkLocale !== "en") {
     // Busca termos localizados e filtra pelas categorias do tema
-    const localized = getLocalizedTerms(locale);
+    const localized = getLocalizedTerms(sdkLocale);
     return localized.filter((t) =>
       theme.categories.includes(t.category as Category),
     );

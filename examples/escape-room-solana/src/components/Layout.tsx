@@ -37,7 +37,11 @@ export default function Layout({ children, hideBack = false }: LayoutProps) {
   };
 
   return (
-    <div className="relative min-h-screen font-['Space_Grotesk',sans-serif]">
+    <div
+      className="relative min-h-screen font-['Space_Grotesk',sans-serif]"
+      onClick={() => audioManager.init()}
+      onKeyDown={() => audioManager.init()}
+    >
       {/* ── Barra superior ─────────────────────────────────────────── */}
       <header className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 py-3 bg-black/40 backdrop-blur-md border-b border-white/10">
         {/* Esquerda: voltar */}

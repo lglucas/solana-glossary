@@ -67,6 +67,7 @@
 - [x] Responsividade: grids adaptativos, safe-area, scroll suave
 - [x] HintsPanel: i18n completo (removido hardcoded)
 - [ ] Musica BGM por tema — adiado (requer composicao)
+- [x] **Hotfix v0.6.1**: locale pt-BR→pt normalizado para SDK, audio init em user gesture
 - [ ] Testes de usabilidade
 
 ## Sprint 6 — Jogo da Vida: Engine Core (v0.7.0)

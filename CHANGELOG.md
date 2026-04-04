@@ -5,6 +5,17 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.6.1] - 2026-04-04
+
+### Corrigido
+- Termos em ingles em TODOS os puzzles — locale "pt-BR" nao era reconhecido pelo SDK (espera "pt"). Adicionado `normalizeLocale()` em glossary.ts
+- Audio sem som — AudioContext precisa ser inicializado em user gesture. Adicionado `init()` no primeiro click via Layout
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.15s)
+
+---
+
 ## [0.6.0] - 2026-04-04
 
 ### Adicionado (Escape Room — Sprint 5: Polish)
