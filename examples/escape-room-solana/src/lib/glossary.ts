@@ -9,9 +9,15 @@ import {
   type GlossaryTerm,
   type Category,
 } from "@stbr/solana-glossary";
-import { getLocalizedTerms } from "@stbr/solana-glossary/i18n";
 import type { ThemeId, LevelId } from "../engine/themes";
 import { getThemeConfig, getLevelConfig } from "../engine/themes";
+
+/**
+ * Importa locales diretamente via Vite (o require() do SDK nao funciona no browser).
+ * Vite resolve imports estaticos de JSON sem problemas.
+ */
+import ptOverrides from "../../../../data/i18n/pt.json";
+import esOverrides from "../../../../data/i18n/es.json";
 
 /** Termo processado para uso nos puzzles */
 export interface PuzzleTerm {
@@ -25,33 +31,48 @@ export interface PuzzleTerm {
   aliases: string[];
 }
 
-/**
- * Normaliza locale do i18n para o formato do SDK.
- * i18n usa "pt-BR" mas SDK tem "pt.json", nao "pt-BR.json".
- */
+/** Mapa de locales carregados estaticamente (Vite-compatible) */
+const LOCALE_DATA: Record<
+  string,
+  Record<string, { term?: string; definition?: string }>
+> = {
+  pt: ptOverrides as Record<string, { term?: string; definition?: string }>,
+  es: esOverrides as Record<string, { term?: string; definition?: string }>,
+};
+
+/** Normaliza locale: "pt-BR" → "pt" */
 function normalizeLocale(locale: string): string {
-  const map: Record<string, string> = { "pt-BR": "pt", "pt-br": "pt" };
-  return map[locale] ?? locale;
+  return (
+    ({ "pt-BR": "pt", "pt-br": "pt" } as Record<string, string>)[locale] ??
+    locale
+  );
+}
+
+/** Aplica overrides de locale nos termos (substitui getLocalizedTerms do SDK) */
+function applyLocale(terms: GlossaryTerm[], locale: string): GlossaryTerm[] {
+  const overrides = LOCALE_DATA[locale];
+  if (!overrides) return terms;
+  return terms.map((t) => {
+    const o = overrides[t.id];
+    if (!o) return t;
+    return {
+      ...t,
+      term: o.term ?? t.term,
+      definition: o.definition ?? t.definition,
+    };
+  });
 }
 
 /**
  * Busca todos os termos das categorias de um tema.
- * Retorna termos localizados se locale != 'en'.
+ * Aplica locale diretamente (sem depender do require() do SDK).
  */
 function getThemeTerms(themeId: ThemeId, locale?: string): GlossaryTerm[] {
   const theme = getThemeConfig(themeId);
+  const base = theme.categories.flatMap((cat) => getTermsByCategory(cat));
   const sdkLocale = locale ? normalizeLocale(locale) : undefined;
-
-  if (sdkLocale && sdkLocale !== "en") {
-    // Busca termos localizados e filtra pelas categorias do tema
-    const localized = getLocalizedTerms(sdkLocale);
-    return localized.filter((t) =>
-      theme.categories.includes(t.category as Category),
-    );
-  }
-
-  // Busca direto por categoria (ingles)
-  return theme.categories.flatMap((cat) => getTermsByCategory(cat));
+  if (sdkLocale && sdkLocale !== "en") return applyLocale(base, sdkLocale);
+  return base;
 }
 
 /**

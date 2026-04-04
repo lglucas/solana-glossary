@@ -5,6 +5,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.7.1] - 2026-04-04
+
+### Corrigido
+- Definicoes apareciam em ingles mesmo com pt.json traduzido — causa raiz: SDK usa `require()` dinamico que nao funciona no Vite/browser. Substituido por imports estaticos diretos dos JSONs de locale (`ptOverrides`, `esOverrides`) com funcao `applyLocale()` propria.
+
+---
+
 ## [0.7.0] - 2026-04-04
 
 ### Adicionado (Sprint 5b — Traducao + Identidade Visual)
