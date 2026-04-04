@@ -80,9 +80,44 @@ Run `/setup-mcp` to configure API keys and verify connections.
 
 Enabled. Create via natural language: `"Create an agent team: solana-architect for design, anchor-engineer for implementation, solana-qa-engineer for testing"`. Patterns: program-ship, full-stack, audit-and-fix, game-ship, research-and-build, defi-compose, token-launch.
 
+## Entrega de Fim de Sessao (OBRIGATORIO)
+<!-- Protocolo que DEVE ser seguido ao final de TODA sessao de trabalho com o Lucas. -->
+
+Ao final de cada sessao, executar os 4 blocos na ordem:
+
+### Bloco 1 — Relatorio
+Entregar ao Lucas um relatorio conciso com:
+1. **O que foi feito** — lista de entregas concretas (arquivos, features, fixes)
+2. **O que o Lucas precisa fazer** — acoes manuais pendentes (se houver)
+3. **Proximos passos** — o que vem no proximo sprint/sessao
+
+### Bloco 2 — Documentacao
+Atualizar TODOS os arquivos de docs afetados:
+- `CHANGELOG.md` — nova entrada de versao com Added/Modified/Verified
+- `docs/SPRINTS.md` — marcar sprint atual como ✓, checkboxes [x]
+- Qualquer outro doc impactado (decisions.md, README, etc.)
+
+### Bloco 3 — Verificacao + Commit + Push
+Executar na ordem:
+1. `npm run build` (ou equivalente) — zero erros
+2. `npx tsc --noEmit` — zero erros TypeScript
+3. Verificar todos os arquivos <= 200 linhas com cabecalho
+4. `git add` dos arquivos especificos (nunca `git add .`)
+5. `git commit` seguindo convencao: `<type>: <desc> — Sprint N (vX.Y.Z)`
+6. `git push` para o fork
+
+### Bloco 4 — Roteiro de Testes Manuais para o Lucas
+Instruir o Lucas com passos curtos para testar no browser:
+- Quais comandos rodar (`npm run dev`, `npm run build`, etc.)
+- Quais URLs acessar e o que clicar
+- O que esperar em cada tela (feedback visual, comportamento)
+- Criterios de "esta funcionando" vs "tem bug"
+
+**Contexto competicao:** 2 projetos, 2 PRs separados para solanabr/solana-glossary.
+- `feat/escape-room-solana` → Escape Room (PR #1)
+- `feat/jogo-da-vida-solana` → Jogo da Vida (PR #2)
+
 ## Done Checklist
-<!-- This is the gate before completing any branch. Claude checks these items.
-     Program-specific items only apply when .rs files are changed. -->
 
 Before completing a branch, verify:
 - [ ] Build succeeds
