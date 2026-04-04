@@ -13,6 +13,7 @@ import {
   joinRoom,
   getRoom,
   getInviteUrl,
+  updateRoomStatus,
   type Room,
 } from "../engine/rooms";
 
@@ -52,16 +53,25 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     });
   }, [roomCode, profile]);
 
-  // Poll Supabase para atualizar jogadores
+  // Poll Supabase para atualizar jogadores + detectar inicio do jogo
   useEffect(() => {
     if (!room) return;
     const interval = setInterval(() => {
       getRoom(room.code).then((updated) => {
-        if (updated) setRoom(updated);
+        if (!updated) return;
+        setRoom(updated);
+        // Se o host iniciou o jogo, todos entram automaticamente
+        if (updated.status === "playing") {
+          clearInterval(interval);
+          onStart(
+            updated.players.map((p) => ({ name: p.nickname, color: p.color })),
+            updated.code,
+          );
+        }
       });
     }, 2000);
     return () => clearInterval(interval);
-  }, [room?.code]);
+  }, [room?.code, onStart]);
 
   const handleCreate = useCallback(async () => {
     if (!profile) return;
@@ -90,8 +100,9 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (!room || room.players.length < 2) return;
+    await updateRoomStatus(room.code, "playing");
     onStart(
       room.players.map((p) => ({ name: p.nickname, color: p.color })),
       room.code,
