@@ -41,6 +41,11 @@
     "defeat": "Tempo esgotado!",
     "footer": "Solana Glossary — Superteam Brazil"
   },
+  "hints": {
+    "useHint": "Usar Dica (-{{cost}} pts)",
+    "noHints": "Sem dicas restantes",
+    "penalty": "Penalidade: -{{total}} pts"
+  },
   "home": {
     "terms": "termos",
     "playLevel": "Jogar {{level}}",

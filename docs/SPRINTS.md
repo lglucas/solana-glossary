@@ -58,13 +58,15 @@
 - [x] Build: zero erros TS, Vite 1.47s, 22 arquivos ≤200 linhas
 - [x] **Hotfix v0.5.1**: 8 bugs criticos corrigidos (locale pt-BR, shuffle, stats, progressao, pagina duplicada)
 
-## Sprint 5 — Escape Room: Polish (v0.6.0)
+## Sprint 5 — Escape Room: Polish (v0.6.0) ✓
 **Objetivo:** Acabamento profissional do Escape Room
-- [ ] Musica 8-bit/16-bit por tema (Howler.js)
-- [ ] Efeitos sonoros (acerto, erro, timer, vitoria, derrota)
-- [ ] Animacoes Framer Motion (transicoes, puzzles, feedback)
-- [ ] Estetica Solana-branded finalizada
-- [ ] Responsividade (mobile + desktop)
+- [x] Audio: SFX 8-bit sintetizado via Web Audio API (sem mp3/Howler), 5 sons distintos
+- [x] Efeitos sonoros integrados: acerto, erro, tick timer, dica, vitoria/derrota
+- [x] Animacoes Framer Motion ja presentes desde Sprint 3-4 (transicoes, puzzles, feedback)
+- [x] Estetica Solana-branded: glassmorphism, gradientes, Orbitron, blobs animados
+- [x] Responsividade: grids adaptativos, safe-area, scroll suave
+- [x] HintsPanel: i18n completo (removido hardcoded)
+- [ ] Musica BGM por tema — adiado (requer composicao)
 - [ ] Testes de usabilidade
 
 ## Sprint 6 — Jogo da Vida: Engine Core (v0.7.0)

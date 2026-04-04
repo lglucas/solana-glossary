@@ -22,6 +22,7 @@ import { getLevelConfig, type ThemeId, type LevelId } from "../engine/themes";
 import { getPuzzleEntry } from "../engine/puzzleRegistry";
 import type { PuzzleResult } from "../engine/puzzleTypes";
 import { completeLevel } from "../lib/progression";
+import { audioManager } from "../lib/audio";
 import Layout from "../components/Layout";
 import AnimatedBlobs, { type BlobVariant } from "../components/AnimatedBlobs";
 import GameHud from "../components/GameHud";
@@ -76,9 +77,11 @@ export default function GamePlay() {
   const handleResult = useCallback(
     (result: PuzzleResult) => {
       if (phase !== "playing") return;
-      // Atualiza score
+      // Atualiza score e toca SFX
       for (let i = 0; i < result.correct; i++) score.addCorrect();
       for (let i = 0; i < result.wrong; i++) score.addWrong();
+      if (result.correct > 0) audioManager.playSfx("correct");
+      else if (result.wrong > 0) audioManager.playSfx("wrong");
 
       if (isBatch && result.done) {
         // Batch puzzle concluido — ir para resultado
@@ -98,10 +101,18 @@ export default function GamePlay() {
     [phase, isBatch, idx, terms.length, score],
   );
 
+  // Tick sonoro quando timer fica critico (<30s)
+  useEffect(() => {
+    if (phase !== "playing" || timer.remaining > 30 || timer.remaining <= 0)
+      return;
+    if (timer.remaining % 5 === 0) audioManager.playSfx("tick");
+  }, [timer.remaining, phase]);
+
   // Navega para resultado quando fase muda
   useEffect(() => {
     if (phase === "playing") return;
     timer.pause();
+    audioManager.playSfx(phase === "won" ? "unlock" : "wrong");
     if (phase === "won") completeLevel(tId, lId);
     const fs = score.calculateFinal(timer.remaining, hints.totalPenalty);
     navigate(`/resultado/${tId}/${lId}`, {

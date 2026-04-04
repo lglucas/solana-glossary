@@ -7,6 +7,7 @@
 
 import { useTranslation } from "react-i18next";
 import type { Hint } from "../hooks/useHints";
+import { audioManager } from "../lib/audio";
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
 
@@ -61,7 +62,10 @@ export default function HintsPanel({
 
         {/* Botao para usar dica */}
         <button
-          onClick={onUseHint}
+          onClick={() => {
+            onUseHint();
+            audioManager.playSfx("hint");
+          }}
           disabled={!canUseHint || disabled}
           className={`w-full text-sm font-medium px-4 py-2.5 rounded-xl border transition-all ${
             canUseHint
@@ -70,14 +74,14 @@ export default function HintsPanel({
           }`}
         >
           {canUseHint
-            ? `Usar Dica (-${hintPenaltyCost} pts)`
-            : "Sem dicas restantes"}
+            ? t("hints.useHint", { cost: hintPenaltyCost })
+            : t("hints.noHints")}
         </button>
 
         {/* Penalidade acumulada */}
         {revealedCount > 0 && (
           <p className="text-[10px] text-red-400/70 mt-2 text-center">
-            Penalidade: -{totalPenalty} pts
+            {t("hints.penalty", { total: totalPenalty })}
           </p>
         )}
       </div>

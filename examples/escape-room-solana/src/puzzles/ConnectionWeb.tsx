@@ -131,7 +131,7 @@ export default function ConnectionWeb({
       </div>
 
       {/* Grid de nodes */}
-      <div className="grid grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
         {nodes.map((node) => (
           <motion.button
             key={node.id}

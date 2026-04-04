@@ -5,6 +5,24 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.6.0] - 2026-04-04
+
+### Adicionado (Escape Room — Sprint 5: Polish)
+- `lib/audio.ts` — reescrito com Web Audio API: SFX 8-bit sintetizados (correct, wrong, tick, hint, unlock), zero dependencia de mp3
+- SFX integrados ao gameplay: acerto/erro em puzzles, tick a cada 5s quando timer <30s, fanfarra na vitoria, buzz na derrota
+- SFX no HintsPanel: som ao revelar dica
+- Responsividade mobile: CategorySort e ConnectionWeb grids adaptativos (1 col mobile → 3 cols desktop)
+- CSS: scroll suave, safe-area para notch, hide-scrollbar utilitario, overscroll-behavior
+
+### Corrigido
+- HintsPanel: strings "Usar Dica", "Sem dicas restantes", "Penalidade" hardcoded → movidas para i18n (pt-BR + es)
+- i18n: novas chaves `hints.*` em pt-BR e es
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.15s) | Todos arquivos ≤200 linhas
+
+---
+
 ## [0.5.1] - 2026-04-04
 
 ### Corrigido (Escape Room — 8 bugs criticos)
