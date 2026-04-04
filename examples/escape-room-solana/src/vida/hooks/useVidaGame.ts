@@ -38,11 +38,9 @@ export function useVidaGame({
 }: UseVidaGameOpts) {
   const { i18n } = useTranslation();
   const locale = i18n.language;
-  const [state, setState] = useState<GameState>(() => {
-    const s = createInitialState(theme, players);
-    save(roomCode, s);
-    return s;
-  });
+  const [state, setState] = useState<GameState>(() =>
+    createInitialState(theme, players),
+  );
 
   const currentPlayer = state.players[state.currentPlayerIndex];
   const isMyTurn = currentPlayer?.wallet === myWallet;
