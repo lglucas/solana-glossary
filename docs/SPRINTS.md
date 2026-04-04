@@ -26,24 +26,26 @@
 - [ ] Build e lint passando sem erros
 - [ ] Avaliacao do Lucas e escolha das melhores tecnicas
 
-## Sprint 2 — Arquitetura Base (v0.3.0)
+## Sprint 2 — Arquitetura Base (v0.3.0) ✓
 **Objetivo:** Estrutura compartilhada entre os dois jogos
-- [ ] Landing page unificada (escolha entre Escape Room e Jogo da Vida)
-- [ ] Setup Supabase (projeto, tabelas, auth)
-- [ ] Integracao wallet-adapter-react (connect wallet Solana)
-- [ ] Sistema de login: wallet → nickname + avatar
-- [ ] Setup react-i18next com pt-BR e es
-- [ ] Componentes base compartilhados (layout, navbar, footer)
-- [ ] Setup Howler.js (sistema de audio)
+- [x] Landing pages independentes por projeto
+- [x] Setup Supabase (schema documentado, .env.local configurado)
+- [x] Integracao wallet-adapter-react (Phantom + Solflare)
+- [x] Setup react-i18next com pt-BR e es
+- [x] Componentes base (layout, navbar)
+- [x] Setup Howler.js (sistema de audio)
+- [ ] Sistema de login wallet → nickname + avatar (Sprint 10)
 
-## Sprint 3 — Escape Room: Engine Core (v0.4.0)
+## Sprint 3 — Escape Room: Engine Core (v0.4.0) ✓
 **Objetivo:** Motor do jogo Escape Room funcionando
-- [ ] Sistema de temas e niveis (modular)
-- [ ] Timer com contagem regressiva
-- [ ] Sistema de dicas (Surface → Consensus)
-- [ ] Sistema de pontuacao
-- [ ] Tela de resultado (vitoria/derrota)
-- [ ] Integracao SDK: getTermsByCategory(), getTerm()
+- [x] Sistema de temas e niveis (modular) — engine/themes.ts
+- [x] Timer com contagem regressiva — hooks/useTimer.ts
+- [x] Sistema de dicas (Surface → Consensus) — hooks/useHints.ts
+- [x] Sistema de pontuacao — hooks/useScore.ts
+- [x] Tela de resultado (vitoria/derrota) — pages/GameResult.tsx
+- [x] Integracao SDK: getTermsByCategory(), getLocalizedTerms() — lib/glossary.ts
+- [x] Pagina de selecao de temas — pages/ThemeSelect.tsx
+- [x] Gameplay funcional (quiz multiple-choice) — pages/GamePlay.tsx
 
 ## Sprint 4 — Escape Room: 12 Puzzles (v0.5.0)
 **Objetivo:** Todos os 12 formatos de puzzle implementados

@@ -5,6 +5,26 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.4.0] - 2026-04-04
+
+### Adicionado (Escape Room — Sprint 3: Engine Core)
+- `engine/themes.ts` — configuracao modular: 3 temas, 4 niveis, categorias SDK
+- `hooks/useTimer.ts` — contagem regressiva com start/pause/reset
+- `hooks/useHints.ts` — dicas progressivas com penalidade por nivel
+- `hooks/useScore.ts` — pontuacao com bonus de tempo e perfect clear (+500)
+- `lib/glossary.ts` — integracao SDK: selectPuzzleTerms(), generateHint()
+- `components/GameHud.tsx` — HUD com timer colorido, score, progresso
+- `components/PuzzleCard.tsx` — quiz 4 opcoes com feedback visual
+- `components/HintsPanel.tsx` — painel de dicas com custo e bloqueio
+- `pages/ThemeSelect.tsx` — selecao de tema com contagem de termos SDK
+- `pages/GamePlay.tsx` — gameplay funcional: timer, quiz, dicas, pontuacao
+- `pages/GameResult.tsx` — resultado: vitoria/derrota + stats detalhados
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.24s) | 22 arquivos ≤200 linhas
+
+---
+
 ## [0.3.0] - 2026-04-04
 
 ### Adicionado
