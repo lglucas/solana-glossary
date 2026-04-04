@@ -136,6 +136,7 @@
     "waitingHost": "Esperando que el host inicie...",
     "roomNotFound": "Sala no encontrada o llena",
     "waitingTurn": "Esperando el turno del otro jugador...",
+    "yourTurn": "TU TURNO! Lanza el dado!",
     "effects": {
       "advance": "Avanza {{value}} casillas!",
       "retreat": "Retrocede {{value}} casillas!",

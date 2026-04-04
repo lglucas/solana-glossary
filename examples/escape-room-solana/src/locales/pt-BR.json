@@ -136,6 +136,7 @@
     "waitingHost": "Aguardando o host iniciar...",
     "roomNotFound": "Sala nao encontrada ou lotada",
     "waitingTurn": "Aguardando o turno do outro jogador...",
+    "yourTurn": "SUA VEZ! Role o dado!",
     "effects": {
       "advance": "Avance {{value}} casas!",
       "retreat": "Recue {{value}} casas!",

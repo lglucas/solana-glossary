@@ -6,7 +6,6 @@
  */
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useWallet } from "@solana/wallet-adapter-react";
 import type { GameState, BoardThemeId } from "../engine/types";
 import {
   createInitialState,
@@ -17,39 +16,32 @@ import {
   nextTurn,
 } from "../engine/turns";
 import { saveGameState, loadGameState } from "../engine/rooms";
+import { audioManager } from "../../lib/audio";
 
 interface UseVidaGameOpts {
   theme: BoardThemeId;
   players: Array<{ name: string; color: string }>;
   roomCode?: string;
+  myName: string;
 }
 
-export function useVidaGame({ theme, players, roomCode }: UseVidaGameOpts) {
+export function useVidaGame({
+  theme,
+  players,
+  roomCode,
+  myName,
+}: UseVidaGameOpts) {
   const { i18n } = useTranslation();
-  const { publicKey } = useWallet();
   const locale = i18n.language;
-  const myWallet = publicKey?.toBase58() ?? "";
   const [state, setState] = useState<GameState>(() =>
     createInitialState(theme, players),
   );
   const syncRef = useRef(false);
 
-  // Identifica qual player index sou eu (por posicao na lista, mapeado por wallet na sala)
-  const myPlayerIndex = state.players.findIndex(
-    (p) =>
-      p.name ===
-      players.find((_, i) => {
-        // Match por cor (que é atribuída na ordem de entrada na sala)
-        return state.players[i]?.color === p.color;
-      })?.name,
-  );
+  const currentPlayer = state.players[state.currentPlayerIndex];
+  const isMyTurn = currentPlayer?.name === myName;
 
-  const isMyTurn =
-    state.currentPlayerIndex < state.players.length &&
-    state.players[state.currentPlayerIndex]?.name ===
-      (myWallet ? players[myPlayerIndex]?.name : players[0]?.name);
-
-  // Salva state no Supabase apos cada mudanca (se tem roomCode)
+  // Salva state no Supabase apos cada mudanca
   useEffect(() => {
     if (!roomCode || !syncRef.current) {
       syncRef.current = true;
@@ -65,22 +57,32 @@ export function useVidaGame({ theme, players, roomCode }: UseVidaGameOpts) {
       const remote = await loadGameState(roomCode);
       if (!remote) return;
       const rs = remote as GameState;
-      // So atualiza se o turno ou fase mudou (evita loop infinito)
       if (
         rs.turnCount !== state.turnCount ||
         rs.turnPhase !== state.turnPhase ||
-        rs.currentPlayerIndex !== state.currentPlayerIndex
+        rs.currentPlayerIndex !== state.currentPlayerIndex ||
+        rs.diceValue !== state.diceValue
       ) {
         setState(rs);
       }
-    }, 1500);
+    }, 1200);
     return () => clearInterval(interval);
-  }, [roomCode, state.turnCount, state.turnPhase, state.currentPlayerIndex]);
+  }, [
+    roomCode,
+    state.turnCount,
+    state.turnPhase,
+    state.currentPlayerIndex,
+    state.diceValue,
+  ]);
 
   const roll = useCallback(() => {
+    audioManager.playSfx("tick");
     setState((s) => {
       const rolled = performRoll(s);
-      setTimeout(() => setState((s2) => resolveSpace(s2, locale)), 800);
+      setTimeout(() => {
+        audioManager.playSfx("correct");
+        setState((s2) => resolveSpace(s2, locale));
+      }, 800);
       return rolled;
     });
   }, [locale]);
@@ -94,6 +96,7 @@ export function useVidaGame({ theme, players, roomCode }: UseVidaGameOpts) {
   }, []);
 
   const answerChallenge = useCallback((correct: boolean) => {
+    audioManager.playSfx(correct ? "correct" : "wrong");
     setState((s) => {
       const applied = applyChallenge(s, correct);
       setTimeout(() => setState(nextTurn), 300);
@@ -104,8 +107,6 @@ export function useVidaGame({ theme, players, roomCode }: UseVidaGameOpts) {
   const skipToNext = useCallback(() => {
     setState((s) => (s.turnPhase === "resolve" ? nextTurn(s) : s));
   }, []);
-
-  const currentPlayer = state.players[state.currentPlayerIndex];
 
   return {
     state,

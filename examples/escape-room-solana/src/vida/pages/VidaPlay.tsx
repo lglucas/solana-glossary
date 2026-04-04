@@ -4,11 +4,13 @@
  * @projeto Solana Glossary — Jogo da Vida Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Layout from "../../components/Layout";
+import { useProfile } from "../../hooks/useProfile";
+import { startBgm, stopBgm } from "../../lib/bgm";
 import type { BoardThemeId } from "../engine/types";
 import { useVidaGame } from "../hooks/useVidaGame";
 import Board from "../components/Board";
@@ -73,6 +75,14 @@ function GameBoard({
   navigate: ReturnType<typeof useNavigate>;
   t: ReturnType<typeof useTranslation>["t"];
 }) {
+  const { profile } = useProfile();
+  const myName = profile?.nickname ?? players[0]?.name ?? "";
+
+  useEffect(() => {
+    startBgm("defi");
+    return () => stopBgm();
+  }, []);
+
   const {
     state,
     currentPlayer,
@@ -81,7 +91,7 @@ function GameBoard({
     dismissEvent,
     answerChallenge,
     skipToNext,
-  } = useVidaGame({ theme, players, roomCode });
+  } = useVidaGame({ theme, players, roomCode, myName });
 
   if (state.winner) {
     setTimeout(() => {
@@ -100,25 +110,58 @@ function GameBoard({
     <Layout>
       <div className="min-h-screen bg-[#0a0015] text-white px-4 py-20">
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between mb-4 px-2">
-            <div className="flex items-center gap-2">
+          {/* HUD */}
+          <div className="flex items-center justify-between mb-5 px-2 py-3 rounded-xl bg-white/[0.03] border border-white/5">
+            <div className="flex items-center gap-3">
               <div
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: currentPlayer.color }}
-              />
-              <span className="text-sm font-bold">{currentPlayer.name}</span>
-              <span className="text-xs text-gray-500">
-                Casa {currentPlayer.position}
-              </span>
+                className="w-8 h-8 rounded-full border-2 border-white/60 flex items-center justify-center text-sm font-bold"
+                style={{
+                  backgroundColor: currentPlayer.color,
+                  boxShadow: `0 0 12px ${currentPlayer.color}60`,
+                }}
+              >
+                {currentPlayer.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <span className="text-sm font-bold block">
+                  {currentPlayer.name}
+                </span>
+                <span className="text-[10px] text-gray-500">
+                  Casa {currentPlayer.position}/49
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-4 text-xs text-gray-400">
-              <span>
-                {t("common.score")}:{" "}
-                <b className="text-cyan-400">{currentPlayer.score}</b>
-              </span>
-              <span>Turno {state.turnCount + 1}</span>
+            <div className="flex items-center gap-4 text-xs">
+              <div className="text-center">
+                <span className="text-cyan-400 font-bold text-lg block">
+                  {currentPlayer.score}
+                </span>
+                <span className="text-gray-600 text-[9px]">
+                  {t("common.score")}
+                </span>
+              </div>
+              <div className="text-center">
+                <span className="text-gray-300 font-bold text-lg block">
+                  {state.turnCount + 1}
+                </span>
+                <span className="text-gray-600 text-[9px]">Turno</span>
+              </div>
             </div>
           </div>
+          {/* Turn indicator */}
+          {isMyTurn ? (
+            <motion.p
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-center text-sm text-yellow-400 font-bold mb-3"
+            >
+              {t("vida.yourTurn")}
+            </motion.p>
+          ) : (
+            <p className="text-center text-sm text-gray-500 mb-3">
+              {t("vida.waitingTurn")}
+            </p>
+          )}
           <Board
             spaces={state.board}
             players={state.players}
@@ -136,18 +179,24 @@ function GameBoard({
               </p>
             )}
           </div>
-          <div className="flex justify-center gap-3 mt-4 flex-wrap">
+          <div className="flex justify-center gap-2 mt-5 flex-wrap">
             {state.players.map((p) => (
               <div
                 key={p.id}
-                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs transition-all ${p.id === currentPlayer.id ? "bg-white/10 border border-white/20" : "opacity-50"}`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-all ${p.id === currentPlayer.id ? "bg-white/10 border border-white/20 scale-105" : "opacity-40 border border-transparent"}`}
               >
                 <div
-                  className="w-3 h-3 rounded-full"
+                  className="w-6 h-6 rounded-full border border-white/40 flex items-center justify-center text-[9px] font-bold"
                   style={{ backgroundColor: p.color }}
-                />
-                <span>{p.name}</span>
-                <span className="text-gray-500">{p.score}</span>
+                >
+                  {p.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <span className="block text-white">{p.name}</span>
+                  <span className="text-gray-500">
+                    {p.score} pts • Casa {p.position}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
