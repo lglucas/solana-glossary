@@ -6,7 +6,17 @@
  */
 
 /** Efeitos sonoros disponiveis */
-export type SfxName = "correct" | "wrong" | "tick" | "hint" | "unlock";
+export type SfxName =
+  | "correct"
+  | "wrong"
+  | "tick"
+  | "hint"
+  | "unlock"
+  | "diceRoll"
+  | "move"
+  | "event"
+  | "bonus"
+  | "trap";
 
 /** Tema sonoro — altera oitava e waveform */
 export type AudioTheme = "genesis" | "defi" | "lab";
@@ -87,6 +97,34 @@ function sfxUnlock(cfg: ThemeAudioCfg): void {
   });
 }
 
+function sfxDiceRoll(cfg: ThemeAudioCfg): void {
+  playNote(300 * cfg.octave, cfg.wave, 0.06, 0, 0.1);
+  playNote(400 * cfg.octave, cfg.wave, 0.06, 0.07, 0.1);
+  playNote(500 * cfg.octave, cfg.wave, 0.08, 0.14, 0.12);
+}
+
+function sfxMove(cfg: ThemeAudioCfg): void {
+  playNote(440 * cfg.octave, "sine", 0.08, 0, 0.08);
+  playNote(554 * cfg.octave, "sine", 0.1, 0.06, 0.08);
+}
+
+function sfxEvent(cfg: ThemeAudioCfg): void {
+  playNote(330 * cfg.octave, cfg.wave, 0.2, 0, 0.08);
+  playNote(415 * cfg.octave, cfg.wave, 0.2, 0.05, 0.08);
+  playNote(494 * cfg.octave, cfg.wave, 0.25, 0.1, 0.08);
+}
+
+function sfxBonus(cfg: ThemeAudioCfg): void {
+  playNote(523 * cfg.octave, "sine", 0.1, 0, 0.1);
+  playNote(659 * cfg.octave, "sine", 0.1, 0.08, 0.1);
+  playNote(784 * cfg.octave, "sine", 0.15, 0.16, 0.12);
+}
+
+function sfxTrap(cfg: ThemeAudioCfg): void {
+  playNote(250 * cfg.octave, cfg.wave, 0.2, 0, 0.1);
+  playNote(150 * cfg.octave, cfg.wave, 0.25, 0.1, 0.08);
+}
+
 type SfxFn = (cfg: ThemeAudioCfg) => void;
 
 const SFX_MAP: Record<SfxName, SfxFn> = {
@@ -95,6 +133,11 @@ const SFX_MAP: Record<SfxName, SfxFn> = {
   tick: sfxTick,
   hint: sfxHint,
   unlock: sfxUnlock,
+  diceRoll: sfxDiceRoll,
+  move: sfxMove,
+  event: sfxEvent,
+  bonus: sfxBonus,
+  trap: sfxTrap,
 };
 
 // ─── Classe singleton ───────────────────────────────────────────────────────

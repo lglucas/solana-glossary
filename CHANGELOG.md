@@ -5,6 +5,175 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.10.0] - 2026-04-05
+
+### Adicionado (Sprint 8-9 — Tabuleiros Imersivos + Leaderboard + Polish)
+- **3 tabuleiros com UX completamente distinta** (layout, interacao, forma):
+  - **Normie (Neon Cockpit)**: layout 2 colunas, dado na sidebar, nos circulares com glow neon, font Space Grotesk
+  - **Startup (Terminal)**: CLI verde monocromo, sem dado visual (texto `> execute roll()`), board 5 colunas vertical, player list como process table
+  - **Timeline (Arcade)**: HUD fixo no bottom, dado pixel 60x60 na barra, board 8 colunas chunky, font Press Start 2P
+- **3 backgrounds animados**: BoardBgNeon (grid cyan pulsante), BoardBgMatrix (chuva katakana), BoardBgPixel (estrelas pixel)
+- **Leaderboard Jogo da Vida**: VidaResult submete scores (`vida-{tema}`), Leaderboard.tsx com toggle Escape/Vida
+- **5 SFX novos**: diceRoll, move, event, bonus, trap (Web Audio API sintetizado)
+- **Timer por turno**: host escolhe Relax (60s) / Normal (30s) / Speed (15s) no Lobby
+- **Ejecao por inatividade**: 3 timeouts consecutivos encerram partida, jogador inativo excluido do ranking
+- **Deteccao de desconexao**: poll fallback com +3s buffer para jogador offline
+
+### Corrigido
+- **Bugfix mute**: BGM agora respeita estado de mute ao iniciar (`audioManager.isMuted()` no `startBgm`)
+- **Bugfix invite URL**: rota de convite agora inclui tema (`/vida/sala/:tema/:code`) — Player 2 nao cai mais no normie
+- **Bugfix winner poll**: poll agora detecta `winner` (`!!remote.winner !== !!local.winner`) — ambos jogadores vao pra tela final
+- **Bugfix modais dupla overlay**: removido wrapper extra em Startup/Timeline — modais ja tem overlay proprio
+
+### Refatorado
+- `VidaPlay.tsx` extraido: wrapper fino (55 linhas) + `GameBoard.tsx` dispatcher de logica
+- 3 UIs independentes: `GameUiNormie.tsx`, `GameUiStartup.tsx`, `GameUiTimeline.tsx`
+- 3 boards independentes: `BoardNormie.tsx`, `BoardStartup.tsx`, `BoardTimeline.tsx`
+- `Board.tsx` agora e dispatcher que seleciona board por tema
+- `themes.ts` expandido com `ThemeVisual` (paletas, spaceStyles, fontes, HUD accent)
+
+### Verificado
+- TypeScript: zero erros | Build: sucesso (1.37s)
+- 15 arquivos novos/modificados, todos componentes independentes por tema
+
+---
+
+## [0.9.12] - 2026-04-05
+
+### Corrigido — FIX DEFINITIVO (turn handoff)
+- **Root cause 1**: poll Supabase rodava para TODOS os jogadores (inclusive o ativo), sobrescrevendo estados intermediarios locais com dados stale do Supabase — cancelava o roll no meio da animacao
+- **Root cause 2**: `resolveSpace()` retornava `turnPhase: "resolve"` em casas normais/bonus/trap, mas `nextTurn()` exigia `turnPhase: "next"` — turno NUNCA avancava nessas casas (NO-OP silencioso)
+- **Root cause 3**: 3 `setState` aninhados + 2 `setTimeout` criavam race conditions impossiveis de debugar
+- **Fix turns.ts**: casas nao-interativas (normal/bonus/trap) agora retornam `turnPhase: "next"` — phase machine corrigida
+- **Fix useVidaGame.ts**: reescrita completa com modelo limpo:
+  - Jogador ativo: computa turno local, salva 1x, NAO faz poll
+  - Jogadores esperando: poll a cada 1.5s, NAO salvam
+  - Zero setState aninhados, 1 setTimeout flat para animacao
+  - Guards `isMyTurn` em todas as acoes (roll/dismiss/answer)
+- **Resultado**: SUCESSO — turnos alternando corretamente, eventos e desafios funcionando, testado ate turno 6+
+- **Escala**: modelo funciona identicamente para 2..8 jogadores
+
+---
+
+## [0.9.11] - 2026-04-04
+
+### Corrigido — TENTATIVA 8 (turn handoff)
+- **Diagnostico**: 3 saves fire-and-forget por roll (moving→resolve→nextTurn) chegavam fora de ordem no Supabase
+  — save intermediario sobrescrevia o save final, revertendo currentPlayerIndex
+- **Fix 1**: Uma unica escrita por acao — roll salva SO apos nextTurn (casas normais) ou SO o resolve (evento/desafio)
+- **Fix 2**: Poll com useRef em vez de state nos deps do useEffect — interval estavel, sem gaps durante animacao
+- **Fix 3**: console.log em save/poll para debug via F12
+- **Resultado**: SUPERADO por v0.9.12
+
+---
+
+## [0.9.10] - 2026-04-04
+
+### Corrigido — TENTATIVA 7 (turn handoff)
+- Removido save do estado inicial no useState (Player 2 sobrescrevia jogada do Player 1)
+- **Resultado**: FALHOU — turno ainda nao passa para Player 2 apos primeira jogada
+
+---
+
+## [0.9.9] - 2026-04-04
+
+### Corrigido — TENTATIVA 6 (turn handoff)
+- Removido useEffect para save — cada acao (roll, dismiss, answer) salva direto dentro da funcao
+- Auto-pass em casas normais (sem precisar clicar "Next")
+- Removido botao "Next" manual
+- **Resultado**: FALHOU no turno 4 e depois REGREDIU primeira passagem (tentativa 7 causou)
+
+---
+
+## [0.9.8] - 2026-04-04
+
+### Corrigido — TENTATIVA 5 (turn handoff)
+- Removido check `isMyTurn` do save effect — o bug era que `nextTurn()` muda currentPlayerIndex
+  ANTES do save effect rodar, entao `isMyTurn` ja era false e o save era pulado
+- Adicionado `initialRef` para pular primeiro render
+- **Resultado**: PARCIAL — funcionou 3 turnos, falhou no 4o (race condition do useEffect + setTimeout)
+
+---
+
+## [0.9.7] - 2026-04-04
+
+### Corrigido — TENTATIVA 4 (turn handoff)
+- `isMyTurn` agora compara por wallet address (nao por nickname)
+- Problema: se ambos jogadores tem nickname "Anon" (padrao), `isMyTurn` era true para ambos
+- So o jogador ativo salva state no Supabase (`fromPollRef` para evitar re-save)
+- **Resultado**: FALHOU — wallet fix correto mas save via useEffect continuou com race condition
+
+---
+
+## [0.9.6] - 2026-04-04
+
+### Adicionado
+- Board visual redesenhado: casas maiores (56px min), layout snake, bordas coloridas, glow
+- Player pins grandes (28px) com inicial do nome e sombra neon
+- HUD melhorado com pin + score destaque + turno
+- Indicador "SUA VEZ!" piscando em amarelo / "Aguardando..."
+- BGM integrado ao Jogo da Vida (tema defi)
+- SFX: tick ao rolar dado, correct/wrong nos quiz
+
+### Corrigido — TENTATIVA 3 (turn handoff)
+- `isMyTurn` comparava por nickname (bugado) — trocado por `myName` do perfil
+- **Resultado**: FALHOU — nickname podia ser igual entre jogadores ("Anon")
+
+---
+
+## [0.9.5] - 2026-04-04
+
+### Corrigido — TENTATIVA 2 (turn handoff + lobby)
+- Host agora chama `updateRoomStatus(code, "playing")` ao clicar "Iniciar Partida"
+- Poll do Lobby detecta `status === "playing"` e auto-inicia jogo para todos
+- **Resultado**: SUCESSO para lobby/entrada — Player 2 entra no jogo quando host inicia
+- **Resultado**: FALHOU para turnos — Player 2 nao recebia controle apos Player 1 jogar
+
+---
+
+## [0.9.4] - 2026-04-04
+
+### Adicionado
+- console.error logging em todas as operacoes Supabase (rooms.ts)
+- Mensagem "(ver console F12)" no erro do Lobby para facilitar debug
+- **Resultado**: Revelou que Supabase funciona (HTTP 200), join insere player corretamente
+
+---
+
+## [0.9.3] - 2026-04-04
+
+### Corrigido — TENTATIVA 1 (turn handoff)
+- Game state sync via Supabase (saveGameState/loadGameState em multiplayer_rooms.game_state)
+- Turn lock: dado desabilitado quando nao e minha vez
+- Definicao sem corte nos modais (removido truncamento 120/150 chars, adicionado scroll)
+- Adicionado `game_state JSONB` na migration SQL
+- **Resultado**: FALHOU — Player 2 nunca recebia turno (estado nao salvava corretamente)
+
+---
+
+## [0.9.2] - 2026-04-04
+
+### Modificado
+- rooms.ts reescrito: Supabase como storage primario (nao mais localStorage)
+- Lobby.tsx: funcoes agora async (createRoom, joinRoom retornam Promises)
+- Criado `docs/supabase-migration.sql` com schema completo
+- **Resultado**: SUCESSO — salas funcionam cross-browser via Supabase
+
+---
+
+## [0.9.1] - 2026-04-04
+
+### Adicionado
+- Sistema de salas multiplayer online (rooms.ts, Lobby.tsx)
+- Criar sala com codigo 6 chars, compartilhar link, entrar por codigo
+- Player data vem do perfil da wallet (sem input manual de nome)
+- Lobby com poll para atualizar lista de jogadores
+- Rota `/vida/sala/:code` para convite direto
+- Removido PlayerSetup local — jogo 100% online
+- **Problema**: usava localStorage (nao funcionava cross-browser)
+
+---
+
 ## [0.9.0] - 2026-04-04
 
 ### Adicionado (Sprint 6 — Jogo da Vida: Engine Core)

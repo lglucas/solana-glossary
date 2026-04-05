@@ -1,73 +1,130 @@
-# React + TypeScript + Vite
+# Solana Glossary Games — Escape Room + Jogo da Vida
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Two interactive educational games built on top of the `@stbr/solana-glossary` SDK with 1000+ Solana terms.
 
-Currently, two official plugins are available:
+**Live Demo:** [Coming soon — aceleradora.eco.br]
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Games
 
-## React Compiler
+### Escape Room Solana
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Solve 12 distinct puzzle types across 3 themes, each mapped to real Solana SDK categories:
 
-## Expanding the ESLint configuration
+| Theme | Categories | Puzzles |
+|-------|-----------|---------|
+| O Bloco Genesis | blockchain-general, core-protocol, network, infrastructure | MultipleChoice, TrueFalse, FillBlank, ConnectionWeb |
+| O Cofre DeFi | token-ecosystem, defi, web3, solana-ecosystem | TermMatcher, CategorySort, DefinitionBuilder, OddOneOut |
+| O Laboratorio do Dev | programming-model, dev-tools, programming-fundamentals, security | AliasResolver, RelatedTerms, CodeBreaker, TermTimeline |
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 4 difficulty levels per theme: Surface → Confirmation → Finality → Consensus
+- Timer, hints system, score with time bonus, progressive unlock
+- Synthesized 8-bit SFX + BGM via Web Audio API (zero mp3 files)
+- Leaderboard with wallet-based ranking
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Jogo da Vida Solana
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+A multiplayer online board game (2-8 players) where you traverse a 50-space board learning Solana terms:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Board | UX Style | Visual | Categories |
+|-------|----------|--------|-----------|
+| De Normie a Validator | Neon Cockpit — 2-column layout, circular glow nodes | Holographic HUD, cyan/violet neon | blockchain-general, core-protocol, network, infrastructure |
+| Startup Solana | Terminal CLI — text-only interaction, vertical 5-col board | Green monochrome, matrix rain, `> execute roll()` | token-ecosystem, defi, web3, solana-ecosystem |
+| A Timeline | Arcade 8-bit — bottom HUD, chunky pixel tiles | Press Start 2P font, segmented timer, pixel dice | programming-model, dev-tools, security |
+
+Each board is a **completely different experience** — different layout, interaction patterns, fonts, backgrounds, and UX.
+
+**Multiplayer features:**
+- Online rooms via Supabase (create room → share 6-char code → play)
+- Real-time turn sync (active player saves, others poll)
+- Configurable turn timer (Relax 60s / Normal 30s / Speed 15s)
+- Disconnect detection — 3 consecutive timeouts = player ejected
+- Event cards and challenge quizzes with terms from the SDK
+- Score submission to shared leaderboard
+
+## SDK Integration
+
+Both games use `@stbr/solana-glossary` extensively:
+
+- `getTermsByCategory()` — selects terms for puzzles, events, and challenges
+- `getLocalizedTerms()` — serves definitions in pt-BR and es
+- All 14 SDK categories mapped across 3 themes per game
+- `term.related[]` and `term.aliases[]` used in specialized puzzles (RelatedTerms, AliasResolver)
+- Difficulty scaling by definition length (shorter = easier)
+
+## Tech Stack
+
+- **Framework:** Vite + React 18 + TypeScript
+- **Styling:** Tailwind CSS v4 + Framer Motion
+- **Multiplayer:** Supabase (rooms, game state sync, leaderboard)
+- **Wallet:** @solana/wallet-adapter-react (Phantom, Solflare)
+- **Audio:** Web Audio API (synthesized SFX + BGM, zero dependencies)
+- **i18n:** react-i18next (pt-BR + es, 200+ translation keys)
+
+## Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/lglucas/solana-glossary.git
+cd solana-glossary/examples/escape-room-solana
+
+# Install dependencies
+npm install
+
+# Configure environment (optional — works without Supabase for single-player)
+cp .env.example .env.local
+# Edit .env.local with your Supabase URL and anon key
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Environment Variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VITE_SUPABASE_URL` | For multiplayer | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | For multiplayer | Supabase anonymous key |
+| `VITE_SOLANA_RPC_URL` | For NFT avatars | Solana RPC endpoint (DAS-compatible) |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+
 ```
+src/
+├── components/     # Shared components (Layout, WalletButton, Footer)
+├── hooks/          # Shared hooks (useProfile, useTimer, useScore, useHints)
+├── lib/            # Shared libs (audio, bgm, supabase, leaderboard, glossary)
+├── pages/          # Shared pages (Portal, Home, Leaderboard, GamePlay, GameResult)
+├── puzzles/        # 12 Escape Room puzzle components
+│   └── shared/     # PuzzleShell, textUtils
+├── engine/         # Escape Room engine (themes, puzzleRegistry, puzzleTypes)
+├── locales/        # i18n (pt-BR.json, es.json)
+└── vida/           # Jogo da Vida module
+    ├── components/ # Board variants (Normie, Startup, Timeline), GameUi variants,
+    │               # Lobby, Dice, EventCardModal, ChallengeModal, backgrounds
+    ├── engine/     # Game engine (types, turns, board, dice, events, challenges,
+    │               # themes, rooms)
+    ├── hooks/      # useVidaGame (multiplayer sync, timer, auto-skip)
+    └── pages/      # VidaPlay, VidaResult, VidaHome
+```
+
+## i18n
+
+Full support for **Portuguese (pt-BR)** and **Spanish (es)**:
+- 979 term definitions translated to pt-BR
+- 1001 term definitions translated to es
+- 200+ UI translation keys per language
+- Language toggle in the header
+
+## Credits
+
+- **Developer:** Lucas Galvao ([@lg_lucas](https://twitter.com/lg_lucas)) — [Tokenfy.me](https://tokenfy.me)
+- **Organization:** AceleradoraECO
+- **SDK:** [@stbr/solana-glossary](https://github.com/solanabr/solana-glossary) by Superteam Brazil
+- **Competition:** [Bring back the Solana Glossary](https://earn.superteam.fun) — Superteam Brazil 2026
+
+## License
+
+MIT

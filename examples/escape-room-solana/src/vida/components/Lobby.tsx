@@ -14,8 +14,12 @@ import {
   getRoom,
   getInviteUrl,
   updateRoomStatus,
+  saveGameState,
+  loadGameState,
   type Room,
 } from "../engine/rooms";
+import { createInitialState } from "../engine/turns";
+import type { TurnTimerOption, BoardThemeId } from "../engine/types";
 
 interface Props {
   theme: string;
@@ -23,6 +27,7 @@ interface Props {
   onStart: (
     players: Array<{ name: string; color: string; wallet: string }>,
     roomCode?: string,
+    turnTimer?: TurnTimerOption,
   ) => void;
 }
 
@@ -34,6 +39,7 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState<TurnTimerOption>(30);
 
   // Auto-entrar se veio por link de convite
   useEffect(() => {
@@ -56,23 +62,27 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
   // Poll Supabase para atualizar jogadores + detectar inicio do jogo
   useEffect(() => {
     if (!room) return;
-    const interval = setInterval(() => {
-      getRoom(room.code).then((updated) => {
-        if (!updated) return;
-        setRoom(updated);
-        // Se o host iniciou o jogo, todos entram automaticamente
-        if (updated.status === "playing") {
-          clearInterval(interval);
-          onStart(
-            updated.players.map((p) => ({
-              name: p.nickname,
-              color: p.color,
-              wallet: p.walletAddress,
-            })),
-            updated.code,
-          );
-        }
-      });
+    const interval = setInterval(async () => {
+      const updated = await getRoom(room.code);
+      if (!updated) return;
+      setRoom(updated);
+      if (updated.status === "playing") {
+        clearInterval(interval);
+        const gs = await loadGameState(updated.code);
+        const t = gs
+          ? (((gs as { turnTimer?: number }).turnTimer as TurnTimerOption) ??
+            30)
+          : 30;
+        onStart(
+          updated.players.map((p) => ({
+            name: p.nickname,
+            color: p.color,
+            wallet: p.walletAddress,
+          })),
+          updated.code,
+          t,
+        );
+      }
     }, 2000);
     return () => clearInterval(interval);
   }, [room?.code, onStart]);
@@ -99,22 +109,22 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
 
   const handleCopy = () => {
     if (!room) return;
-    navigator.clipboard.writeText(getInviteUrl(room.code));
+    navigator.clipboard.writeText(getInviteUrl(room.code, theme));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleStart = async () => {
     if (!room || room.players.length < 2) return;
+    const ps = room.players.map((p) => ({
+      name: p.nickname,
+      color: p.color,
+      wallet: p.walletAddress,
+    }));
+    const initial = createInitialState(theme as BoardThemeId, ps, timer);
+    await saveGameState(room.code, initial);
     await updateRoomStatus(room.code, "playing");
-    onStart(
-      room.players.map((p) => ({
-        name: p.nickname,
-        color: p.color,
-        wallet: p.walletAddress,
-      })),
-      room.code,
-    );
+    onStart(ps, room.code, timer);
   };
 
   const isHost = room && profile && room.hostWallet === profile.walletAddress;
@@ -219,6 +229,27 @@ export default function Lobby({ theme, roomCode, onStart }: Props) {
           </div>
         ))}
       </div>
+      {/* Timer selector — host only */}
+      {isHost && (
+        <div className="flex gap-2 justify-center mb-4">
+          {[
+            { val: 60 as TurnTimerOption, icon: "🧘", label: "Relax" },
+            { val: 30 as TurnTimerOption, icon: "⏱", label: "Normal" },
+            { val: 15 as TurnTimerOption, icon: "⚡", label: "Speed" },
+          ].map((opt) => (
+            <button
+              key={opt.val}
+              onClick={() => setTimer(opt.val)}
+              className={`px-3 py-2 rounded-lg text-xs border transition-all ${timer === opt.val ? "border-cyan-400 bg-cyan-400/10 text-cyan-400" : "border-white/10 text-gray-500 hover:border-white/20"}`}
+            >
+              <span className="block">
+                {opt.icon} {opt.label}
+              </span>
+              <span className="text-[10px] opacity-60">{opt.val}s</span>
+            </button>
+          ))}
+        </div>
+      )}
       {isHost ? (
         <button
           onClick={handleStart}

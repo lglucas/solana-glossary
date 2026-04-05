@@ -90,30 +90,32 @@
 - [x] Quiz rapido (definicao → 4 opcoes) — ChallengeModal.tsx
 - [x] Integracao SDK: getTermsByCategory() + locale overrides
 
-## Sprint 7 — Jogo da Vida: Multiplayer Online (v0.8.0)
+## Sprint 7 — Jogo da Vida: Multiplayer Online (v0.9.12) ✓
 **Objetivo:** Multiplayer via internet funcionando
-- [ ] Supabase Realtime: criacao de sala
-- [ ] Geracao de link/QR code de convite
-- [ ] Sincronizacao de estado entre jogadores
-- [ ] Coordenacao de turnos em tempo real
-- [ ] Tratamento de desconexao (jogador sai = perde pontuacao)
-- [ ] Lobby de espera pre-jogo
+- [x] Supabase Realtime: criacao de sala — rooms.ts, Lobby.tsx
+- [x] Geracao de link/codigo de convite — getInviteUrl(), codigo 6 chars
+- [x] Sincronizacao de estado entre jogadores — saveGameState/loadGameState poll 1.5s
+- [x] Coordenacao de turnos em tempo real — modelo ativo-salva / passivo-poll
+- [x] Tratamento de desconexao — timer por turno (15/30/60s), 3 timeouts = ejecao
+- [x] Lobby de espera pre-jogo — Lobby.tsx com auto-start quando host inicia
 
-## Sprint 8 — Jogo da Vida: 3 Tabuleiros (v0.9.0)
-**Objetivo:** Os 3 tabuleiros completos com conteudo
-- [ ] Tabuleiro 1 "De Normie a Validator" — visual Futurista/Neon, 50 casas
-- [ ] Tabuleiro 2 "Startup Solana" — visual Matrix, 50 casas
-- [ ] Tabuleiro 3 "A Timeline" — visual Pixel Art, 50 casas
-- [ ] Conteudo curado por tabuleiro (eventos, desafios, quiz)
-- [ ] i18n de todo o conteudo (pt-BR + es)
+## Sprint 8 — Jogo da Vida: 3 Tabuleiros (v0.10.0) ✓
+**Objetivo:** Os 3 tabuleiros completos com conteudo e UX distinta
+- [x] Tabuleiro 1 "De Normie a Validator" — Neon Cockpit: 2 colunas, nos circulares, glow
+- [x] Tabuleiro 2 "Startup Solana" — Terminal CLI: 5 colunas vertical, texto-only, verde monocromo
+- [x] Tabuleiro 3 "A Timeline" — Arcade 8-bit: HUD bottom, 8 colunas chunky, pixel font
+- [x] Conteudo curado por tabuleiro — eventos/desafios usam categorias SDK distintas por tema
+- [x] i18n: pt-BR + es completo (leaderboard, vida, boards)
 
-## Sprint 9 — Jogo da Vida: Polish (v0.10.0)
+## Sprint 9 — Jogo da Vida: Polish (v0.10.0) ✓
 **Objetivo:** Acabamento profissional do Jogo da Vida
-- [ ] Animacoes por tabuleiro (particulas, confetti, shake, transicoes)
-- [ ] Efeitos sonoros (dado, avancar, voltar, evento, vitoria)
-- [ ] 3 estilos visuais finalizados e distintos
-- [ ] Responsividade (mobile + desktop)
-- [ ] Testes de usabilidade
+- [x] 3 backgrounds animados (neon grid, matrix rain, pixel stars)
+- [x] 5 SFX novos: diceRoll, move, event, bonus, trap (Web Audio API)
+- [x] 3 estilos visuais imersivamente distintos (layout, interacao, forma)
+- [x] Leaderboard integrado: submit score + toggle Escape/Vida
+- [x] Bugfixes: mute, invite URL, winner poll, dupla overlay modais
+- [ ] Responsividade mobile (parcial)
+- [ ] Testes de usabilidade finais
 
 ## Sprint 10 — Leaderboard e Integracao (v0.8.0) ✓
 **Objetivo:** Sistema de ranking e integracao final

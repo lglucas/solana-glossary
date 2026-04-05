@@ -46,10 +46,14 @@ export interface Player {
   position: number;
   score: number;
   finished: boolean;
+  timeoutCount: number;
 }
 
 /** Fases do turno */
 export type TurnPhase = "roll" | "moving" | "resolve" | "next";
+
+/** Opcoes de tempo por turno (segundos) */
+export type TurnTimerOption = 15 | 30 | 60;
 
 /** Efeito de uma carta de evento */
 export interface EventCard {
@@ -80,6 +84,9 @@ export interface GameState {
   winner: Player | null;
   theme: BoardThemeId;
   turnCount: number;
+  turnTimer: TurnTimerOption;
+  turnStartedAt: string;
+  abortedBy: number | null;
 }
 
 /** Configuracao de um tabuleiro */

@@ -4,7 +4,7 @@
  * @projeto Solana Glossary — Escape Room Solana
  * @autor Lucas Galvao (@lg_lucas) — Tokenfy.me
  */
-import { getAudioContext } from "./audio";
+import { getAudioContext, audioManager } from "./audio";
 
 // ─── Tipos ─────────────────────────────────────────────────────────────────
 
@@ -111,7 +111,7 @@ export function startBgm(theme: BgmTheme): void {
     const ctx = getAudioContext();
     if (!ctx) return;
     masterGain = ctx.createGain();
-    masterGain.gain.value = 1;
+    masterGain.gain.value = audioManager.isMuted() ? 0 : 1;
     masterGain.connect(ctx.destination);
     activeTheme = theme;
     playSequence(theme);

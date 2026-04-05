@@ -38,7 +38,12 @@
     "empty": "Sin puntuaciones registradas",
     "yourRank": "Tu posicion: #{{rank}}",
     "scoreSaved": "Puntuacion guardada!",
-    "newRecord": "Nuevo record!"
+    "newRecord": "Nuevo record!",
+    "escapeRoom": "Escape Room",
+    "vidaGame": "Juego de la Vida",
+    "vida-normie": "Normie a Validator",
+    "vida-startup": "Startup Solana",
+    "vida-timeline": "La Timeline"
   },
   "portal": {
     "subtitle": "Aprende blockchain Solana jugando — dos juegos, mil terminos, una mision",

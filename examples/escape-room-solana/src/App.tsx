@@ -39,7 +39,7 @@ export default function App() {
         <Route path="/escape" element={<Home />} />
         <Route path="/vida" element={<VidaHome />} />
         <Route path="/vida/jogar/:tema" element={<VidaPlay />} />
-        <Route path="/vida/sala/:code" element={<VidaPlay />} />
+        <Route path="/vida/sala/:tema/:code" element={<VidaPlay />} />
         <Route path="/vida/resultado/:tema" element={<VidaResult />} />
         <Route path="/jogar/:tema/:nivel" element={<GamePlay />} />
         <Route path="/resultado/:tema/:nivel" element={<GameResult />} />
