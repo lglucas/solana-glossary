@@ -245,7 +245,8 @@ export async function loadGameState(code: string): Promise<unknown | null> {
 
 /** Gera URL de convite */
 export function getInviteUrl(code: string, theme?: string): string {
-  return `${window.location.origin}/vida/sala/${theme ?? "normie"}/${code}`;
+  const base = import.meta.env.VITE_BASE_PATH || "/";
+  return `${window.location.origin}${base}vida/sala/${theme ?? "normie"}/${code}`;
 }
 
 // ─── Helper ────────────────────────────────────────────────────────────────

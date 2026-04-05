@@ -2,7 +2,15 @@
 
 Two interactive educational games built on top of the `@stbr/solana-glossary` SDK with 1000+ Solana terms.
 
-**Live Demo:** [Coming soon — aceleradora.eco.br]
+**Live Demo:** [https://aceleradora.eco.br/solanabr-glossario/](https://aceleradora.eco.br/solanabr-glossario/)
+
+## Screenshots
+
+| Portal | Escape Room | Jogo da Vida |
+|--------|-------------|--------------|
+| ![Portal](docs/screenshots/1_ss_portal.png) | ![Temas](docs/screenshots/2_ss_escaperoom_temas.png) | ![Lobby](docs/screenshots/5_ss_jogodavida_lobby.png) |
+| ![Leaderboard](docs/screenshots/1_ss_leaderboard.png) | ![Gameplay](docs/screenshots/3_ss_escaperoom_gameplay_cofre.png) | ![Timeline](docs/screenshots/7_ss_jogodavida_timelinegameplay.png) |
+| | ![Resultado](docs/screenshots/4_ss_escaperoom_resultado_lab.png) | ![Desafio](docs/screenshots/8_ss_jogodavida_desafio.png) |
 
 ## Games
 
@@ -121,9 +129,11 @@ Full support for **Portuguese (pt-BR)** and **Spanish (es)**:
 ## Credits
 
 - **Developer:** Lucas Galvao ([@lg_lucas](https://twitter.com/lg_lucas)) — [Tokenfy.me](https://tokenfy.me)
-- **Organization:** AceleradoraECO
+- **Organization:** [Tokenfy.me](https://tokenfy.me)
 - **SDK:** [@stbr/solana-glossary](https://github.com/solanabr/solana-glossary) by Superteam Brazil
 - **Competition:** [Bring back the Solana Glossary](https://earn.superteam.fun) — Superteam Brazil 2026
+
+> **Note:** The live demo is hosted at `aceleradora.eco.br`, a personal domain owned by @lg_lucas used solely for hosting personal projects. It is not affiliated with any organization.
 
 ## License
 

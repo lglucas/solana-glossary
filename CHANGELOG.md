@@ -5,6 +5,37 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).
 
 ---
 
+## [0.10.3] - 2026-04-05
+
+### Corrigido — Deploy #3 (BrowserRouter basename)
+- `No routes matched location "/solanabr-glossario/"` — React Router nao reconhecia o path base
+- **Fix**: adicionado `basename={import.meta.env.VITE_BASE_PATH}` ao `<BrowserRouter>` em main.tsx
+- CSP expandido para permitir `https://static.cloudflareinsights.com` (beacon injetado pela hospedagem)
+- **Resultado**: SUCESSO — site live em https://aceleradora.eco.br/solanabr-glossario/
+
+---
+
+## [0.10.2] - 2026-04-05
+
+### Corrigido — Deploy #2 (CSP eval)
+- Tela branca em producao: `Content Security Policy blocks 'eval'`
+- Causa: `protobufjs` (dependencia do wallet-adapter) usa `eval()` internamente
+- **Fix**: `.htaccess` com header CSP permitindo `unsafe-eval` + `unsafe-inline`
+- **Resultado**: PARCIAL — CSP resolvido mas rotas nao funcionavam (ver 0.10.3)
+
+---
+
+## [0.10.1] - 2026-04-05
+
+### Corrigido — Deploy #1 (SDK no CI)
+- GitHub Actions: `Cannot find module '@stbr/solana-glossary'`
+- Causa: SDK usa `file:../..` (link local), CI nao tinha o SDK buildado
+- **Fix**: workflow agora faz `npm install && npm run build` na raiz antes do app
+- Adicionado `VITE_BASE_PATH` env var para deploy em subfolder
+- **Resultado**: Build CI passou, deploy FTP OK, mas site tela branca (ver 0.10.2)
+
+---
+
 ## [0.10.0] - 2026-04-05
 
 ### Adicionado (Sprint 8-9 — Tabuleiros Imersivos + Leaderboard + Polish)
