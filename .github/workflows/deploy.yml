@@ -12,9 +12,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: examples/escape-room-solana
 
     steps:
       - name: Checkout
@@ -24,14 +21,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: examples/escape-room-solana/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build SDK
+        run: npm install && npm run build
+        working-directory: .
 
-      - name: Build
+      - name: Install app dependencies
+        run: npm install
+        working-directory: examples/escape-room-solana
+
+      - name: Build app
         run: npm run build
+        working-directory: examples/escape-room-solana
         env:
           VITE_BASE_PATH: /solanabr-glossario/
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
